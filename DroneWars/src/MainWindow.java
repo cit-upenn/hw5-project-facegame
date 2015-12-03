@@ -244,7 +244,7 @@ public class MainWindow extends Canvas {
 			}
 			
 			// wait 17 millisec
-			//try { Thread.sleep(10); } catch (Exception e) {}
+			try { Thread.sleep(10); } catch (Exception e) {}
 		}
 	}
 	
