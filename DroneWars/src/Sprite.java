@@ -1,9 +1,12 @@
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.Transparency;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -11,8 +14,11 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
-public class Sprite 
+
+public class Sprite extends JFrame
 {
 	File imageFile;
 	BufferedImage bufferedImage;
@@ -25,6 +31,7 @@ public class Sprite
 	double height;
 	double centroidx;
 	double centroidy;
+	Rectangle bounds;
 
 	public Sprite(String imageFile)
 	{
@@ -47,6 +54,8 @@ public class Sprite
 			this.transform.setToIdentity();
 			this.transform.translate(this.posx, this.posy);
 			this.transform.rotate(this.angle, this.width * 0.5, this.height * 0.5);
+			
+			this.bounds = new Rectangle((int)this.posx, (int)this.posy, (int)this.width, (int)this.height);
 			
 
 			BufferedImage buf = ImageIO.read(this.imageFile);
@@ -79,6 +88,21 @@ public class Sprite
 		this.transform.translate(this.posx+this.centroidx, this.posy+this.centroidy);
 		this.transform.rotate(this.angle, this.width * 0.5, this.height * 0.5);
 		//this.transform.translate(this.posx, this.posy);
+	}
+	
+	public void setBounds(double x, double y, double width, double height)
+	{
+		this.bounds.setRect((int)x, (int)y, (int)width, (int)height);
+	}
+	
+	public void updateBounds()
+	{
+		this.bounds.setRect(this.posx, this.posy, this.width, this.height);
+	}
+	
+	public Rectangle getBounds()
+	{
+		return this.bounds;
 	}
 	
 	public void setPos(double x, double y)
@@ -122,18 +146,6 @@ public class Sprite
 		this.updateTransform();
 	}
 	
-	public double[] getBounds()
-	{
-		double bounds[] = {0, 0, 0, 0};
-		double x = this.posx + this.centroidx;
-		double y = this.posy + this.centroidy;
-		bounds[0] = x;
-		bounds[1] = x + this.width;
-		bounds[2] = y;
-		bounds[3] = y + this.height;
-		
-		return bounds;
-	}
 	
 	public BufferedImage getImageBuffer()
 	{
@@ -144,4 +156,25 @@ public class Sprite
 	{
 		return this.image;
 	}
+	
+	/*
+	@Override(non-Javadoc)
+	protected void paintComponent(Graphics g) {
+	      super.paintComponent(g);
+	      g.drawImage(this.image, (int)this.posx, (int)this.posx, this);
+	      g.setColor(Color.yellow);
+	      int rectCount = 10;
+	      //g.drawImage(img1, myX, myY, this);
+	      int height = getHeight() / rectCount;
+	      int width = 27;
+	      int x = getWidth() - width;
+	      for (int i = 0; i < rectCount; i++) {
+	         int y = i * height;
+	         g.drawRect(x, y, width, height);
+	      }
+	      Font font1 = new Font("Serif", Font.BOLD, 36);
+	      g.setFont(font1);
+	      g.drawString(Integer.toString(10), 500, 100);
+	   }
+	   */
 }

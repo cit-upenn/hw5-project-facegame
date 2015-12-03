@@ -10,13 +10,18 @@ public class Player extends Asset
 	public Player()
 	{
 	
-		URL location = Player.class.getProtectionDomain().getCodeSource().getLocation();
-		String pwd = location.toString().replace("file:", "");
+		//URL location = Player.class.getProtectionDomain().getCodeSource().getLocation();
+		//String pwd = location.toString().replace("file:", "");
 		
-		String shipPath = pwd + "/jpeg.png";
-		String gunPath = pwd+"/gun.png";
-		System.out.println(shipPath.toString());
-		System.out.println(gunPath.toString());
+		String shipPath = "./jpeg.png";
+		String gunPath = "./gun.png";
+		
+		// testing other collisions
+		//shipPath = "./bullet.png";
+		//gunPath = "./bullet.png";
+		
+		//System.out.println(shipPath.toString());
+		//System.out.println(gunPath.toString());
 		
 		this.add(shipPath);
 		this.add(gunPath);
@@ -36,5 +41,10 @@ public class Player extends Asset
 	public void rotateBy(double x)
 	{
 		this.gun.rotateBy(x);
-	}	
+	}
+	
+	public void step()
+	{
+		this.moveBy(0.0, 0.0);
+	}
 }

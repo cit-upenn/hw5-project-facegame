@@ -7,9 +7,10 @@ public class MainRun
 		// TODO Auto-generated method stub
 		//MainWindow win = new MainWindow();
 		System.setProperty("sun.java2d.opengl","True");
-		
-		GameThread game = new GameThread();
-		game.run();
+		//GameThread game = new GameThread();
+		//game.run();
+		MainWindow win = new MainWindow();
+		win.gameLoop();
 	}
 
 }

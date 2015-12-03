@@ -1,4 +1,4 @@
-import java.net.URL;
+
 
 public class Bullet extends Asset
 {
@@ -9,10 +9,10 @@ public class Bullet extends Asset
 	{
 		super();
 		this.speed = 40.0;
-		URL location = Player.class.getProtectionDomain().getCodeSource().getLocation();
-		String pwd = location.toString().replace("file:", "");
+		//URL location = Player.class.getProtectionDomain().getCodeSource().getLocation();
+		//String pwd = location.toString().replace("file:", "");
 		
-		String bulletPath = pwd+"bullet.png";
+		String bulletPath = "./bullet.png";
 		
 		this.add(bulletPath);
 		//this.add("./src/bullet.png");

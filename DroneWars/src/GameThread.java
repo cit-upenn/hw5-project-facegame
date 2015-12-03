@@ -18,18 +18,20 @@ public class GameThread extends Thread
 	
 	public void run()
 	{
-		this.window.repaint(18);
+		this.window.repaint(17);
+		
 		while(true)
 		{
 			long now = System.currentTimeMillis();
-				
 			if (now - this.currentTime >= 17)
-			{
-				this.window.eval();
-				this.window.draw();
-				
+			{	    	
+				//this.window.eval();
+				//this.window.draw();
+				//System.out.println("draw " + (now - this.currentTime));
 				this.currentTime = System.currentTimeMillis();
+				
 			}
+			//System.out.println("	TIME ELAPSED " + (now - this.currentTime));
 		}
 	}
 }
