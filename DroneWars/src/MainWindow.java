@@ -57,6 +57,9 @@ public class MainWindow extends Canvas {
 	boolean rotateLeft;
 	boolean rotateRight;
 	boolean fire;
+	
+	long lastFireTime;
+	long fireInterval;
 	//private KeyEventListener listener;
 	
 	
@@ -107,6 +110,8 @@ public class MainWindow extends Canvas {
 		this.bullets = new ArrayList<Bullet>();
 		this.enemies = new ArrayList<Enemy>();
 		this.player = new Player();
+		this.lastFireTime = System.currentTimeMillis();
+		this.fireInterval = 60;
 		
 		// set player coordinates at center
 		this.player.moveBy(320, 240);
@@ -195,14 +200,20 @@ public class MainWindow extends Canvas {
 				this.player.rotateBy(speed*0.1);
 			if (this.fire)
 			{
-				Bullet bb = new Bullet();
-				double bWidth = bb.sprites.get(0).width;
-				double bHeight = bb.sprites.get(0).height;
+				// compute fire interval
+				if (this.canFire())
+				{
+					Bullet bb = new Bullet();
+					double randRot = 0.05 * (Math.random() - 0.5) *2;
+					double randMove = 20 * (0.5 + Math.random() * 0.5);
 				
-				bb.moveBy(this.player.ship.posx+(this.player.ship.width)*0.5, 
-						 this.player.ship.posy+(this.player.ship.height)*0.5);
-				bb.rotateBy(this.player.gun.angle);
-				this.bullets.add(bb);
+					bb.setSpeed(randMove);
+					
+					bb.moveBy(this.player.ship.posx+(this.player.ship.width)*0.5, 
+							this.player.ship.posy+(this.player.ship.height)*0.5);
+					bb.rotateBy(this.player.gun.angle + randRot);
+					this.bullets.add(bb);
+				}
 			}
 			
 			for(int i=0; i<this.bullets.size(); i++)
@@ -244,10 +255,20 @@ public class MainWindow extends Canvas {
 			}
 			
 			// wait 17 millisec
-			//try { Thread.sleep(10); } catch (Exception e) {}
+			try { Thread.sleep(10); } catch (Exception e) {}
 		}
 	}
 	
+	public boolean canFire() 
+	{
+		// test if enough time elapsed to fire
+		if (System.currentTimeMillis() - this.lastFireTime < this.fireInterval) {
+			return false;
+		}
+		
+		this.lastFireTime = System.currentTimeMillis();
+		return true;
+	}
 
 	private class KeyInputHandler extends KeyAdapter {
 
@@ -296,7 +317,6 @@ public class MainWindow extends Canvas {
 			// nothing for now
 		}
 	}
-
 }
 
 
