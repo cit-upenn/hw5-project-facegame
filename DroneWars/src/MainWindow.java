@@ -50,13 +50,16 @@ public class MainWindow extends Canvas {
 	ArrayList<Enemy> enemies;
 	Player player;
 	
-	boolean moveLeft;
-	boolean moveRight;
 	boolean moveUp;
 	boolean moveDown;
+	boolean moveLeft;
+	boolean moveRight;
 	boolean rotateLeft;
 	boolean rotateRight;
-	boolean fire;
+	boolean fireUp;
+	boolean fireDown;
+	boolean fireLeft;
+	boolean fireRight;
 	
 	long lastFireTime;
 	long fireInterval;
@@ -166,20 +169,30 @@ public class MainWindow extends Canvas {
 	    	for(int i=0; i<this.bullets.size(); i++)
 	    	{
 	    		Bullet bullet = this.bullets.get(i);
-	    		g.drawImage(bullet.bullet.image, bullet.bullet.transform, null);
+	    		g.drawImage(bullet.bullet.getImage(), bullet.bullet.getTransform(), null);
+	    		
+	    		//Rectangle bbox = bullet.getBBox(0);
+	    		//g.setColor(Color.WHITE);
+	    		//g.fillRect((int)bbox.getMinX(), (int)bbox.getMinY(), (int)bbox.getWidth(), (int)bbox.getHeight());
+	    		//g.drawRect((int)bbox.getMinX(), (int)bbox.getMinY(), (int)bbox.getWidth(), (int)bbox.getHeight());
 	    	}
 	    	
 	    	// enemies
 	    	for(int i=0; i<this.enemies.size(); i++)
 	    	{
 	    		Enemy enemy = this.enemies.get(i);
-	    		g.drawImage(enemy.enemy.image, enemy.enemy.transform, null);
+	    		g.drawImage(enemy.enemy.getImage(), enemy.enemy.getTransform(), null);
+	    		
+	    		//Rectangle bbox = enemy.getBBox(0);
+	    		//g.setColor(Color.WHITE);
+	    		//g.fillRect((int)bbox.getMinX(), (int)bbox.getMinY(), (int)bbox.getWidth(), (int)bbox.getHeight());
+	    		//g.drawRect((int)bbox.getMinX(), (int)bbox.getMinY(), (int)bbox.getWidth(), (int)bbox.getHeight());
 	    	}
 	    	//repaint();
 			
 	    	// player ship
-	    	g.drawImage(this.player.ship.image, this.player.ship.transform, null);
-	    	g.drawImage(this.player.gun.image, this.player.gun.transform, null);
+	    	g.drawImage(this.player.ship.getImage(), this.player.ship.getTransform(), null);
+	    	g.drawImage(this.player.gun.getImage(), this.player.gun.getTransform(), null);
 
 			// we can now flip the buffer.  We're done drawing
 			g.dispose();
@@ -198,20 +211,48 @@ public class MainWindow extends Canvas {
 				this.player.rotateBy(-speed*0.1);
 			if (this.rotateRight)
 				this.player.rotateBy(speed*0.1);
-			if (this.fire)
+			if (this.fireUp || this.fireDown || this.fireLeft || this.fireRight)
 			{
 				// compute fire interval
 				if (this.canFire())
 				{
+					double angle = 0.0;
+					if(this.fireUp)
+					{
+						if(this.fireRight)
+							angle = Math.PI*1.75;
+						else if(this.fireLeft)
+							angle = Math.PI*1.25;
+						else
+							angle = Math.PI*1.5;
+					}
+					else if(this.fireDown)
+					{
+						if(this.fireRight)
+							angle = Math.PI*0.25;
+						else if(this.fireLeft)
+							angle = Math.PI*0.75;
+						else
+							angle = Math.PI*0.5;
+					}
+					else if(this.fireLeft)
+						angle = Math.PI;
+					else if(this.fireRight)
+						angle = 0.0;
+					
+					this.player.gun.setRot(angle);
+					
+						  
+					
 					Bullet bb = new Bullet();
 					double randRot = 0.05 * (Math.random() - 0.5) *2;
 					double randMove = 20 * (0.5 + Math.random() * 0.5);
 				
 					bb.setSpeed(randMove);
 					
-					bb.moveBy(this.player.ship.posx+(this.player.ship.width)*0.5, 
-							this.player.ship.posy+(this.player.ship.height)*0.5);
-					bb.rotateBy(this.player.gun.angle + randRot);
+					bb.moveBy(this.player.ship.getPosX()+(this.player.ship.getWidth())*0.5, 
+							this.player.ship.getPosY()+(this.player.ship.getHeight())*0.5);
+					bb.rotateBy(this.player.gun.getAngle() + randRot);
 					this.bullets.add(bb);
 				}
 			}
@@ -220,10 +261,10 @@ public class MainWindow extends Canvas {
 			{
 	    		Bullet bSprite = this.bullets.get(i);
 	    		
-	    		if(bSprite.bullet.posx > this.width+50 || 
-	    				bSprite.bullet.posx < -50 ||
-	    				bSprite.bullet.posy > this.height+50 ||
-	    				bSprite.bullet.posy < -50)
+	    		if(bSprite.bullet.getPosX() > this.width+50 || 
+	    				bSprite.bullet.getPosX() < -50 ||
+	    				bSprite.bullet.getPosY() > this.height+50 ||
+	    				bSprite.bullet.getPosY() < -50)
 	    		{
 	    			this.bullets.remove(i);
 	    		}
@@ -288,8 +329,14 @@ public class MainWindow extends Canvas {
 	    		rotateLeft = true;
 	    	if (e.getKeyCode() == KeyEvent.VK_E)
 	    		rotateRight = true;
-	    	if (e.getKeyCode() == KeyEvent.VK_I)
-	    		fire = true;
+	    	if (e.getKeyCode() == KeyEvent.VK_UP)
+	    		fireUp = true;
+	    	if (e.getKeyCode() == KeyEvent.VK_DOWN)
+	    		fireDown = true;
+	    	if (e.getKeyCode() == KeyEvent.VK_LEFT)
+	    		fireLeft = true;
+	    	if (e.getKeyCode() == KeyEvent.VK_RIGHT)
+	    		fireRight = true;
 		} 
 		
 
@@ -307,8 +354,14 @@ public class MainWindow extends Canvas {
 	    		rotateLeft = false;
 	    	if (e.getKeyCode() == KeyEvent.VK_E)
 	    		rotateRight = false;
-	    	if (e.getKeyCode() == KeyEvent.VK_I)
-	    		fire = false;
+	    	if (e.getKeyCode() == KeyEvent.VK_UP)
+	    		fireUp = false;
+	    	if (e.getKeyCode() == KeyEvent.VK_DOWN)
+	    		fireDown = false;
+	    	if (e.getKeyCode() == KeyEvent.VK_LEFT)
+	    		fireLeft = false;
+	    	if (e.getKeyCode() == KeyEvent.VK_RIGHT)
+	    		fireRight = false;
 		}
 
 

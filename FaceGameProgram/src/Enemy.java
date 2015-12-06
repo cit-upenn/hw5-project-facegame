@@ -16,8 +16,8 @@ public class Enemy extends Asset
 		this.add(enemyPath);
 		//this.add("./src/bullet.png");
 		this.enemy = this.sprites.get(0);
-		this.enemy.setCentroid((-this.enemy.width)*0.5,
-							    (-this.enemy.height)*0.5);
+		this.enemy.setCentroid((-this.enemy.getWidth())*0.5,
+							    (-this.enemy.getHeight())*0.5);
 	}
 	
 	public void setSpeed(double value)
@@ -27,6 +27,7 @@ public class Enemy extends Asset
 	
 	public void step()
 	{
+		
 		//double x = this.speed * Math.cos(this.enemy.angle);
 		//double y = this.speed * Math.sin(this.enemy.angle);
 		//this.moveBy(x, y);

@@ -20,27 +20,29 @@ import javax.swing.JPanel;
 
 public class Sprite extends JFrame
 {
-	File imageFile;
-	BufferedImage bufferedImage;
-	Image image;
-	AffineTransform transform;
-	double posx;
-	double posy;
-	double angle;
-	double width;
-	double height;
-	double centroidx;
-	double centroidy;
-	Rectangle bounds;
+	private File imageFile;
+	private BufferedImage bufferedImage;
+	private Image image;
+	private AffineTransform transform;
+	private double posX;
+	private double posY;
+	private double angle;
+	private double width;
+	private double height;
+	private double centroidX;
+	private double centroidY;
+	private double scaleX;
+	private double scaleY;
+	private Rectangle bounds;
 
 	public Sprite(String imageFile)
 	{
 		this.transform = new AffineTransform();
-		this.posx = 0.0;
-		this.posy = 0.0;
+		this.posX = 0.0;
+		this.posY = 0.0;
 		this.angle = 0.0;
-		this.centroidx = 0.0;
-		this.centroidy = 0.0;
+		this.centroidX = 0.0;
+		this.centroidY = 0.0;
 		
 		try
 		{
@@ -49,13 +51,17 @@ public class Sprite extends JFrame
 			
 			this.width = this.bufferedImage.getWidth();
 			this.height = this.bufferedImage.getHeight();
-
+			
+			this.scaleX = 1.0;
+			this.scaleY = 1.0;
 			
 			this.transform.setToIdentity();
-			this.transform.translate(this.posx, this.posy);
+			this.transform.scale(this.scaleX, this.scaleY);
+			this.transform.translate(this.posX, this.posY);
 			this.transform.rotate(this.angle, this.width * 0.5, this.height * 0.5);
 			
-			this.bounds = new Rectangle((int)this.posx, (int)this.posy, (int)this.width, (int)this.height);
+			this.bounds = new Rectangle();
+			this.updateBounds();
 			
 
 			BufferedImage buf = ImageIO.read(this.imageFile);
@@ -78,15 +84,17 @@ public class Sprite extends JFrame
 	
 	public void setCentroid(double x, double y)
 	{
-		this.centroidx = x;
-		this.centroidy = y;
+		this.centroidX = x;
+		this.centroidY = y;
 	}
 	
 	public void updateTransform()
 	{
-		this.transform.setToIdentity();
-		this.transform.translate(this.posx+this.centroidx, this.posy+this.centroidy);
+		this.transform.setToIdentity();		
+		this.transform.translate(this.posX+this.centroidX, this.posY+this.centroidY);
 		this.transform.rotate(this.angle, this.width * 0.5, this.height * 0.5);
+		this.transform.scale(this.scaleX, this.scaleY);
+		this.updateBounds();
 		//this.transform.translate(this.posx, this.posy);
 	}
 	
@@ -97,7 +105,10 @@ public class Sprite extends JFrame
 	
 	public void updateBounds()
 	{
-		this.bounds.setRect(this.posx, this.posy, this.width, this.height);
+		this.setBounds(this.posX+this.centroidX, 
+					   this.posY+this.centroidY, 
+                       this.width, 
+                       this.height);
 	}
 	
 	public Rectangle getBounds()
@@ -107,15 +118,15 @@ public class Sprite extends JFrame
 	
 	public void setPos(double x, double y)
 	{
-		this.posx = x;
-		this.posy = y;
-		this.updateTransform();		
+		this.posX = x;
+		this.posY = y;
+		this.updateTransform();
 	}
 	
 	public void moveBy(double x, double y)
 	{
-		this.posx += x;
-		this.posy += y;
+		this.posX += x;
+		this.posY += y;
 		this.updateTransform();		
 	}
 	
@@ -127,8 +138,8 @@ public class Sprite extends JFrame
 	
 	public void moveAndRotateBy(double x, double y, double rotate)
 	{
-		this.posx += x;
-		this.posy += y;
+		this.posX += x;
+		this.posY += y;
 		this.angle += rotate;
 		this.updateTransform();		
 	}
@@ -139,10 +150,10 @@ public class Sprite extends JFrame
 		this.updateTransform();
 	}
 	
-	public void setScale(double width, double height)
+	public void setScale(double scaleX, double scaleY)
 	{
-		this.width = width;
-		this.height = height;
+		this.scaleX = scaleX;
+		this.scaleY = scaleY;
 		this.updateTransform();
 	}
 	
@@ -156,6 +167,37 @@ public class Sprite extends JFrame
 	{
 		return this.image;
 	}
+	
+	public double getPosX()
+	{
+		return this.posX;
+	}
+	
+	public double getPosY()
+	{
+		return this.posY;
+	}
+	
+	public double getAngle()
+	{
+		return this.angle;
+	}
+	
+	public AffineTransform getTransform()
+	{
+		return this.transform;
+	}
+	
+	public int getWidth()
+	{
+		return (int)this.width;
+	}
+	
+	public int getHeight()
+	{
+		return (int)this.height;
+	}
+	
 	
 	/*
 	@Override(non-Javadoc)

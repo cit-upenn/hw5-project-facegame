@@ -17,8 +17,8 @@ public class Bullet extends Asset
 		this.add(bulletPath);
 		//this.add("./src/bullet.png");
 		this.bullet = this.sprites.get(0);
-		this.bullet.setCentroid((-this.bullet.width)*0.5,
-							    (-this.bullet.height)*0.5);
+		this.bullet.setCentroid((-this.bullet.getWidth())*0.5,
+							    (-this.bullet.getHeight())*0.5);
 	}
 	
 	public void setSpeed(double value)
@@ -28,8 +28,8 @@ public class Bullet extends Asset
 	
 	public void step()
 	{
-		double x = this.speed * Math.cos(this.bullet.angle);
-		double y = this.speed * Math.sin(this.bullet.angle);
+		double x = this.speed * Math.cos(this.bullet.getAngle());
+		double y = this.speed * Math.sin(this.bullet.getAngle());
 		this.moveBy(x, y);
 	}
 }

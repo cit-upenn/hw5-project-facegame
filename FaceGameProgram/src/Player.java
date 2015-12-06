@@ -28,8 +28,8 @@ public class Player extends Asset
 		
 		this.ship = this.sprites.get(0);
 		this.gun = this.sprites.get(1);
-		this.gun.setCentroid((this.ship.width-this.gun.width)*0.5,
-							 (this.ship.height-this.gun.height)*0.5);
+		this.gun.setCentroid((this.ship.getWidth()-this.gun.getWidth())*0.5,
+							 (this.ship.getHeight()-this.gun.getHeight())*0.5);
 	}
 	
 	public void moveBy(double x, double y)

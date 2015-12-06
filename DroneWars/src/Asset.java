@@ -20,8 +20,8 @@ public class Asset
 		if(this.sprites.size() >= 1)
 		{
 			Sprite sprite = this.sprites.get(0);
-			Rectangle bounds = new Rectangle((int)sprite.posx, (int)sprite.posy,
-		     		  					     (int)sprite.width, (int)sprite.height);
+			Rectangle bounds = new Rectangle((int)sprite.getPosX(), (int)sprite.getPosY(),
+		     		  					     (int)sprite.getPosX(), (int)sprite.getPosY());
 			
 			if(bounds.intersects(rec))
 				return true;
@@ -34,9 +34,8 @@ public class Asset
 		Rectangle bBox = new Rectangle();
 		if(this.sprites.size() >= index-1)
 		{
-			Sprite sprite = this.sprites.get(index);
-			bBox.setBounds((int)sprite.posx, (int)sprite.posy,
-						   (int)sprite.width, (int)sprite.height);
+			Sprite sprite = this.sprites.get(0);
+			bBox = sprite.getBounds();
 		}
 		return bBox;
 	}
