@@ -175,6 +175,7 @@ public class MainWindow extends Canvas {
 	    		//g.setColor(Color.WHITE);
 	    		//g.fillRect((int)bbox.getMinX(), (int)bbox.getMinY(), (int)bbox.getWidth(), (int)bbox.getHeight());
 	    		//g.drawRect((int)bbox.getMinX(), (int)bbox.getMinY(), (int)bbox.getWidth(), (int)bbox.getHeight());
+	    		//g.drawImage(bullet.bullet.getImage(), bullet.bullet.getTransform(), null);
 	    	}
 	    	
 	    	// enemies
@@ -187,6 +188,7 @@ public class MainWindow extends Canvas {
 	    		//g.setColor(Color.WHITE);
 	    		//g.fillRect((int)bbox.getMinX(), (int)bbox.getMinY(), (int)bbox.getWidth(), (int)bbox.getHeight());
 	    		//g.drawRect((int)bbox.getMinX(), (int)bbox.getMinY(), (int)bbox.getWidth(), (int)bbox.getHeight());
+	    		//g.drawImage(enemy.enemy.getImage(), enemy.enemy.getTransform(), null);
 	    	}
 	    	//repaint();
 			
@@ -292,6 +294,7 @@ public class MainWindow extends Canvas {
 						break;
 					}
 				}
+				e.aim(this.player);
 				e.step();
 			}
 			

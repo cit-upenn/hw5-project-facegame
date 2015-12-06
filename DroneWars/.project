@@ -14,21 +14,4 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>src/bullet.png</name>
-			<type>1</type>
-			<location>C:/Users/moi/workspace/DroneWars/bullet.png</location>
-		</link>
-		<link>
-			<name>src/gun.png</name>
-			<type>1</type>
-			<location>C:/Users/moi/workspace/DroneWars/gun.png</location>
-		</link>
-		<link>
-			<name>src/jpeg.png</name>
-			<type>1</type>
-			<location>C:/Users/moi/workspace/DroneWars/jpeg.png</location>
-		</link>
-	</linkedResources>
 </projectDescription>
