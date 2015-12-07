@@ -66,6 +66,8 @@ public class MainWindow extends Canvas {
 	
 	long lastFireTime;
 	long fireInterval;
+	long lastSpawnTime;
+	long spawnInterval;
 	
 	int playerScore;
 	//private KeyEventListener listener;
@@ -121,29 +123,14 @@ public class MainWindow extends Canvas {
 		this.playerSpeed = 4.0;
 		this.lastFireTime = System.currentTimeMillis();
 		this.fireInterval = 60;
+		this.spawnInterval = 300;
 		this.playerScore = 0;
 		
 		// set player coordinates at center
 		this.player.moveBy(320, 240);
     	
     	// temp testing of enemies
-    	Enemy e1 = new Enemy();
-    	Enemy e2 = new Enemy();
-    	Enemy e3 = new Enemy();
-    	Enemy e4 = new Enemy();
-    	Enemy e5 = new Enemy();
-    	
-    	e1.moveBy(10, 20);
-    	e2.moveBy(200, 200);
-    	e3.moveBy(100, 400);
-    	e4.moveBy(400, 200);
-    	e5.moveBy(300, 400);
-    	
-    	this.enemies.add(e1);
-    	this.enemies.add(e2);
-    	this.enemies.add(e3);
-    	this.enemies.add(e4);
-    	this.enemies.add(e5);
+    	this.spawnEnemies(10);
 		// initialise the entities in our game so there's something
 		// to see at startup
 	}
@@ -241,6 +228,9 @@ public class MainWindow extends Canvas {
 				e.step();
 			}
 			
+			// spawn new enemies
+			this.spawnEnemies(2);
+			
 			// wait 17 millisec
 			try { Thread.sleep(10); } catch (Exception e) {}
 		}
@@ -257,6 +247,17 @@ public class MainWindow extends Canvas {
 		return true;
 	}
 
+	public boolean canSpawn()
+	{
+		// test if enough time elapsed to spawn
+		if (System.currentTimeMillis() - this.lastSpawnTime < this.spawnInterval) {
+			return false;
+		}
+		
+		this.lastSpawnTime = System.currentTimeMillis();
+		return true;
+	}
+	
 	public void fireShots()
 	{
 		// compute fire interval
@@ -298,6 +299,44 @@ public class MainWindow extends Canvas {
 					this.player.ship.getPosY()+(this.player.ship.getHeight())*0.5);
 			bb.rotateBy(this.player.gun.getAngle() + randRot);
 			this.bullets.add(bb);
+		}
+	}
+
+	public void spawnEnemies(int num)
+	{
+		if(this.canSpawn())
+		{
+			for (int i=0; i<num; i++)
+			{
+				double axis = Math.random();
+				double x = 0.0;
+				double y = 0.0;
+				if (axis<0.5)
+				{
+					x = 2 * (Math.random()-0.5) * this.width;
+					y = Math.round(Math.random()) * this.height;
+				}
+				else
+				{
+					x = Math.round(Math.random()) * this.width ;
+					y = 2 * (Math.random()-0.5) * this.height;
+				}
+				
+				if(x > 0 && x < this.width+30)
+					x+=30;
+				else if(x > -30)
+					x-=30;
+				
+				if(y > 0 && y < this.height+30)
+					y+=30;
+				else if(y > -30)
+					y-=30;
+				
+				Enemy e = new Enemy();    	
+				e.moveBy(x, y);
+
+				this.enemies.add(e);
+			}
 		}
 	}
 	
