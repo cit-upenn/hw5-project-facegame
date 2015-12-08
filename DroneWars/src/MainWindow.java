@@ -52,6 +52,7 @@ public class MainWindow extends Canvas {
 	ArrayList<Enemy> enemies;
 	Player player;
 	
+	boolean paused;
 	double playerSpeed;
 	boolean moveUp;
 	boolean moveDown;
@@ -70,6 +71,9 @@ public class MainWindow extends Canvas {
 	long spawnInterval;
 	
 	int playerScore;
+	
+	String enemyPath1;
+	String enemyPath2;
 	//private KeyEventListener listener;
 	
 	
@@ -116,6 +120,7 @@ public class MainWindow extends Canvas {
 		// TODO integrate with main window once everything works
 		this.width = 640;
 		this.height = 480;
+		this.paused = true;
 		this.keysPressed = new HashMap<Character, Integer>();
 		this.bullets = new ArrayList<Bullet>();
 		this.enemies = new ArrayList<Enemy>();
@@ -125,6 +130,8 @@ public class MainWindow extends Canvas {
 		this.fireInterval = 60;
 		this.spawnInterval = 300;
 		this.playerScore = 0;
+		this.enemyPath1 = "./penguin.png";
+		this.enemyPath2 = "./jpeg.png";
 		
 		// set player coordinates at center
 		this.player.moveBy(320, 240);
@@ -137,19 +144,21 @@ public class MainWindow extends Canvas {
 	
 
 
-	public void gameLoop() {
+	public void gameLoop() 
+	{
 		long lastLoopTime = System.currentTimeMillis();
-		
+		boolean firstLoop = true;
 		// keep looping until we exit
-		while (gameRunning) {
-			// check running time passed
-			long delta = System.currentTimeMillis() - lastLoopTime;
-			lastLoopTime = System.currentTimeMillis();
-			
+		while (gameRunning) 
+		{		
 			// graphics context
 			Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
 			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 			        		   RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+			
+			// check running time passed
+			long delta = System.currentTimeMillis() - lastLoopTime;
+			lastLoopTime = System.currentTimeMillis();
 			
 			g.setColor(Color.black);
 			g.fillRect(0,0,640,480);
@@ -172,10 +181,16 @@ public class MainWindow extends Canvas {
 	    	this.drawPlayer(g);
 	    	this.drawScore(g);
 	        
+	    	if (this.paused && !firstLoop)
+				this.drawPauseMenu(g);
+	    	
 			// we can now flip the buffer.  We're done drawing
 			g.dispose();
 			strategy.show();
 			
+			if (this.paused && !firstLoop)
+				continue;
+						
 			if (this.moveLeft)
 	    		this.player.moveBy(-this.playerSpeed, 0);
 			if (this.moveRight)
@@ -233,6 +248,8 @@ public class MainWindow extends Canvas {
 			
 			// wait 17 millisec
 			try { Thread.sleep(10); } catch (Exception e) {}
+			
+			firstLoop = false;
 		}
 	}
 
@@ -332,10 +349,20 @@ public class MainWindow extends Canvas {
 				else if(y > -30)
 					y-=30;
 				
-				Enemy e = new Enemy();    	
+				
+				Enemy e = null;
+				if (Math.random() < 0.5)
+					e = new EnemyFollow(this.enemyPath1);    	
+				else
+					e = new EnemyWaving(this.enemyPath2);
+				
+				// fit random to 0.2-1.0 and amp about 5
+				double speed = ((Math.random() * 0.8) + 0.2) * 5;
+				e.setSpeed(speed);
+				
 				e.moveBy(x, y);
-
 				this.enemies.add(e);
+				
 			}
 		}
 	}
@@ -367,6 +394,24 @@ public class MainWindow extends Canvas {
         
 	}
 	
+	public void drawPauseMenu(Graphics2D g)
+	{
+		String pauseStr1 = "Game Paused";
+		String pauseStr2 = "Press P to resume";
+    	Font font = new Font("Serif", Font.BOLD, 25);
+        g.setFont(font);
+        
+        g.setColor(new Color(0.8f, 0.1f, 0.8f));
+        g.drawString(pauseStr1, 240, 150);
+        g.setColor(new Color(0.8f, 0.0f, 0.5f));
+        g.drawString(pauseStr1, 240+1, 150+1);
+        
+        g.setColor(new Color(0.5f, 1.0f, 0.5f));
+        g.drawString(pauseStr2, 220, 180);
+        g.setColor(new Color(0.1f, 1.0f, 0.1f));
+        g.drawString(pauseStr2, 220+1, 180+1);
+	}
+	
 	private class KeyInputHandler extends KeyAdapter {
 
 		private int pressCount = 1;
@@ -393,6 +438,8 @@ public class MainWindow extends Canvas {
 	    		fireLeft = true;
 	    	if (e.getKeyCode() == KeyEvent.VK_RIGHT)
 	    		fireRight = true;
+	    	if (e.getKeyCode() == KeyEvent.VK_P)
+	    		paused = !paused;
 		} 
 		
 
