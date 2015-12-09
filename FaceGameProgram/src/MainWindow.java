@@ -52,6 +52,7 @@ public class MainWindow extends Canvas {
 	ArrayList<Enemy> enemies;
 	Player player;
 	
+	double difficulty;
 	boolean paused;
 	double playerSpeed;
 	boolean moveUp;
@@ -120,6 +121,7 @@ public class MainWindow extends Canvas {
 		// TODO integrate with main window once everything works
 		this.width = 640;
 		this.height = 480;
+		this.difficulty = 1.0;
 		this.paused = true;
 		this.keysPressed = new HashMap<Character, Integer>();
 		this.bullets = new ArrayList<Bullet>();
@@ -130,8 +132,8 @@ public class MainWindow extends Canvas {
 		this.fireInterval = 60;
 		this.spawnInterval = 300;
 		this.playerScore = 0;
-		this.enemyPath1 = "./penguin.png";
-		this.enemyPath2 = "./jpeg.png";
+		this.enemyPath1 = "./enemy1.png";
+		this.enemyPath2 = "./enemy2.png";
 		
 		// set player coordinates at center
 		this.player.moveBy(320, 240);
@@ -246,6 +248,9 @@ public class MainWindow extends Canvas {
 			// spawn new enemies
 			this.spawnEnemies(2);
 			
+			// slightly increase difficulty
+			this.incrementDifficulty(0.001);
+			
 			// wait 17 millisec
 			try { Thread.sleep(10); } catch (Exception e) {}
 			
@@ -352,12 +357,12 @@ public class MainWindow extends Canvas {
 				
 				Enemy e = null;
 				if (Math.random() < 0.5)
-					e = new EnemyFollow(this.enemyPath1);    	
+					e = new EnemyWaving(this.enemyPath1);    	
 				else
-					e = new EnemyWaving(this.enemyPath2);
+					e = new EnemyFollow(this.enemyPath2);
 				
 				// fit random to 0.2-1.0 and amp about 5
-				double speed = ((Math.random() * 0.8) + 0.2) * 5;
+				double speed = ((Math.random() * 0.8) + 0.2) * 2 * this.difficulty;
 				e.setSpeed(speed);
 				
 				e.moveBy(x, y);
@@ -365,6 +370,11 @@ public class MainWindow extends Canvas {
 				
 			}
 		}
+	}
+	
+	public void incrementDifficulty(double val)
+	{
+		this.difficulty += val;
 	}
 	
 	public void drawPlayer(Graphics2D g)

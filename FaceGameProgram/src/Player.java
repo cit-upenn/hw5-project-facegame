@@ -13,7 +13,7 @@ public class Player extends Asset
 		//URL location = Player.class.getProtectionDomain().getCodeSource().getLocation();
 		//String pwd = location.toString().replace("file:", "");
 		
-		String shipPath = "./jpeg.png";
+		String shipPath = "./ship.png";
 		String gunPath = "./gun.png";
 		
 		// testing other collisions
