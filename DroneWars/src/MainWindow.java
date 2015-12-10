@@ -53,9 +53,12 @@ public class MainWindow extends Canvas {
 	ArrayList<Enemy> enemies;
 	Player player;
 	ImageAsset lifeAsset;
+	ImageAsset bombAsset;
 	
 	double difficulty;
 	int numLives;
+	int numBombs;
+	int numBombBullets;
 	boolean paused;
 	boolean gameOver;
 	double playerSpeed;
@@ -69,6 +72,7 @@ public class MainWindow extends Canvas {
 	boolean fireDown;
 	boolean fireLeft;
 	boolean fireRight;
+	boolean useBomb;
 	
 	long lastFireTime;
 	long fireInterval;
@@ -128,9 +132,10 @@ public class MainWindow extends Canvas {
 		this.height = 480;
 		this.difficulty = 1.0;
 		this.numLives = 30;
+		this.numBombs = 5;
+		this.numBombBullets = 20;
 		this.paused = true;
 		this.gameOver = false;
-		this.lifeAsset = new ImageAsset("./heart.png");
 		this.keysPressed = new HashMap<Character, Integer>();
 		this.bullets = new ArrayList<Bullet>();
 		this.enemies = new ArrayList<Enemy>();
@@ -142,6 +147,8 @@ public class MainWindow extends Canvas {
 		this.playerScore = 0;
 		this.collisionThreshold = 8;
 		
+		this.lifeAsset = new ImageAsset("./heart.png");
+		this.bombAsset = new ImageAsset("./bomb.png");
 		this.enemyPath1 = "./enemy1.png";
 		this.enemyPath2 = "./enemy2.png";
 		
@@ -191,8 +198,12 @@ public class MainWindow extends Canvas {
 	    	this.drawEnemies(g);
 	    	// player ship
 	    	this.drawPlayer(g);
+	    	// draw score
 	    	this.drawScore(g);
+	    	// draw lives
 	    	this.drawLives(g);
+	    	// draw bombs
+	    	this.drawBombs(g);
 	        
 	    	if (this.paused && !firstLoop)
 				this.drawPauseMenu(g);
@@ -219,6 +230,12 @@ public class MainWindow extends Canvas {
 				this.player.rotateBy(-this.playerSpeed*0.1);
 			if (this.rotateRight)
 				this.player.rotateBy(this.playerSpeed*0.1);
+			if (this.useBomb && this.numBombs > 0)
+			{
+				this.useBomb(20);
+				this.numBombs--;
+				this.useBomb = false;
+			}
 			if (this.fireUp || this.fireDown || this.fireLeft || this.fireRight)
 			{
 				this.fireShots();
@@ -352,6 +369,22 @@ public class MainWindow extends Canvas {
 			this.bullets.add(bb);
 		}
 	}
+	
+	public void useBomb(int numBullets)
+	{
+		double angle = 0.0;
+		for (int i = 0; i<numBombBullets; i++)
+		{
+			angle = i * Math.PI * 2 / numBullets;
+			Bullet bb = new Bullet();
+			bb.setSpeed(10);
+		
+			bb.moveBy(this.player.ship.getPosX()+(this.player.ship.getWidth())*0.5, 
+					  this.player.ship.getPosY()+(this.player.ship.getHeight())*0.5);
+			bb.rotateBy(this.player.gun.getAngle() + angle);
+			this.bullets.add(bb);
+		}
+	}
 
 	public void spawnEnemies(int num)
 	{
@@ -457,6 +490,22 @@ public class MainWindow extends Canvas {
 		}
 	}
 	
+	public void drawBombs(Graphics2D g)
+	{
+		String lifeStr = "bombs";
+    	Font font = new Font("Serif", Font.BOLD, 18);
+        g.setFont(font);
+        g.setColor(new Color(0.1f, 0.5f, 0.8f));
+        g.drawString(lifeStr, 10, 70);
+        
+		for (int i=0; i<this.numBombs; i++)
+		{
+			AffineTransform at = new AffineTransform();
+			at.setToTranslation(62 + i*13, 60);
+			g.drawImage(this.bombAsset.image.getImage(), at, null);
+		}
+	}
+	
 	public void drawPauseMenu(Graphics2D g)
 	{
 		String pauseStr1 = "Game Paused";
@@ -527,6 +576,8 @@ public class MainWindow extends Canvas {
 	    		fireRight = true;
 	    	if (e.getKeyCode() == KeyEvent.VK_P)
 	    		paused = !paused;
+	    	if (e.getKeyCode() == KeyEvent.VK_SPACE)
+	    		useBomb = true;
 		} 
 		
 
@@ -552,6 +603,8 @@ public class MainWindow extends Canvas {
 	    		fireLeft = false;
 	    	if (e.getKeyCode() == KeyEvent.VK_RIGHT)
 	    		fireRight = false;
+	    	if (e.getKeyCode() == KeyEvent.VK_SPACE)
+	    		useBomb = false;
 		}
 
 
