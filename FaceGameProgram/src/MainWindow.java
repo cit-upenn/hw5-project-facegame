@@ -29,6 +29,7 @@ import java.awt.Dimension;
 import java.awt.event.KeyAdapter;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.geom.AffineTransform;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -51,9 +52,12 @@ public class MainWindow extends Canvas {
 	ArrayList<Bullet> bullets;
 	ArrayList<Enemy> enemies;
 	Player player;
+	ImageAsset lifeAsset;
 	
 	double difficulty;
+	int numLives;
 	boolean paused;
+	boolean gameOver;
 	double playerSpeed;
 	boolean moveUp;
 	boolean moveDown;
@@ -72,6 +76,7 @@ public class MainWindow extends Canvas {
 	long spawnInterval;
 	
 	int playerScore;
+	int collisionThreshold;
 	
 	String enemyPath1;
 	String enemyPath2;
@@ -122,7 +127,10 @@ public class MainWindow extends Canvas {
 		this.width = 640;
 		this.height = 480;
 		this.difficulty = 1.0;
+		this.numLives = 30;
 		this.paused = true;
+		this.gameOver = false;
+		this.lifeAsset = new ImageAsset("./heart.png");
 		this.keysPressed = new HashMap<Character, Integer>();
 		this.bullets = new ArrayList<Bullet>();
 		this.enemies = new ArrayList<Enemy>();
@@ -132,6 +140,8 @@ public class MainWindow extends Canvas {
 		this.fireInterval = 60;
 		this.spawnInterval = 300;
 		this.playerScore = 0;
+		this.collisionThreshold = 8;
+		
 		this.enemyPath1 = "./enemy1.png";
 		this.enemyPath2 = "./enemy2.png";
 		
@@ -182,15 +192,19 @@ public class MainWindow extends Canvas {
 	    	// player ship
 	    	this.drawPlayer(g);
 	    	this.drawScore(g);
+	    	this.drawLives(g);
 	        
 	    	if (this.paused && !firstLoop)
 				this.drawPauseMenu(g);
+	    	
+	    	if (this.numLives <= 0)
+	    		this.setGameOver(g);
 	    	
 			// we can now flip the buffer.  We're done drawing
 			g.dispose();
 			strategy.show();
 			
-			if (this.paused && !firstLoop)
+			if (this.gameOver || (this.paused && !firstLoop))
 				continue;
 						
 			if (this.moveLeft)
@@ -227,11 +241,14 @@ public class MainWindow extends Canvas {
 			for (int i=0; i<this.enemies.size(); i++)
 			{
 				Enemy e = this.enemies.get(i);
-				Rectangle bBox = e.getBBox(0);
+				Rectangle bBox = e.getErodedBBox(0, this.collisionThreshold);
+				boolean collision = false;
 				for (int j=0; j<this.bullets.size(); j++)
 				{
 					Bullet bb = this.bullets.get(j);
-					boolean collision = bb.collidesWith(0, bBox);
+					
+					// collide with bullets
+					collision = bb.collidesWith(0, bBox);
 					if(collision)
 					{
 						this.enemies.remove(i);
@@ -241,6 +258,18 @@ public class MainWindow extends Canvas {
 						break;
 					}
 				}
+				
+				// collide with player
+				collision = this.player.collidesWith(0, bBox);
+				if(collision)
+				{
+					//System.out.println("enemy  bbox = " + bBox);
+					//System.out.println("player bbox = " + this.player.getBBox(0));
+					this.enemies.remove(i);
+					this.numLives--;
+					break;
+				}
+				
 				e.aim(this.player);
 				e.step();
 			}
@@ -381,6 +410,10 @@ public class MainWindow extends Canvas {
 	{
 		g.drawImage(this.player.ship.getImage(), this.player.ship.getTransform(), null);
     	g.drawImage(this.player.gun.getImage(), this.player.gun.getTransform(), null);
+    	
+    	//Rectangle r = this.player.getErodedBBox(0, 5);
+    	//g.setColor(Color.RED);
+    	//g.drawRect(r.x, r.y, r.width, r.height);
 	}
 	
 	public void drawEnemies(Graphics2D g)
@@ -389,25 +422,69 @@ public class MainWindow extends Canvas {
     	{
     		Enemy enemy = this.enemies.get(i);
     		g.drawImage(enemy.enemy.getImage(), enemy.enemy.getTransform(), null);
+    		
+    		//Rectangle r = enemy.getErodedBBox(0, 5);
+        	//g.setColor(Color.BLUE);
+        	//g.drawRect(r.x, r.y, r.width, r.height);
     	}
 	}
 	
 	public void drawScore(Graphics2D g)
 	{
 		String scoreStr = "Player Score:" + this.playerScore;
-    	Font font = new Font("Serif", Font.BOLD, 25);
+    	Font font = new Font("Sans-Serif", Font.BOLD, 20);
         g.setFont(font);
-        g.setColor(new Color(0.1f, 0.5f, 0.8f));
+        g.setColor(new Color(1.0f, 1.0f, 0.8f));
         g.drawString(scoreStr, 10, 30);
-        g.setColor(new Color(0.1f, 0.1f, 0.5f));
+        g.setColor(new Color(0.9f, 0.9f, 0.0f));
         g.drawString(scoreStr, 11, 31);
         
+	}
+
+	public void drawLives(Graphics2D g)
+	{
+		String lifeStr = "lives";
+    	Font font = new Font("Serif", Font.BOLD, 18);
+        g.setFont(font);
+        g.setColor(new Color(0.1f, 0.5f, 0.8f));
+        g.drawString(lifeStr, 10, 52);
+        
+		for (int i=0; i<this.numLives; i++)
+		{
+			AffineTransform at = new AffineTransform();
+			at.setToTranslation(47 + i*13, 40);
+			g.drawImage(this.lifeAsset.image.getImage(), at, null);
+		}
 	}
 	
 	public void drawPauseMenu(Graphics2D g)
 	{
 		String pauseStr1 = "Game Paused";
 		String pauseStr2 = "Press P to resume";
+    	Font font = new Font("Serif", Font.BOLD, 25);
+        g.setFont(font);
+        
+        g.setColor(new Color(0.8f, 0.1f, 0.8f));
+        g.drawString(pauseStr1, 240, 150);
+        g.setColor(new Color(0.8f, 0.0f, 0.5f));
+        g.drawString(pauseStr1, 240+1, 150+1);
+        
+        g.setColor(new Color(0.5f, 1.0f, 0.5f));
+        g.drawString(pauseStr2, 220, 180);
+        g.setColor(new Color(0.1f, 1.0f, 0.1f));
+        g.drawString(pauseStr2, 220+1, 180+1);
+	}
+
+	public void setGameOver(Graphics2D g)
+	{
+		this.drawGameOverMenu(g);
+		this.gameOver = true;
+	}
+	
+	public void drawGameOverMenu(Graphics2D g)
+	{
+		String pauseStr1 = "Game Over";
+		String pauseStr2 = "Score: " + this.playerScore;
     	Font font = new Font("Serif", Font.BOLD, 25);
         g.setFont(font);
         

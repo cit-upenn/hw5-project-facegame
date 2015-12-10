@@ -76,6 +76,7 @@ public class MainWindow extends Canvas {
 	long spawnInterval;
 	
 	int playerScore;
+	int collisionThreshold;
 	
 	String enemyPath1;
 	String enemyPath2;
@@ -139,6 +140,8 @@ public class MainWindow extends Canvas {
 		this.fireInterval = 60;
 		this.spawnInterval = 300;
 		this.playerScore = 0;
+		this.collisionThreshold = 8;
+		
 		this.enemyPath1 = "./enemy1.png";
 		this.enemyPath2 = "./enemy2.png";
 		
@@ -238,7 +241,7 @@ public class MainWindow extends Canvas {
 			for (int i=0; i<this.enemies.size(); i++)
 			{
 				Enemy e = this.enemies.get(i);
-				Rectangle bBox = e.getBBox(0);
+				Rectangle bBox = e.getErodedBBox(0, this.collisionThreshold);
 				boolean collision = false;
 				for (int j=0; j<this.bullets.size(); j++)
 				{
@@ -260,6 +263,9 @@ public class MainWindow extends Canvas {
 				collision = this.player.collidesWith(0, bBox);
 				if(collision)
 				{
+					//System.out.println("enemy  bbox = " + bBox);
+					//System.out.println("player bbox = " + this.player.getBBox(0));
+					this.enemies.remove(i);
 					this.numLives--;
 					break;
 				}
@@ -404,6 +410,10 @@ public class MainWindow extends Canvas {
 	{
 		g.drawImage(this.player.ship.getImage(), this.player.ship.getTransform(), null);
     	g.drawImage(this.player.gun.getImage(), this.player.gun.getTransform(), null);
+    	
+    	//Rectangle r = this.player.getErodedBBox(0, 5);
+    	//g.setColor(Color.RED);
+    	//g.drawRect(r.x, r.y, r.width, r.height);
 	}
 	
 	public void drawEnemies(Graphics2D g)
@@ -412,17 +422,21 @@ public class MainWindow extends Canvas {
     	{
     		Enemy enemy = this.enemies.get(i);
     		g.drawImage(enemy.enemy.getImage(), enemy.enemy.getTransform(), null);
+    		
+    		//Rectangle r = enemy.getErodedBBox(0, 5);
+        	//g.setColor(Color.BLUE);
+        	//g.drawRect(r.x, r.y, r.width, r.height);
     	}
 	}
 	
 	public void drawScore(Graphics2D g)
 	{
 		String scoreStr = "Player Score:" + this.playerScore;
-    	Font font = new Font("Serif", Font.BOLD, 25);
+    	Font font = new Font("Sans-Serif", Font.BOLD, 20);
         g.setFont(font);
-        g.setColor(new Color(0.1f, 0.5f, 0.8f));
+        g.setColor(new Color(1.0f, 1.0f, 0.8f));
         g.drawString(scoreStr, 10, 30);
-        g.setColor(new Color(0.1f, 0.1f, 0.5f));
+        g.setColor(new Color(0.9f, 0.9f, 0.0f));
         g.drawString(scoreStr, 11, 31);
         
 	}

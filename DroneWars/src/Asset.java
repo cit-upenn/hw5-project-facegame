@@ -19,9 +19,9 @@ public class Asset
 	{
 		if(this.sprites.size() >= 1)
 		{
-			Sprite sprite = this.sprites.get(0);
-			Rectangle bounds = new Rectangle((int)sprite.getPosX(), (int)sprite.getPosY(),
-		     		  					     (int)sprite.getPosX(), (int)sprite.getPosY());
+			//Sprite sprite = this.sprites.get(index);
+			Rectangle bounds = getBBox(index);//new Rectangle((int)sprite.getPosX(), (int)sprite.getPosY(),
+		     		  					     //(int)sprite.getPosX(), (int)sprite.getPosY());
 			
 			if(bounds.intersects(rec))
 				return true;
@@ -38,6 +38,15 @@ public class Asset
 			bBox = sprite.getBounds();
 		}
 		return bBox;
+	}
+	
+	public Rectangle getErodedBBox(int index, int scale)
+	{
+		Rectangle bBox = this.sprites.get(index).getBounds();
+		return new Rectangle(bBox.x+scale, 
+							 bBox.y+scale, 
+							 (bBox.width-scale*2), 
+							 (bBox.height-scale*2));		
 	}
 	
 	public Asset(String spritePath)
