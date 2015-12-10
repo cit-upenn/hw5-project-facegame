@@ -1,31 +1,22 @@
 
-import javax.swing.*;
-
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.DisplayMode;
-import java.awt.FlowLayout;
+
 import java.awt.Font;
-import java.awt.Frame;
+
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
+
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
 
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.awt.Canvas;
 
-
-import java.awt.Dimension;
 import java.awt.event.KeyAdapter;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -78,12 +69,19 @@ public class MainWindow extends Canvas {
 	long fireInterval;
 	long lastSpawnTime;
 	long spawnInterval;
+	long lastSoundTime;
+	long soundInterval;
 	
 	int playerScore;
 	int collisionThreshold;
 	
 	String enemyPath1;
 	String enemyPath2;
+	
+	SoundEffects bulletSound;
+	SoundEffects bombSound;
+	SoundEffects hitSound;
+	
 	//private KeyEventListener listener;
 	
 	
@@ -144,6 +142,8 @@ public class MainWindow extends Canvas {
 		this.lastFireTime = System.currentTimeMillis();
 		this.fireInterval = 60;
 		this.spawnInterval = 300;
+		this.lastSoundTime = 0;
+		this.soundInterval = 10;
 		this.playerScore = 0;
 		this.collisionThreshold = 8;
 		
@@ -151,6 +151,11 @@ public class MainWindow extends Canvas {
 		this.bombAsset = new ImageAsset("./bomb.png");
 		this.enemyPath1 = "./enemy1.png";
 		this.enemyPath2 = "./enemy2.png";
+		
+		this.bulletSound = new SoundEffects("./gun_fire.wav");
+		this.bombSound = new SoundEffects("./bomb.wav");
+		this.hitSound = new SoundEffects("./hit.wav");
+
 		
 		// set player coordinates at center
 		this.player.moveBy(320, 240);
@@ -235,6 +240,7 @@ public class MainWindow extends Canvas {
 				this.useBomb(20);
 				this.numBombs--;
 				this.useBomb = false;
+				this.bombSound.run();
 			}
 			if (this.fireUp || this.fireDown || this.fireLeft || this.fireRight)
 			{
@@ -271,6 +277,7 @@ public class MainWindow extends Canvas {
 						this.enemies.remove(i);
 						this.bullets.remove(j);
 						this.playerScore+=10;
+						this.hitSound.run();
 						//System.out.println("Collision occurred");
 						break;
 					}
@@ -315,6 +322,17 @@ public class MainWindow extends Canvas {
 		return true;
 	}
 
+	public boolean canPlaySound() 
+	{
+		// test if enough time elapsed to fire
+		if (System.currentTimeMillis() - this.lastSoundTime < this.soundInterval) {
+			return false;
+		}
+		
+		this.lastSoundTime = System.currentTimeMillis();
+		return true;
+	}
+	
 	public boolean canSpawn()
 	{
 		// test if enough time elapsed to spawn
@@ -367,6 +385,8 @@ public class MainWindow extends Canvas {
 					this.player.ship.getPosY()+(this.player.ship.getHeight())*0.5);
 			bb.rotateBy(this.player.gun.getAngle() + randRot);
 			this.bullets.add(bb);
+			
+			this.bulletSound.run();
 		}
 	}
 	
@@ -385,6 +405,7 @@ public class MainWindow extends Canvas {
 			this.bullets.add(bb);
 		}
 	}
+
 
 	public void spawnEnemies(int num)
 	{
@@ -548,7 +569,8 @@ public class MainWindow extends Canvas {
         g.drawString(pauseStr2, 220+1, 180+1);
 	}
 	
-	private class KeyInputHandler extends KeyAdapter {
+	private class KeyInputHandler extends KeyAdapter 
+	{
 
 		private int pressCount = 1;
 		
@@ -606,7 +628,6 @@ public class MainWindow extends Canvas {
 	    	if (e.getKeyCode() == KeyEvent.VK_SPACE)
 	    		useBomb = false;
 		}
-
 
 		public void keyTyped(KeyEvent e) 
 		{
