@@ -79,7 +79,6 @@ public class Profile extends JFrame {
 			}
 		});
 		
-		
 
 		add(p1, BorderLayout.NORTH);
 		add(p2, BorderLayout.WEST);
@@ -94,7 +93,16 @@ public class Profile extends JFrame {
 			}
 		});
 		
-		
+		try
+		{
+			BufferedImage image = ImageIO.read(new File("./penguin.png"));
+			JLabel picLabel = new JLabel(new ImageIcon(image));
+			add(picLabel);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 		
 	
 /*		MainWindow win = new MainWindow();
