@@ -1,6 +1,6 @@
 import java.awt.Rectangle;
 
-public abstract class Enemy extends Asset
+public abstract class MotionAsset extends Asset
 {
 	Sprite entity;
 	private double speed;
@@ -9,7 +9,7 @@ public abstract class Enemy extends Asset
 	private double dirThreshold;
 	private double steps;
 	
-	public Enemy(String enemyPath)
+	public MotionAsset(String enemyPath)
 	{
 		super();
 		this.speed = 0.5;

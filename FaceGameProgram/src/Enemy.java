@@ -2,7 +2,7 @@ import java.awt.Rectangle;
 
 public abstract class Enemy extends Asset
 {
-	Sprite enemy;
+	Sprite entity;
 	private double speed;
 	private double direction;
 	private double targetDir;
@@ -24,9 +24,9 @@ public abstract class Enemy extends Asset
 		
 		this.add(enemyPath);
 		//this.add("./src/bullet.png");
-		this.enemy = this.sprites.get(0);
-		this.enemy.setCentroid((-this.enemy.getWidth())*0.5,
-							    (-this.enemy.getHeight())*0.5);
+		this.entity = this.sprites.get(0);
+		this.entity.setCentroid((-this.entity.getWidth())*0.5,
+							    (-this.entity.getHeight())*0.5);
 	}
 	
 	public double getSteps()

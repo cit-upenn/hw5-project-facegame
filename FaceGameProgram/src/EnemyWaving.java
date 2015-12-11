@@ -1,5 +1,5 @@
 
-public class EnemyWaving extends Enemy
+public class EnemyWaving extends MotionAsset
 {
 	public EnemyWaving(String enemyPath)
 	{
