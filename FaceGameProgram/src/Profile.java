@@ -1,28 +1,38 @@
 
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
-public class Profile extends JFrame{
+public class Profile extends JFrame {
 	private JPanel p1 = new JPanel();
 	private JPanel p2 = new JPanel();
 	private JPanel p3 = new JPanel();
 	private JPanel p4 = new JPanel();
-	private JPanel pCenter;
+	private JPanel pCenter = new JPanel();
+	
 	private JButton b1 = new JButton("Update Status");
 	private JButton b2 = new JButton("Search!");
 	private JButton b3 = new JButton("Add Profile Picture");
 	private JButton b4 = new JButton("Play Game");
 	private JButton b5 = new JButton ("Add Friends");
+
 	private JLabel imageLabel;
 	private JTextField tf1= new JTextField("New Status", 15);
 	private JTextField tf2 = new JTextField("Search Friends", 15);
 	private JTextField tf3 = new JTextField("New Friends", 15);
 	private JTextField tf4 = new JTextField ("Picture Path", 15);
 	private ImageIcon img;
+	
+	private BufferedImage image;
+	
+	
 
 	
 	public Profile() {
@@ -85,6 +95,7 @@ public class Profile extends JFrame{
 		});
 		
 		
+		
 	
 /*		MainWindow win = new MainWindow();
 		win.gameLoop();
@@ -111,22 +122,39 @@ public class Profile extends JFrame{
 		//paint a picture to profile
 		String imgPath = tf4.getText();
 		img = new ImageIcon(getClass().getResource("bomb.png"));
+		String path = "penguin.png";
+		File file = new File(path);
+		BufferedImage image = null;
+		try {
+			image = ImageIO.read(file);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//Image buf = ImageIO.read(file);
 		
-//		pCenter = new JPanel();
-//		pCenter.setLayout(new BoxLayout(pCenter, BoxLayout.PAGE_AXIS));
+		//pCenter.add(buf);
+		add(pCenter, BorderLayout.CENTER);
+		pCenter.setLayout(new BoxLayout(pCenter, BoxLayout.PAGE_AXIS));
+	
+	
+
 
 		imageLabel = new JLabel (img);
 //		pCenter.add (imageLabel);
 		
 		add(imageLabel);
 		
-		add(pCenter, BorderLayout.CENTER);
-		System.out.println("I come here!");
+		
 				
 	}
+	
 
-	public static void main(String[] args) {
+
+	public static void main(String[] args) throws IOException {
 		Profile startingProfile = new Profile();
+		
+		
 	}	
 	
 	
