@@ -11,16 +11,18 @@ public class Profile extends JFrame{
 	private JPanel p2 = new JPanel();
 	private JPanel p3 = new JPanel();
 	private JPanel p4 = new JPanel();
+	private JPanel pCenter;
 	private JButton b1 = new JButton("Update Status");
 	private JButton b2 = new JButton("Search!");
 	private JButton b3 = new JButton("Add Profile Picture");
 	private JButton b4 = new JButton("Play Game");
 	private JButton b5 = new JButton ("Add Friends");
-	private JLabel lab = new JLabel();
+	private JLabel imageLabel;
 	private JTextField tf1= new JTextField("New Status", 15);
 	private JTextField tf2 = new JTextField("Search Friends", 15);
 	private JTextField tf3 = new JTextField("New Friends", 15);
 	private JTextField tf4 = new JTextField ("Picture Path", 15);
+	private ImageIcon img;
 
 	
 	public Profile() {
@@ -32,22 +34,30 @@ public class Profile extends JFrame{
 		setSize(1200, 800);
 		//setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
+		b3.addActionListener(new ActionListener(){
+			public void actionPerformed (ActionEvent pictureButtonEvt) {
+				pictureButtonActionPerformed (pictureButtonEvt);
+		
+			}
+		});
+		
 		p1.setBackground(new Color (0.9f, 1.0f, 1.0f));
 		p1.add(tf1);
 		p1.add(b1);
 		
 		p1.add(tf3);
 		p1.add(b5);
-		
+
+		//added the image path input Textfield
 		p1.add(tf4);
 		p1.add(b3);
+		
 		
 		p2.setBackground(new Color (0.9f, 0.9f, 0.9f));
 		p2.add(tf2);
 		p2.add(b2,  BorderLayout.SOUTH);
 		
 
-		
 		p3.setBackground(new Color(0.9f, 0.9f, 0.9f));
 		p4.setBackground(new Color(0.9f, 0.9f, 0.9f));
 		
@@ -58,6 +68,8 @@ public class Profile extends JFrame{
 				String input = tf1.getText();
 			}
 		});
+		
+		
 
 		add(p1, BorderLayout.NORTH);
 		add(p2, BorderLayout.WEST);
@@ -71,6 +83,8 @@ public class Profile extends JFrame{
 			{
 			}
 		});
+		
+		
 	
 /*		MainWindow win = new MainWindow();
 		win.gameLoop();
@@ -90,10 +104,30 @@ public class Profile extends JFrame{
 		add(win, BorderLayout.EAST);//, BorderLayout.EAST);
 		pack();
 	}
-*/
 
-//	public static void main(String[] args) {
-//		Profile startingProfile = new Profile();
-//	}	
+*/
+	
+	private void pictureButtonActionPerformed (ActionEvent evt) {
+		//paint a picture to profile
+		String imgPath = tf4.getText();
+		img = new ImageIcon(getClass().getResource("bomb.png"));
+		
+//		pCenter = new JPanel();
+//		pCenter.setLayout(new BoxLayout(pCenter, BoxLayout.PAGE_AXIS));
+
+		imageLabel = new JLabel (img);
+//		pCenter.add (imageLabel);
+		
+		add(imageLabel);
+		
+		add(pCenter, BorderLayout.CENTER);
+		System.out.println("I come here!");
+				
+	}
+
+	public static void main(String[] args) {
+		Profile startingProfile = new Profile();
+	}	
+	
 	
 }

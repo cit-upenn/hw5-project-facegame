@@ -193,9 +193,12 @@ public class Login extends JFrame{
 		char[] inputPw = passwordField.getPassword();
 		
 		Person user = new Person(inputName, inputEmail, inputPw);
+		
 		UserDatabase.addProfile(user);
 		Profile userProfile = new Profile();
 	}
+	
+	
 	public static void main (String args[]) {
 		Login newLogin = new Login();
 	}
