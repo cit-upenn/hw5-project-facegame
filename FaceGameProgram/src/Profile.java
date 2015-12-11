@@ -99,9 +99,11 @@ public class Profile extends JFrame {
 		
 		try
 		{
-			BufferedImage image = ImageIO.read(new File("./penguin.png"));
+			BufferedImage image = ImageIO.read(new File("./1.jpg"));
 			JLabel picLabel = new JLabel(new ImageIcon(image));
 			add(picLabel);
+			picLabel.setLocation(340, 100);
+			picLabel.setSize(200, 200);
 		}
 		catch (Exception e)
 		{
