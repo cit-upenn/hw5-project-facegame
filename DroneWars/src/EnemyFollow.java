@@ -1,5 +1,5 @@
 
-public class EnemyFollow extends Enemy
+public class EnemyFollow extends MotionAsset
 {
 	public EnemyFollow(String enemyPath)
 	{

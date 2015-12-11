@@ -1,4 +1,4 @@
-public class PowerUp extends Enemy
+public class PowerUp extends MotionAsset
 {
 	public PowerUp(String powerUpPath)
 	{

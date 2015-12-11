@@ -41,8 +41,9 @@ public class MainWindow extends Canvas {
 	int height;
 	HashMap<Character, Integer> keysPressed;
 	ArrayList<Bullet> bullets;
-	ArrayList<Enemy> enemies;
+	ArrayList<MotionAsset> enemies;
 	ArrayList<PowerUp> powerUps;
+	ArrayList<HeartUp> heartUps;
 	Player player;
 	ImageAsset lifeAsset;
 	ImageAsset bombAsset;
@@ -73,6 +74,8 @@ public class MainWindow extends Canvas {
 	long spawnInterval;
 	long lastPowerUpSpawnTime;
 	long powerUpSpawnInterval;
+	long lastHeartUpSpawnTime;
+	long heartUpSpawnInterval;
 	long lastSoundTime;
 	long soundInterval;
 	
@@ -140,16 +143,20 @@ public class MainWindow extends Canvas {
 		this.gameOver = false;
 		this.keysPressed = new HashMap<Character, Integer>();
 		this.bullets = new ArrayList<Bullet>();
-		this.enemies = new ArrayList<Enemy>();
+		this.enemies = new ArrayList<MotionAsset>();
 		this.powerUps = new ArrayList<PowerUp>();
+		this.heartUps = new ArrayList<HeartUp>();
 		this.player = new Player();
 		this.playerSpeed = 4.0;
-		this.lastFireTime = System.currentTimeMillis();
+		
 		this.fireInterval = 60;
+		this.lastFireTime = System.currentTimeMillis();
 		this.spawnInterval = 300;
 		this.lastSoundTime = System.currentTimeMillis();
-		this.powerUpSpawnInterval = 1000;
+		this.powerUpSpawnInterval = 4000;
 		this.lastPowerUpSpawnTime = System.currentTimeMillis();
+		this.heartUpSpawnInterval = 6000;
+		this.lastHeartUpSpawnTime = System.currentTimeMillis();
 		this.soundInterval = 10;
 		this.playerScore = 0;
 		this.collisionThreshold = 8;
@@ -208,6 +215,8 @@ public class MainWindow extends Canvas {
 	    	this.drawPlayer(g);
 	    	// draw powerUps
 	    	this.drawPowerUps(g);
+	    	// draw heartUps
+	    	this.drawHeartUps(g);
 	    	// draw score
 	    	this.drawScore(g);
 	    	// draw lives
@@ -291,9 +300,34 @@ public class MainWindow extends Canvas {
 	    		powerUp.step();
 	    	}
 			
+			for(int i=0; i<this.heartUps.size(); i++)
+			{
+	    		HeartUp heartUp = this.heartUps.get(i);
+	    		
+	    		if(heartUp.entity.getPosX() > this.width+50 || 
+	    				heartUp.entity.getPosX() < -50 ||
+	    				heartUp.entity.getPosY() > this.height+50 ||
+	    				heartUp.entity.getPosY() < -50)
+	    		{
+	    			this.heartUps.remove(i);
+	    		}
+	    		
+	    		Rectangle bBox = heartUp.getBBox(0);
+	    		boolean collision = this.player.collidesWith(0, bBox);
+				if(collision)
+				{
+					//System.out.println("enemy  bbox = " + bBox);
+					//System.out.println("player bbox = " + this.player.getBBox(0));
+					this.heartUps.remove(i);
+					this.numLives+=2;
+				}
+	    		
+				heartUp.step();
+	    	}
+			
 			for (int i=0; i<this.enemies.size(); i++)
 			{
-				Enemy e = this.enemies.get(i);
+				MotionAsset e = this.enemies.get(i);
 				Rectangle bBox = e.getErodedBBox(0, this.collisionThreshold);
 				boolean collision = false;
 				for (int j=0; j<this.bullets.size(); j++)
@@ -332,6 +366,9 @@ public class MainWindow extends Canvas {
 			
 			// spawn power ups
 			this.spawnPowerUps(1);
+			
+			// spawn heart ups
+			this.spawnHeartUps(1);
 			
 			// slightly increase difficulty
 			this.incrementDifficulty(0.001);
@@ -391,6 +428,18 @@ public class MainWindow extends Canvas {
 		}
 		
 		this.lastPowerUpSpawnTime = System.currentTimeMillis();
+		return true;
+	}
+	
+	public boolean canSpawnHeartUps()
+	{
+		// test if enough time elapsed to spawn
+		if (System.currentTimeMillis() - this.lastHeartUpSpawnTime < this.heartUpSpawnInterval) 
+		{
+			return false;
+		}
+		
+		this.lastHeartUpSpawnTime = System.currentTimeMillis();
 		return true;
 	}
 	
@@ -518,7 +567,7 @@ public class MainWindow extends Canvas {
 					y-=30;
 				
 				
-				Enemy e = null;
+				MotionAsset e = null;
 				if (Math.random() < 0.5)
 					e = new EnemyWaving(this.enemyPath1);    	
 				else
@@ -572,7 +621,52 @@ public class MainWindow extends Canvas {
 				double speed = ((Math.random() * 0.8) + 0.2) * 2;
 				p.setSpeed(speed);
 				p.moveBy(x, y);
+				p.aim(this.player);
 				this.powerUps.add(p);
+				
+			}
+		}
+	}
+	
+	public void spawnHeartUps(int num)
+	{
+		if(this.canSpawnHeartUps())
+		{
+			for (int i=0; i<num; i++)
+			{
+				double axis = Math.random();
+				double x = 0.0;
+				double y = 0.0;
+				if (axis<0.5)
+				{
+					x = 2 * (Math.random()-0.5) * this.width;
+					y = Math.round(Math.random()) * this.height;
+				}
+				else
+				{
+					x = Math.round(Math.random()) * this.width ;
+					y = 2 * (Math.random()-0.5) * this.height;
+				}
+				
+				if(x > 0 && x < this.width+30)
+					x+=30;
+				else if(x > -30)
+					x-=30;
+				
+				if(y > 0 && y < this.height+30)
+					y+=30;
+				else if(y > -30)
+					y-=30;
+				
+				
+				HeartUp p = new HeartUp("./heart.png");
+				
+				// fit random to 0.2-1.0 and amp about 5
+				double speed = ((Math.random() * 0.8) + 0.2) * 2;
+				p.setSpeed(speed);
+				p.moveBy(x, y);
+				p.aim(this.player);
+				this.heartUps.add(p);
 				
 			}
 		}
@@ -606,8 +700,8 @@ public class MainWindow extends Canvas {
 	{
 		for(int i=0; i<this.enemies.size(); i++)
     	{
-    		Enemy enemy = this.enemies.get(i);
-    		g.drawImage(enemy.entity.getImage(), enemy.entity.getTransform(), null);
+    		MotionAsset motionAsset = this.enemies.get(i);
+    		g.drawImage(motionAsset.entity.getImage(), motionAsset.entity.getTransform(), null);
     		
     		//Rectangle r = enemy.getErodedBBox(0, 5);
         	//g.setColor(Color.BLUE);
@@ -621,6 +715,19 @@ public class MainWindow extends Canvas {
     	{
     		PowerUp powerUp = this.powerUps.get(i);
     		g.drawImage(powerUp.entity.getImage(), powerUp.entity.getTransform(), null);
+    		
+    		//Rectangle r = enemy.getErodedBBox(0, 5);
+        	//g.setColor(Color.BLUE);
+        	//g.drawRect(r.x, r.y, r.width, r.height);
+    	}
+	}
+	
+	public void drawHeartUps(Graphics2D g)
+	{
+		for(int i=0; i<this.heartUps.size(); i++)
+    	{
+    		HeartUp heartUp = this.heartUps.get(i);
+    		g.drawImage(heartUp.entity.getImage(), heartUp.entity.getTransform(), null);
     		
     		//Rectangle r = enemy.getErodedBBox(0, 5);
         	//g.setColor(Color.BLUE);
@@ -674,6 +781,9 @@ public class MainWindow extends Canvas {
 	
 	public void drawPauseMenu(Graphics2D g)
 	{
+		if(this.gameOver)
+			return;
+		
 		String pauseStr1 = "Game Paused";
 		String pauseStr2 = "Press P to resume";
     	Font font = new Font("Serif", Font.BOLD, 25);
@@ -709,9 +819,9 @@ public class MainWindow extends Canvas {
         g.drawString(pauseStr1, 240+1, 150+1);
         
         g.setColor(new Color(0.5f, 1.0f, 0.5f));
-        g.drawString(pauseStr2, 220, 180);
+        g.drawString(pauseStr2, 240, 180);
         g.setColor(new Color(0.1f, 1.0f, 0.1f));
-        g.drawString(pauseStr2, 220+1, 180+1);
+        g.drawString(pauseStr2, 240+1, 180+1);
 	}
 	
 	private class KeyInputHandler extends KeyAdapter 
