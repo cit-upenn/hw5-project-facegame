@@ -31,6 +31,8 @@ public class Profile extends JFrame {
 	private ImageIcon img;
 	
 	private BufferedImage image;
+	private JFrame container = new JFrame("Drone Wars");
+	private GameThread game;
 	
 	
 
@@ -86,10 +88,12 @@ public class Profile extends JFrame {
 		add(p4, BorderLayout.EAST);
 		
 		p1.add(b4,  BorderLayout.SOUTH);
+		
 		b4.addActionListener(new ActionListener() 
 		{
 			public void actionPerformed (ActionEvent e)
 			{
+				launchGame();
 			}
 		});
 		
@@ -104,7 +108,7 @@ public class Profile extends JFrame {
 			e.printStackTrace();
 		}
 		
-	
+	}
 /*		MainWindow win = new MainWindow();
 		win.gameLoop();
 		add(win);
@@ -113,9 +117,20 @@ public class Profile extends JFrame {
 		add(game.window);
 */		
 		
-		
-	}
+	private void launchGame()
+	{
+		game = new GameThread(this.container);
+		game.window.gameInit();
+		game.start();
+		//p1.add(container, BorderLayout.CENTER);
+		game.window.getPlayerScore();
 	
+		//game.run();
+	
+		//add(game.window, BorderLayout.EAST);//, BorderLayout.EAST);
+		//game.window.run();
+		//pack();
+	}
 /*	private void launchGame()
 	{
 		MainWindow win = new MainWindow();
@@ -153,8 +168,6 @@ public class Profile extends JFrame {
 		
 		add(imageLabel);
 		
-		
-				
 	}
 	
 
