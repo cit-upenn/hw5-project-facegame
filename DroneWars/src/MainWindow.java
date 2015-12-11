@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.DisplayMode;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -12,6 +13,7 @@ import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -27,6 +29,7 @@ import java.awt.Dimension;
 import java.awt.event.KeyAdapter;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.geom.AffineTransform;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -49,17 +52,38 @@ public class MainWindow extends Canvas {
 	ArrayList<Bullet> bullets;
 	ArrayList<Enemy> enemies;
 	Player player;
+	ImageAsset lifeAsset;
+	ImageAsset bombAsset;
 	
-	boolean moveLeft;
-	boolean moveRight;
+	double difficulty;
+	int numLives;
+	int numBombs;
+	int numBombBullets;
+	boolean paused;
+	boolean gameOver;
+	double playerSpeed;
 	boolean moveUp;
 	boolean moveDown;
+	boolean moveLeft;
+	boolean moveRight;
 	boolean rotateLeft;
 	boolean rotateRight;
-	boolean fire;
+	boolean fireUp;
+	boolean fireDown;
+	boolean fireLeft;
+	boolean fireRight;
+	boolean useBomb;
 	
 	long lastFireTime;
 	long fireInterval;
+	long lastSpawnTime;
+	long spawnInterval;
+	
+	int playerScore;
+	int collisionThreshold;
+	
+	String enemyPath1;
+	String enemyPath2;
 	//private KeyEventListener listener;
 	
 	
@@ -106,51 +130,55 @@ public class MainWindow extends Canvas {
 		// TODO integrate with main window once everything works
 		this.width = 640;
 		this.height = 480;
+		this.difficulty = 1.0;
+		this.numLives = 30;
+		this.numBombs = 5;
+		this.numBombBullets = 20;
+		this.paused = true;
+		this.gameOver = false;
 		this.keysPressed = new HashMap<Character, Integer>();
 		this.bullets = new ArrayList<Bullet>();
 		this.enemies = new ArrayList<Enemy>();
 		this.player = new Player();
+		this.playerSpeed = 4.0;
 		this.lastFireTime = System.currentTimeMillis();
 		this.fireInterval = 60;
+		this.spawnInterval = 300;
+		this.playerScore = 0;
+		this.collisionThreshold = 8;
+		
+		this.lifeAsset = new ImageAsset("./heart.png");
+		this.bombAsset = new ImageAsset("./bomb.png");
+		this.enemyPath1 = "./enemy1.png";
+		this.enemyPath2 = "./enemy2.png";
 		
 		// set player coordinates at center
 		this.player.moveBy(320, 240);
     	
     	// temp testing of enemies
-    	Enemy e1 = new Enemy();
-    	Enemy e2 = new Enemy();
-    	Enemy e3 = new Enemy();
-    	Enemy e4 = new Enemy();
-    	Enemy e5 = new Enemy();
-    	
-    	e1.moveBy(10, 20);
-    	e2.moveBy(200, 200);
-    	e3.moveBy(100, 400);
-    	e4.moveBy(400, 200);
-    	e5.moveBy(300, 400);
-    	
-    	this.enemies.add(e1);
-    	this.enemies.add(e2);
-    	this.enemies.add(e3);
-    	this.enemies.add(e4);
-    	this.enemies.add(e5);
+    	this.spawnEnemies(10);
 		// initialise the entities in our game so there's something
 		// to see at startup
 	}
 	
 
 
-	public void gameLoop() {
+	public void gameLoop() 
+	{
 		long lastLoopTime = System.currentTimeMillis();
-		
+		boolean firstLoop = true;
 		// keep looping until we exit
-		while (gameRunning) {
+		while (gameRunning) 
+		{		
+			// graphics context
+			Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
+			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+			        		   RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+			
 			// check running time passed
 			long delta = System.currentTimeMillis() - lastLoopTime;
 			lastLoopTime = System.currentTimeMillis();
 			
-			// graphics context
-			Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
 			g.setColor(Color.black);
 			g.fillRect(0,0,640,480);
 			
@@ -159,106 +187,123 @@ public class MainWindow extends Canvas {
 			g.fillRect(0, 0, this.width, this.height);
 	    	
 	    	
-	    	//Bullet b = new Bullet();
-			//g.drawImage(b.bullet.image, b.bullet.transform, null);
-			
 			// bullets
 	    	for(int i=0; i<this.bullets.size(); i++)
 	    	{
 	    		Bullet bullet = this.bullets.get(i);
-	    		g.drawImage(bullet.bullet.image, bullet.bullet.transform, null);
+	    		g.drawImage(bullet.bullet.getImage(), bullet.bullet.getTransform(), null);
 	    	}
 	    	
 	    	// enemies
-	    	for(int i=0; i<this.enemies.size(); i++)
-	    	{
-	    		Enemy enemy = this.enemies.get(i);
-	    		g.drawImage(enemy.enemy.image, enemy.enemy.transform, null);
-	    	}
-	    	//repaint();
-			
+	    	this.drawEnemies(g);
 	    	// player ship
-	    	g.drawImage(this.player.ship.image, this.player.ship.transform, null);
-	    	g.drawImage(this.player.gun.image, this.player.gun.transform, null);
-
+	    	this.drawPlayer(g);
+	    	// draw score
+	    	this.drawScore(g);
+	    	// draw lives
+	    	this.drawLives(g);
+	    	// draw bombs
+	    	this.drawBombs(g);
+	        
+	    	if (this.paused && !firstLoop)
+				this.drawPauseMenu(g);
+	    	
+	    	if (this.numLives <= 0)
+	    		this.setGameOver(g);
+	    	
 			// we can now flip the buffer.  We're done drawing
 			g.dispose();
 			strategy.show();
 			
-			int speed = 1;
+			if (this.gameOver || (this.paused && !firstLoop))
+				continue;
+						
 			if (this.moveLeft)
-	    		this.player.moveBy(-speed, 0);
+	    		this.player.moveBy(-this.playerSpeed, 0);
 			if (this.moveRight)
-				this.player.moveBy(speed, 0);
+				this.player.moveBy(this.playerSpeed, 0);
 			if (this.moveUp)
-				this.player.moveBy(0, -speed);
+				this.player.moveBy(0, -this.playerSpeed);
 			if (this.moveDown)
-				this.player.moveBy(0, speed);
+				this.player.moveBy(0, this.playerSpeed);
 			if (this.rotateLeft)
-				this.player.rotateBy(-speed*0.1);
+				this.player.rotateBy(-this.playerSpeed*0.1);
 			if (this.rotateRight)
-				this.player.rotateBy(speed*0.1);
-			if (this.fire)
+				this.player.rotateBy(this.playerSpeed*0.1);
+			if (this.useBomb && this.numBombs > 0)
 			{
-				// compute fire interval
-				if (this.canFire())
-				{
-					Bullet bb = new Bullet();
-					double randRot = 0.05 * (Math.random() - 0.5) *2;
-					double randMove = 20 * (0.5 + Math.random() * 0.5);
-				
-					bb.setSpeed(randMove);
-					
-					bb.moveBy(this.player.ship.posx+(this.player.ship.width)*0.5, 
-							this.player.ship.posy+(this.player.ship.height)*0.5);
-					bb.rotateBy(this.player.gun.angle + randRot);
-					this.bullets.add(bb);
-				}
+				this.useBomb(20);
+				this.numBombs--;
+				this.useBomb = false;
+			}
+			if (this.fireUp || this.fireDown || this.fireLeft || this.fireRight)
+			{
+				this.fireShots();
 			}
 			
 			for(int i=0; i<this.bullets.size(); i++)
 			{
 	    		Bullet bSprite = this.bullets.get(i);
 	    		
-	    		if(bSprite.bullet.posx > this.width+50 || 
-	    				bSprite.bullet.posx < -50 ||
-	    				bSprite.bullet.posy > this.height+50 ||
-	    				bSprite.bullet.posy < -50)
+	    		if(bSprite.bullet.getPosX() > this.width+50 || 
+	    				bSprite.bullet.getPosX() < -50 ||
+	    				bSprite.bullet.getPosY() > this.height+50 ||
+	    				bSprite.bullet.getPosY() < -50)
 	    		{
 	    			this.bullets.remove(i);
 	    		}
 	    		bSprite.step();
 	    	}
 			
-			//ArrayList<Enemy> enemyToRemove = new ArrayList<Enemy>();
-			//ArrayList<Bullet> bulletToRemove = new ArrayList<Bullet>();
-			
 			for (int i=0; i<this.enemies.size(); i++)
 			{
 				Enemy e = this.enemies.get(i);
-				Rectangle bBox = e.getBBox(0);
+				Rectangle bBox = e.getErodedBBox(0, this.collisionThreshold);
+				boolean collision = false;
 				for (int j=0; j<this.bullets.size(); j++)
 				{
 					Bullet bb = this.bullets.get(j);
-					boolean collision = bb.collidesWith(0, bBox);
+					
+					// collide with bullets
+					collision = bb.collidesWith(0, bBox);
 					if(collision)
 					{
 						this.enemies.remove(i);
 						this.bullets.remove(j);
-						//enemyToRemove.add(e);
-						//bulletToRemove.add(bb);
-						System.out.println("Collision occurred");
+						this.playerScore+=10;
+						//System.out.println("Collision occurred");
 						break;
 					}
 				}
+				
+				// collide with player
+				collision = this.player.collidesWith(0, bBox);
+				if(collision)
+				{
+					//System.out.println("enemy  bbox = " + bBox);
+					//System.out.println("player bbox = " + this.player.getBBox(0));
+					this.enemies.remove(i);
+					this.numLives--;
+					break;
+				}
+				
+				e.aim(this.player);
 				e.step();
 			}
 			
+			// spawn new enemies
+			this.spawnEnemies(2);
+			
+			// slightly increase difficulty
+			this.incrementDifficulty(0.001);
+			
 			// wait 17 millisec
 			try { Thread.sleep(10); } catch (Exception e) {}
+			
+			firstLoop = false;
 		}
 	}
-	
+
 	public boolean canFire() 
 	{
 		// test if enough time elapsed to fire
@@ -270,6 +315,239 @@ public class MainWindow extends Canvas {
 		return true;
 	}
 
+	public boolean canSpawn()
+	{
+		// test if enough time elapsed to spawn
+		if (System.currentTimeMillis() - this.lastSpawnTime < this.spawnInterval) {
+			return false;
+		}
+		
+		this.lastSpawnTime = System.currentTimeMillis();
+		return true;
+	}
+	
+	public void fireShots()
+	{
+		// compute fire interval
+		if (this.canFire())
+		{
+			double angle = 0.0;
+			if(this.fireUp)
+			{
+				if(this.fireRight)
+					angle = Math.PI*1.75;
+				else if(this.fireLeft)
+					angle = Math.PI*1.25;
+				else
+					angle = Math.PI*1.5;
+			}
+			else if(this.fireDown)
+			{
+				if(this.fireRight)
+					angle = Math.PI*0.25;
+				else if(this.fireLeft)
+					angle = Math.PI*0.75;
+				else
+					angle = Math.PI*0.5;
+			}
+			else if(this.fireLeft)
+				angle = Math.PI;
+			else if(this.fireRight)
+				angle = 0.0;
+			
+			this.player.gun.setRot(angle);			  
+			
+			Bullet bb = new Bullet();
+			double randRot = 0.05 * (Math.random() - 0.5) *2;
+			double randMove = 20 * (0.5 + Math.random() * 0.5);
+		
+			bb.setSpeed(randMove);
+			
+			bb.moveBy(this.player.ship.getPosX()+(this.player.ship.getWidth())*0.5, 
+					this.player.ship.getPosY()+(this.player.ship.getHeight())*0.5);
+			bb.rotateBy(this.player.gun.getAngle() + randRot);
+			this.bullets.add(bb);
+		}
+	}
+	
+	public void useBomb(int numBullets)
+	{
+		double angle = 0.0;
+		for (int i = 0; i<numBombBullets; i++)
+		{
+			angle = i * Math.PI * 2 / numBullets;
+			Bullet bb = new Bullet();
+			bb.setSpeed(10);
+		
+			bb.moveBy(this.player.ship.getPosX()+(this.player.ship.getWidth())*0.5, 
+					  this.player.ship.getPosY()+(this.player.ship.getHeight())*0.5);
+			bb.rotateBy(this.player.gun.getAngle() + angle);
+			this.bullets.add(bb);
+		}
+	}
+
+	public void spawnEnemies(int num)
+	{
+		if(this.canSpawn())
+		{
+			for (int i=0; i<num; i++)
+			{
+				double axis = Math.random();
+				double x = 0.0;
+				double y = 0.0;
+				if (axis<0.5)
+				{
+					x = 2 * (Math.random()-0.5) * this.width;
+					y = Math.round(Math.random()) * this.height;
+				}
+				else
+				{
+					x = Math.round(Math.random()) * this.width ;
+					y = 2 * (Math.random()-0.5) * this.height;
+				}
+				
+				if(x > 0 && x < this.width+30)
+					x+=30;
+				else if(x > -30)
+					x-=30;
+				
+				if(y > 0 && y < this.height+30)
+					y+=30;
+				else if(y > -30)
+					y-=30;
+				
+				
+				Enemy e = null;
+				if (Math.random() < 0.5)
+					e = new EnemyWaving(this.enemyPath1);    	
+				else
+					e = new EnemyFollow(this.enemyPath2);
+				
+				// fit random to 0.2-1.0 and amp about 5
+				double speed = ((Math.random() * 0.8) + 0.2) * 2 * this.difficulty;
+				e.setSpeed(speed);
+				
+				e.moveBy(x, y);
+				this.enemies.add(e);
+				
+			}
+		}
+	}
+	
+	public void incrementDifficulty(double val)
+	{
+		this.difficulty += val;
+	}
+	
+	public void drawPlayer(Graphics2D g)
+	{
+		g.drawImage(this.player.ship.getImage(), this.player.ship.getTransform(), null);
+    	g.drawImage(this.player.gun.getImage(), this.player.gun.getTransform(), null);
+    	
+    	//Rectangle r = this.player.getErodedBBox(0, 5);
+    	//g.setColor(Color.RED);
+    	//g.drawRect(r.x, r.y, r.width, r.height);
+	}
+	
+	public void drawEnemies(Graphics2D g)
+	{
+		for(int i=0; i<this.enemies.size(); i++)
+    	{
+    		Enemy enemy = this.enemies.get(i);
+    		g.drawImage(enemy.enemy.getImage(), enemy.enemy.getTransform(), null);
+    		
+    		//Rectangle r = enemy.getErodedBBox(0, 5);
+        	//g.setColor(Color.BLUE);
+        	//g.drawRect(r.x, r.y, r.width, r.height);
+    	}
+	}
+	
+	public void drawScore(Graphics2D g)
+	{
+		String scoreStr = "Player Score:" + this.playerScore;
+    	Font font = new Font("Sans-Serif", Font.BOLD, 20);
+        g.setFont(font);
+        g.setColor(new Color(1.0f, 1.0f, 0.8f));
+        g.drawString(scoreStr, 10, 30);
+        g.setColor(new Color(0.9f, 0.9f, 0.0f));
+        g.drawString(scoreStr, 11, 31);
+        
+	}
+
+	public void drawLives(Graphics2D g)
+	{
+		String lifeStr = "lives";
+    	Font font = new Font("Serif", Font.BOLD, 18);
+        g.setFont(font);
+        g.setColor(new Color(0.1f, 0.5f, 0.8f));
+        g.drawString(lifeStr, 10, 52);
+        
+		for (int i=0; i<this.numLives; i++)
+		{
+			AffineTransform at = new AffineTransform();
+			at.setToTranslation(47 + i*13, 40);
+			g.drawImage(this.lifeAsset.image.getImage(), at, null);
+		}
+	}
+	
+	public void drawBombs(Graphics2D g)
+	{
+		String lifeStr = "bombs";
+    	Font font = new Font("Serif", Font.BOLD, 18);
+        g.setFont(font);
+        g.setColor(new Color(0.1f, 0.5f, 0.8f));
+        g.drawString(lifeStr, 10, 70);
+        
+		for (int i=0; i<this.numBombs; i++)
+		{
+			AffineTransform at = new AffineTransform();
+			at.setToTranslation(62 + i*13, 60);
+			g.drawImage(this.bombAsset.image.getImage(), at, null);
+		}
+	}
+	
+	public void drawPauseMenu(Graphics2D g)
+	{
+		String pauseStr1 = "Game Paused";
+		String pauseStr2 = "Press P to resume";
+    	Font font = new Font("Serif", Font.BOLD, 25);
+        g.setFont(font);
+        
+        g.setColor(new Color(0.8f, 0.1f, 0.8f));
+        g.drawString(pauseStr1, 240, 150);
+        g.setColor(new Color(0.8f, 0.0f, 0.5f));
+        g.drawString(pauseStr1, 240+1, 150+1);
+        
+        g.setColor(new Color(0.5f, 1.0f, 0.5f));
+        g.drawString(pauseStr2, 220, 180);
+        g.setColor(new Color(0.1f, 1.0f, 0.1f));
+        g.drawString(pauseStr2, 220+1, 180+1);
+	}
+
+	public void setGameOver(Graphics2D g)
+	{
+		this.drawGameOverMenu(g);
+		this.gameOver = true;
+	}
+	
+	public void drawGameOverMenu(Graphics2D g)
+	{
+		String pauseStr1 = "Game Over";
+		String pauseStr2 = "Score: " + this.playerScore;
+    	Font font = new Font("Serif", Font.BOLD, 25);
+        g.setFont(font);
+        
+        g.setColor(new Color(0.8f, 0.1f, 0.8f));
+        g.drawString(pauseStr1, 240, 150);
+        g.setColor(new Color(0.8f, 0.0f, 0.5f));
+        g.drawString(pauseStr1, 240+1, 150+1);
+        
+        g.setColor(new Color(0.5f, 1.0f, 0.5f));
+        g.drawString(pauseStr2, 220, 180);
+        g.setColor(new Color(0.1f, 1.0f, 0.1f));
+        g.drawString(pauseStr2, 220+1, 180+1);
+	}
+	
 	private class KeyInputHandler extends KeyAdapter {
 
 		private int pressCount = 1;
@@ -288,8 +566,18 @@ public class MainWindow extends Canvas {
 	    		rotateLeft = true;
 	    	if (e.getKeyCode() == KeyEvent.VK_E)
 	    		rotateRight = true;
-	    	if (e.getKeyCode() == KeyEvent.VK_I)
-	    		fire = true;
+	    	if (e.getKeyCode() == KeyEvent.VK_UP)
+	    		fireUp = true;
+	    	if (e.getKeyCode() == KeyEvent.VK_DOWN)
+	    		fireDown = true;
+	    	if (e.getKeyCode() == KeyEvent.VK_LEFT)
+	    		fireLeft = true;
+	    	if (e.getKeyCode() == KeyEvent.VK_RIGHT)
+	    		fireRight = true;
+	    	if (e.getKeyCode() == KeyEvent.VK_P)
+	    		paused = !paused;
+	    	if (e.getKeyCode() == KeyEvent.VK_SPACE)
+	    		useBomb = true;
 		} 
 		
 
@@ -307,8 +595,16 @@ public class MainWindow extends Canvas {
 	    		rotateLeft = false;
 	    	if (e.getKeyCode() == KeyEvent.VK_E)
 	    		rotateRight = false;
-	    	if (e.getKeyCode() == KeyEvent.VK_I)
-	    		fire = false;
+	    	if (e.getKeyCode() == KeyEvent.VK_UP)
+	    		fireUp = false;
+	    	if (e.getKeyCode() == KeyEvent.VK_DOWN)
+	    		fireDown = false;
+	    	if (e.getKeyCode() == KeyEvent.VK_LEFT)
+	    		fireLeft = false;
+	    	if (e.getKeyCode() == KeyEvent.VK_RIGHT)
+	    		fireRight = false;
+	    	if (e.getKeyCode() == KeyEvent.VK_SPACE)
+	    		useBomb = false;
 		}
 
 
