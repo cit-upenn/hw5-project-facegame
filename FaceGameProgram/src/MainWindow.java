@@ -42,6 +42,7 @@ public class MainWindow extends Canvas {
 	HashMap<Character, Integer> keysPressed;
 	ArrayList<Bullet> bullets;
 	ArrayList<Enemy> enemies;
+	ArrayList<PowerUp> powerUps;
 	Player player;
 	ImageAsset lifeAsset;
 	ImageAsset bombAsset;
@@ -64,11 +65,14 @@ public class MainWindow extends Canvas {
 	boolean fireLeft;
 	boolean fireRight;
 	boolean useBomb;
+	int powerUpCount;
 	
 	long lastFireTime;
 	long fireInterval;
 	long lastSpawnTime;
 	long spawnInterval;
+	long lastPowerUpSpawnTime;
+	long powerUpSpawnInterval;
 	long lastSoundTime;
 	long soundInterval;
 	
@@ -137,15 +141,19 @@ public class MainWindow extends Canvas {
 		this.keysPressed = new HashMap<Character, Integer>();
 		this.bullets = new ArrayList<Bullet>();
 		this.enemies = new ArrayList<Enemy>();
+		this.powerUps = new ArrayList<PowerUp>();
 		this.player = new Player();
 		this.playerSpeed = 4.0;
 		this.lastFireTime = System.currentTimeMillis();
 		this.fireInterval = 60;
 		this.spawnInterval = 300;
-		this.lastSoundTime = 0;
+		this.lastSoundTime = System.currentTimeMillis();
+		this.powerUpSpawnInterval = 1000;
+		this.lastPowerUpSpawnTime = System.currentTimeMillis();
 		this.soundInterval = 10;
 		this.playerScore = 0;
 		this.collisionThreshold = 8;
+		this.powerUpCount = 0;
 		
 		this.lifeAsset = new ImageAsset("./heart.png");
 		this.bombAsset = new ImageAsset("./bomb.png");
@@ -192,17 +200,14 @@ public class MainWindow extends Canvas {
 			g.fillRect(0, 0, this.width, this.height);
 	    	
 	    	
-			// bullets
-	    	for(int i=0; i<this.bullets.size(); i++)
-	    	{
-	    		Bullet bullet = this.bullets.get(i);
-	    		g.drawImage(bullet.bullet.getImage(), bullet.bullet.getTransform(), null);
-	    	}
-	    	
+	    	// draw bullets
+	    	this.drawBullets(g);
 	    	// enemies
 	    	this.drawEnemies(g);
 	    	// player ship
 	    	this.drawPlayer(g);
+	    	// draw powerUps
+	    	this.drawPowerUps(g);
 	    	// draw score
 	    	this.drawScore(g);
 	    	// draw lives
@@ -261,6 +266,31 @@ public class MainWindow extends Canvas {
 	    		bSprite.step();
 	    	}
 			
+			for(int i=0; i<this.powerUps.size(); i++)
+			{
+	    		PowerUp powerUp = this.powerUps.get(i);
+	    		
+	    		if(powerUp.entity.getPosX() > this.width+50 || 
+	    				powerUp.entity.getPosX() < -50 ||
+	    				powerUp.entity.getPosY() > this.height+50 ||
+	    				powerUp.entity.getPosY() < -50)
+	    		{
+	    			this.powerUps.remove(i);
+	    		}
+	    		
+	    		Rectangle bBox = powerUp.getErodedBBox(0, this.collisionThreshold);
+	    		boolean collision = this.player.collidesWith(0, bBox);
+				if(collision)
+				{
+					//System.out.println("enemy  bbox = " + bBox);
+					//System.out.println("player bbox = " + this.player.getBBox(0));
+					this.powerUps.remove(i);
+					this.powerUpCount = 100;
+				}
+	    		
+	    		powerUp.step();
+	    	}
+			
 			for (int i=0; i<this.enemies.size(); i++)
 			{
 				Enemy e = this.enemies.get(i);
@@ -291,7 +321,6 @@ public class MainWindow extends Canvas {
 					//System.out.println("player bbox = " + this.player.getBBox(0));
 					this.enemies.remove(i);
 					this.numLives--;
-					break;
 				}
 				
 				e.aim(this.player);
@@ -300,6 +329,9 @@ public class MainWindow extends Canvas {
 			
 			// spawn new enemies
 			this.spawnEnemies(2);
+			
+			// spawn power ups
+			this.spawnPowerUps(1);
 			
 			// slightly increase difficulty
 			this.incrementDifficulty(0.001);
@@ -314,18 +346,23 @@ public class MainWindow extends Canvas {
 	public boolean canFire() 
 	{
 		// test if enough time elapsed to fire
-		if (System.currentTimeMillis() - this.lastFireTime < this.fireInterval) {
+		if (System.currentTimeMillis() - this.lastFireTime < this.fireInterval) 
+		{
 			return false;
 		}
 		
 		this.lastFireTime = System.currentTimeMillis();
+		if(this.powerUpCount > 0)
+			this.powerUpCount--;
+		
 		return true;
 	}
 
 	public boolean canPlaySound() 
 	{
 		// test if enough time elapsed to fire
-		if (System.currentTimeMillis() - this.lastSoundTime < this.soundInterval) {
+		if (System.currentTimeMillis() - this.lastSoundTime < this.soundInterval) 
+		{
 			return false;
 		}
 		
@@ -336,11 +373,24 @@ public class MainWindow extends Canvas {
 	public boolean canSpawn()
 	{
 		// test if enough time elapsed to spawn
-		if (System.currentTimeMillis() - this.lastSpawnTime < this.spawnInterval) {
+		if (System.currentTimeMillis() - this.lastSpawnTime < this.spawnInterval) 
+		{
 			return false;
 		}
 		
 		this.lastSpawnTime = System.currentTimeMillis();
+		return true;
+	}
+	
+	public boolean canSpawnPowerUps()
+	{
+		// test if enough time elapsed to spawn
+		if (System.currentTimeMillis() - this.lastPowerUpSpawnTime < this.powerUpSpawnInterval) 
+		{
+			return false;
+		}
+		
+		this.lastPowerUpSpawnTime = System.currentTimeMillis();
 		return true;
 	}
 	
@@ -375,17 +425,47 @@ public class MainWindow extends Canvas {
 			
 			this.player.gun.setRot(angle);			  
 			
-			Bullet bb = new Bullet();
-			double randRot = 0.05 * (Math.random() - 0.5) *2;
-			double randMove = 20 * (0.5 + Math.random() * 0.5);
+			if(this.powerUpCount <= 0)
+			{
+				double randRot = 0.05 * (Math.random() - 0.5) *2;
+				double randMove = 20 * (0.5 + Math.random() * 0.5);
 		
-			bb.setSpeed(randMove);
+				Bullet bb = new Bullet();
+				bb.setSpeed(randMove);
 			
-			bb.moveBy(this.player.ship.getPosX()+(this.player.ship.getWidth())*0.5, 
-					this.player.ship.getPosY()+(this.player.ship.getHeight())*0.5);
-			bb.rotateBy(this.player.gun.getAngle() + randRot);
-			this.bullets.add(bb);
+				bb.moveBy(this.player.ship.getPosX()+(this.player.ship.getWidth())*0.5, 
+						this.player.ship.getPosY()+(this.player.ship.getHeight())*0.5);
+				bb.rotateBy(this.player.gun.getAngle() + randRot);
+				this.bullets.add(bb);
+			}
+			else
+			{
+				double randRot = 0.05 * (Math.random() - 0.5) *2;
+				double randMove = 20 * (0.5 + Math.random() * 0.5);
+		
+				Bullet bb1 = new Bullet();
+				Bullet bb2 = new Bullet();
+				Bullet bb3 = new Bullet();
+				bb1.setSpeed(randMove);
+				bb2.setSpeed(randMove);
+				bb3.setSpeed(randMove);
 			
+				bb1.moveBy(this.player.ship.getPosX()+(this.player.ship.getWidth())*0.5, 
+						this.player.ship.getPosY()+(this.player.ship.getHeight())*0.5);
+				bb1.rotateBy(this.player.gun.getAngle() + randRot);
+				
+				bb2.moveBy(this.player.ship.getPosX()+(this.player.ship.getWidth())*0.5, 
+						this.player.ship.getPosY()+(this.player.ship.getHeight())*0.5);
+				bb2.rotateBy(this.player.gun.getAngle() + randRot+0.52);
+				
+				bb3.moveBy(this.player.ship.getPosX()+(this.player.ship.getWidth())*0.5, 
+						this.player.ship.getPosY()+(this.player.ship.getHeight())*0.5);
+				bb3.rotateBy(this.player.gun.getAngle() + randRot-0.52);
+				
+				this.bullets.add(bb1);
+				this.bullets.add(bb2);
+				this.bullets.add(bb3);
+			}
 			this.bulletSound.run();
 		}
 	}
@@ -455,9 +535,61 @@ public class MainWindow extends Canvas {
 		}
 	}
 	
+	public void spawnPowerUps(int num)
+	{
+		if(this.canSpawnPowerUps())
+		{
+			for (int i=0; i<num; i++)
+			{
+				double axis = Math.random();
+				double x = 0.0;
+				double y = 0.0;
+				if (axis<0.5)
+				{
+					x = 2 * (Math.random()-0.5) * this.width;
+					y = Math.round(Math.random()) * this.height;
+				}
+				else
+				{
+					x = Math.round(Math.random()) * this.width ;
+					y = 2 * (Math.random()-0.5) * this.height;
+				}
+				
+				if(x > 0 && x < this.width+30)
+					x+=30;
+				else if(x > -30)
+					x-=30;
+				
+				if(y > 0 && y < this.height+30)
+					y+=30;
+				else if(y > -30)
+					y-=30;
+				
+				
+				PowerUp p = new PowerUp("./multi_shot.png");
+				
+				// fit random to 0.2-1.0 and amp about 5
+				double speed = ((Math.random() * 0.8) + 0.2) * 2;
+				p.setSpeed(speed);
+				p.moveBy(x, y);
+				this.powerUps.add(p);
+				
+			}
+		}
+	}
+	
 	public void incrementDifficulty(double val)
 	{
 		this.difficulty += val;
+	}
+	
+	public void drawBullets(Graphics2D g)
+	{
+		for(int i=0; i<this.bullets.size(); i++)
+		{
+			Bullet bullet = this.bullets.get(i);
+			g.drawImage(bullet.bullet.getImage(), bullet.bullet.getTransform(), null);
+		}
 	}
 	
 	public void drawPlayer(Graphics2D g)
@@ -475,7 +607,20 @@ public class MainWindow extends Canvas {
 		for(int i=0; i<this.enemies.size(); i++)
     	{
     		Enemy enemy = this.enemies.get(i);
-    		g.drawImage(enemy.enemy.getImage(), enemy.enemy.getTransform(), null);
+    		g.drawImage(enemy.entity.getImage(), enemy.entity.getTransform(), null);
+    		
+    		//Rectangle r = enemy.getErodedBBox(0, 5);
+        	//g.setColor(Color.BLUE);
+        	//g.drawRect(r.x, r.y, r.width, r.height);
+    	}
+	}
+	
+	public void drawPowerUps(Graphics2D g)
+	{
+		for(int i=0; i<this.powerUps.size(); i++)
+    	{
+    		PowerUp powerUp = this.powerUps.get(i);
+    		g.drawImage(powerUp.entity.getImage(), powerUp.entity.getTransform(), null);
     		
     		//Rectangle r = enemy.getErodedBBox(0, 5);
         	//g.setColor(Color.BLUE);
