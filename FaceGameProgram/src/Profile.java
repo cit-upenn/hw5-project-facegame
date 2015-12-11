@@ -17,6 +17,7 @@ public class Profile extends JFrame {
 	private JPanel p4 = new JPanel();
 	private JPanel pCenter = new JPanel();
 	
+	
 	private JButton b1 = new JButton("Update Status");
 	private JButton b2 = new JButton("Search!");
 	private JButton b3 = new JButton("Add Profile Picture");
@@ -24,6 +25,7 @@ public class Profile extends JFrame {
 	private JButton b5 = new JButton ("Add Friends");
 
 	private JLabel imageLabel;
+	private JTextArea textArea;
 	private JTextField tf1= new JTextField("New Status", 15);
 	private JTextField tf2 = new JTextField("Search Friends", 15);
 	private JTextField tf3 = new JTextField("New Friends", 15);
@@ -99,11 +101,22 @@ public class Profile extends JFrame {
 		
 		try
 		{
+			
 			BufferedImage image = ImageIO.read(new File("./1.jpg"));
 			JLabel picLabel = new JLabel(new ImageIcon(image));
 			add(picLabel);
 			picLabel.setLocation(340, 100);
 			picLabel.setSize(200, 200);
+			
+			JTextArea textArea = new JTextArea("Name", 6 ,20);
+			textArea.setFont(new Font("Serif", Font.ITALIC, 32));
+	        textArea.setLineWrap(false);
+	        textArea.setWrapStyleWord(false);
+	        textArea.setOpaque(false);
+	        textArea.setEditable(false);
+	        add(textArea);
+	        textArea.setLocation(600, 120);
+	        textArea.setSize(200, 200);
 		}
 		catch (Exception e)
 		{
