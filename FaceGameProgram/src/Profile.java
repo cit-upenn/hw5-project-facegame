@@ -5,9 +5,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Profile extends JFrame {
 	private JPanel p1 = new JPanel();
@@ -15,42 +19,33 @@ public class Profile extends JFrame {
 	private JPanel p3 = new JPanel();
 	private JPanel p4 = new JPanel();
 	private JPanel pCenter = new JPanel();
-	private JPanel pCenter1 = new JPanel();
-	private JPanel pCenter2 = new JPanel();
-	private JPanel pCenter3 = new JPanel();
-	private JPanel pCenter4 = new JPanel();
-	
 
-	private JButton b1 = new JButton("Update Status");
+	private JButton b1 = new JButton("Update!");
 	private JButton b2 = new JButton("Search!");
-	private JButton b3 = new JButton("Add Profile Picture");
-	private JButton b4 = new JButton("Play Game");
+	private JButton b3 = new JButton("Update Avatar");
+	private JButton b4 = new JButton("Enjoy Game!");
 	private JButton b5 = new JButton("Add Friends");
 
 	private JLabel imageLabel;
 	private JTextArea textArea;
-	private JTextArea statusArea;
-
-
-	private JTextField tf1 = new JTextField("New Status", 15);
+	
+	private JTextField tf1 = new JTextField("What are you doing?", 20);
 	private JTextField tf2 = new JTextField("Search Friends", 15);
-	private JTextField tf3 = new JTextField("New Friends", 15);
-	private JTextField tf4 = new JTextField("Picture Path", 15);
-	private Image img;
+	private JTextField tf3 = new JTextField("Search users", 15);
+	private JTextField tf4 = new JTextField("Image path", 15);
+	private ImageIcon img;
+	private JTextArea statusField = new JTextArea("");
 
 	private BufferedImage image;
 	private JFrame container = new JFrame("Drone Wars");
 	private GameThread game;
 	
-	private Person loginUser;
+	
+	
+	private static Person loginUser;
 
 	public Profile(Person p) {
 		loginUser = p;
-		gui();
-
-	}
-	
-	public Profile() {
 		gui();
 
 	}
@@ -58,22 +53,7 @@ public class Profile extends JFrame {
 	public void gui() {
 		setVisible(true);
 		setSize(1200, 800);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-//		pCenter.setBackground(new Color(0.9f, 1.0f, 1.0f));
-//		pCenter.setLayout(new GridLayout(2, 2, 10, 10));
-//		add(pCenter);
-//		pCenter.setLocation(300,300);
-//		pCenter.setSize(300,300);
-//		pCenter.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
-//		
-//		pCenter1.setLayout(new BoxLayout(pCenter1,BoxLayout.LINE_AXIS));
-//		
-//		pCenter2.setBackground(new Color(0.9f, 1.0f, 1.0f));
-//		
-//		pCenter3.setBackground(new Color(0.9f, 0.9f, 0.9f));
-//		
-//		pCenter4.setBackground(new Color(0.9f, 1.0f, 1.0f));
-
+		// setDefaultCloseOperation(EXIT_ON_CLOSE);
 
 		p1.setBackground(new Color(0.9f, 1.0f, 1.0f));
 		p1.add(tf1);
@@ -96,15 +76,60 @@ public class Profile extends JFrame {
 		add(p2, BorderLayout.WEST);
 		add(p3, BorderLayout.SOUTH);
 		add(p4, BorderLayout.EAST);
+		p1.add(b4, BorderLayout.SOUTH);
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		
+		
+
+		try {
+			String imagePath = "./2.pic.jpg";
+			BufferedImage image = ImageIO.read(new File(imagePath));
+			JLabel picLabel = new JLabel(new ImageIcon(image));
+			add(picLabel);
+			picLabel.setLocation(340, 50);
+			picLabel.setSize(300, 300);
+			
+			String username = "                                                       Xinxin Ma";
+  			this.textArea = new JTextArea(username, 6, 30);
+			this.textArea.setFont(new Font("Serif", Font.ITALIC, 32));
+			this.textArea.setLineWrap(false);
+			this.textArea.setWrapStyleWord(false);
+			this.textArea.setOpaque(false);
+			this.textArea.setEditable(false);
+			add(this.textArea);
+			this.textArea.setLocation(300, 40);
+			this.textArea.setSize(800, 100);
+			
+			Dimension m = new Dimension();
+			m.setSize(400, 400);
+			this.textArea.setAlignmentX(100);
+			this.textArea.setAlignmentX(200);
+			this.textArea.setPreferredSize(m);
+			
+			Dimension preferredSize = new Dimension(20, 30);
+			this.textArea.setPreferredSize(preferredSize);
+			
+			//pack();
+			
+			this.statusField.setLocation(300, 600);
+			this.statusField.setOpaque(false);
+			add(this.statusField);
+			
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+			
+		
 		b1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent updateStatusEvt) {
-				b1ActionPerformed(updateStatusEvt);
-			
+				updateStatusField();
 			}
 		});
 
+		
 		b3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent pictureButtonEvt) {
 				pictureButtonActionPerformed(pictureButtonEvt);
@@ -118,44 +143,28 @@ public class Profile extends JFrame {
 			}
 		});
 		
-		
-		try {
-			BufferedImage image = ImageIO.read(new File("penguin.png"));
-			JLabel picLabel = new JLabel(new ImageIcon(image));
-//			pCenter1.add(picLabel);
-			add(picLabel);
-			picLabel.setLocation(340, 100);
-			picLabel.setSize(200, 200);
-
-
-			JTextArea textArea = new JTextArea("Name", 6, 20);
-			textArea.setFont(new Font("Serif", Font.ITALIC, 32));
-			textArea.setLineWrap(false);
-			textArea.setWrapStyleWord(false);
-			textArea.setOpaque(false);
-			textArea.setEditable(false);
-//			pCenter1.add(textArea);
-			add(textArea);
-			textArea.setLocation(600, 120);
-			textArea.setSize(200, 200);
-
-			
-			
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-//		pCenter.add(pCenter1);
-//		pCenter.add(pCenter2);
-//		pCenter.add(pCenter3);
-//		pCenter.add(pCenter4);
-		
-//		add(pCenter1, BorderLayout.CENTER);
-		
-
 	}
 
+	private void updateStatusField()
+	{
+		this.statusField.setText("");
+		String input = tf1.getText();
+		
+		DateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+		Date dateobj = new Date();
+		
+		GeoLocation gl = new GeoLocation();
+		gl.getLocationData();
+		String[] glStrings = gl.getLocationStrings();
+		String finalLocation = "";
+		for(String s : glStrings)
+		{
+			finalLocation +=  s  + System.lineSeparator();
+		}
+		
+		this.statusField.setText(input + " " + df.format(dateobj) + finalLocation);
+		
+	}
 	/*
 	 * MainWindow win = new MainWindow(); win.gameLoop(); add(win); GameThread
 	 * game = new GameThread(); game.run(); add(game.window);
@@ -180,51 +189,30 @@ public class Profile extends JFrame {
 	 * pack(); }
 	 */
 
-	private void pictureButtonActionPerformed(ActionEvent evt) {
-		// paint a picture to profile
-		String imgPath = tf4.getText();
+//	private void pictureButtonActionPerformed(ActionEvent evt) {
+//		
+//		String imgPath = tf4.getText();
 //		img = new ImageIcon(getClass().getResource("bomb.png"));
-		//BufferStrategy strategy = getBufferStrategy() ;
-		//		Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
-		//		img = new Image ("bomb.png");
-		
-		
-		// Image buf = ImageIO.read(file);
-
-		// pCenter.add(buf);
-		//add(pCenter, BorderLayout.CENTER);
-		//pCenter.setLayout(new BoxLayout(pCenter, BoxLayout.PAGE_AXIS));
-
-		//imageLabel = new JLabel(img);
-		// pCenter.add (imageLabel);
-
-		//add(imageLabel);
-
-	}
-
-	private void b1ActionPerformed(ActionEvent evt) {
-		
-		
-		JTextArea statusArea = new JTextArea("");
-		statusArea.setFont(new Font("Serif", Font.PLAIN, 16));
-		statusArea.setLineWrap(false);
-		statusArea.setWrapStyleWord(false);
-		statusArea.setOpaque(false);
-		statusArea.setEditable(false);
-		
-		statusArea.setLocation(600, 800);
-		statusArea.setSize(1000, 50);
-		add(statusArea);
-		String input = tf1.getText();
-		statusArea.append(input);
-//		tf1.selectAll();
-//		statusArea.setCaretPosition(statusArea.getDocument().getLength());
-		
-
-	}
+//		BufferStrategy strategy = getBufferStrategy() ;
+//		Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
+//		//img = new Image ("bomb.png");
+//		
+//		Component buf = ImageIO.read(file);
+//
+//		pCenter.add(buf);
+//		add(pCenter, BorderLayout.CENTER);
+//		pCenter.setLayout(new BoxLayout(pCenter, BoxLayout.PAGE_AXIS));
+//
+//		imageLabel = new JLabel(img);
+//		pCenter.add (imageLabel);
+//
+//		add(imageLabel);
+//
+//	}
 	
-	public static void main (String[] args) {
-		Profile newProfile = new Profile();
+	public static void main(String[] args) throws IOException {
+		Profile startingProfile = new Profile(loginUser);
+						
 	}
 
 
