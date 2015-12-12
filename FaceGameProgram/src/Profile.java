@@ -1,5 +1,4 @@
 
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
@@ -16,169 +15,177 @@ public class Profile extends JFrame {
 	private JPanel p3 = new JPanel();
 	private JPanel p4 = new JPanel();
 	private JPanel pCenter = new JPanel();
-	
+
 	private JButton b1 = new JButton("Update Status");
 	private JButton b2 = new JButton("Search!");
 	private JButton b3 = new JButton("Add Profile Picture");
 	private JButton b4 = new JButton("Play Game");
-	private JButton b5 = new JButton ("Add Friends");
+	private JButton b5 = new JButton("Add Friends");
 
 	private JLabel imageLabel;
-	private JTextField tf1= new JTextField("New Status", 15);
+	private JTextArea textArea;
+	private JTextArea statusArea;
+
+
+	private JTextField tf1 = new JTextField("New Status", 15);
 	private JTextField tf2 = new JTextField("Search Friends", 15);
 	private JTextField tf3 = new JTextField("New Friends", 15);
-	private JTextField tf4 = new JTextField ("Picture Path", 15);
-	private ImageIcon img;
-	
+	private JTextField tf4 = new JTextField("Picture Path", 15);
+	private Image img;
+
 	private BufferedImage image;
 	private JFrame container = new JFrame("Drone Wars");
 	private GameThread game;
 	
-	
+	private Person loginUser;
 
-	
-	public Profile() {
+	public Profile(Person p) {
+		loginUser = p;
 		gui();
+
 	}
-	
+
 	public void gui() {
 		setVisible(true);
 		setSize(1200, 800);
-		//setDefaultCloseOperation(EXIT_ON_CLOSE);
-		
-		b3.addActionListener(new ActionListener(){
-			public void actionPerformed (ActionEvent pictureButtonEvt) {
-				pictureButtonActionPerformed (pictureButtonEvt);
-		
-			}
-		});
-		
-		p1.setBackground(new Color (0.9f, 1.0f, 1.0f));
+		// setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+		p1.setBackground(new Color(0.9f, 1.0f, 1.0f));
 		p1.add(tf1);
 		p1.add(b1);
-		
+
 		p1.add(tf3);
 		p1.add(b5);
-
-		//added the image path input Textfield
+		// added the image path input Textfield
 		p1.add(tf4);
 		p1.add(b3);
-		
-		
-		p2.setBackground(new Color (0.9f, 0.9f, 0.9f));
+
+		p2.setBackground(new Color(0.9f, 0.9f, 0.9f));
 		p2.add(tf2);
-		p2.add(b2,  BorderLayout.SOUTH);
-		
+		p2.add(b2, BorderLayout.SOUTH);
 
 		p3.setBackground(new Color(0.9f, 0.9f, 0.9f));
 		p4.setBackground(new Color(0.9f, 0.9f, 0.9f));
-		
-		tf1.addActionListener(new ActionListener() 
-		{
-			public void actionPerformed (ActionEvent e)
-			{
-				String input = tf1.getText();
-			}
-		});
-		
 
 		add(p1, BorderLayout.NORTH);
 		add(p2, BorderLayout.WEST);
 		add(p3, BorderLayout.SOUTH);
 		add(p4, BorderLayout.EAST);
+		p1.add(b4, BorderLayout.SOUTH);
 		
-		p1.add(b4,  BorderLayout.SOUTH);
-		
-		b4.addActionListener(new ActionListener() 
-		{
-			public void actionPerformed (ActionEvent e)
-			{
-				launchGame();
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		b1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent updateStatusEvt) {
+				b1ActionPerformed(updateStatusEvt);
+			
+			}
+		});
+
+		b3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent pictureButtonEvt) {
+				pictureButtonActionPerformed(pictureButtonEvt);
+
+			}
+		});
+
+		b4.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			//	launchGame();
 			}
 		});
 		
-		try
-		{
+		
+		try {
 			BufferedImage image = ImageIO.read(new File("./1.jpg"));
 			JLabel picLabel = new JLabel(new ImageIcon(image));
 			add(picLabel);
 			picLabel.setLocation(340, 100);
 			picLabel.setSize(200, 200);
-		}
-		catch (Exception e)
-		{
+
+			JTextArea textArea = new JTextArea("Name", 6, 20);
+			textArea.setFont(new Font("Serif", Font.ITALIC, 32));
+			textArea.setLineWrap(false);
+			textArea.setWrapStyleWord(false);
+			textArea.setOpaque(false);
+			textArea.setEditable(false);
+			add(textArea);
+			textArea.setLocation(600, 120);
+			textArea.setSize(200, 200);
+			
+			
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-	}
-/*		MainWindow win = new MainWindow();
-		win.gameLoop();
-		add(win);
-		GameThread game = new GameThread();
-		game.run();
-		add(game.window);
-*/		
-		
-	private void launchGame()
-	{
-		game = new GameThread(this.container);
-		game.window.gameInit();
-		game.start();
-		//p1.add(container, BorderLayout.CENTER);
-		game.window.getPlayerScore();
-	
-		//game.run();
-	
-		//add(game.window, BorderLayout.EAST);//, BorderLayout.EAST);
-		//game.window.run();
-		//pack();
-	}
-/*	private void launchGame()
-	{
-		MainWindow win = new MainWindow();
-		win.gameLoop();
-		add(win, BorderLayout.EAST);//, BorderLayout.EAST);
-		pack();
+
 	}
 
-*/
-	
-	private void pictureButtonActionPerformed (ActionEvent evt) {
-		//paint a picture to profile
+	/*
+	 * MainWindow win = new MainWindow(); win.gameLoop(); add(win); GameThread
+	 * game = new GameThread(); game.run(); add(game.window);
+	 */
+
+//	private void launchGame() {
+//		game = new GameThread(this.container);
+//		game.window.gameInit();
+//		game.start();
+//		// p1.add(container, BorderLayout.CENTER);
+//		game.window.getPlayerScore();
+//		// game.run();
+//
+//		// add(game.window, BorderLayout.EAST);//, BorderLayout.EAST);
+//		// game.window.run();
+//		// pack();
+//	}
+
+	/*
+	 * private void launchGame() { MainWindow win = new MainWindow();
+	 * win.gameLoop(); add(win, BorderLayout.EAST);//, BorderLayout.EAST);
+	 * pack(); }
+	 */
+
+	private void pictureButtonActionPerformed(ActionEvent evt) {
+		// paint a picture to profile
 		String imgPath = tf4.getText();
-		img = new ImageIcon(getClass().getResource("bomb.png"));
-		String path = "penguin.png";
-		File file = new File(path);
-		BufferedImage image = null;
-		try {
-			image = ImageIO.read(file);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		//Image buf = ImageIO.read(file);
+//		img = new ImageIcon(getClass().getResource("bomb.png"));
+		//BufferStrategy strategy = getBufferStrategy() ;
+		//		Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
+		//		img = new Image ("bomb.png");
 		
-		//pCenter.add(buf);
-		add(pCenter, BorderLayout.CENTER);
-		pCenter.setLayout(new BoxLayout(pCenter, BoxLayout.PAGE_AXIS));
-	
-	
+		
+		// Image buf = ImageIO.read(file);
 
+		// pCenter.add(buf);
+		//add(pCenter, BorderLayout.CENTER);
+		//pCenter.setLayout(new BoxLayout(pCenter, BoxLayout.PAGE_AXIS));
 
-		imageLabel = new JLabel (img);
-//		pCenter.add (imageLabel);
-		
-		add(imageLabel);
-		
+		//imageLabel = new JLabel(img);
+		// pCenter.add (imageLabel);
+
+		//add(imageLabel);
+
 	}
-	
 
-
-	public static void main(String[] args) throws IOException {
-		Profile startingProfile = new Profile();
+	private void b1ActionPerformed(ActionEvent evt) {
 		
 		
-	}	
-	
-	
+		JTextArea statusArea = new JTextArea("");
+		statusArea.setFont(new Font("Serif", Font.PLAIN, 16));
+		statusArea.setLineWrap(false);
+		statusArea.setWrapStyleWord(false);
+		statusArea.setOpaque(false);
+		statusArea.setEditable(false);
+		
+		statusArea.setLocation(600, 800);
+		statusArea.setSize(1000, 50);
+		add(statusArea);
+		String input = tf1.getText();
+		statusArea.append(input);
+//		tf1.selectAll();
+//		statusArea.setCaretPosition(statusArea.getDocument().getLength());
+		
+
+	}
+
+
 }
