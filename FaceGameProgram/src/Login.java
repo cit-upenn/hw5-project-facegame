@@ -6,7 +6,6 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 
-
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
@@ -18,13 +17,17 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.GroupLayout.Alignment;
+
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.awt.*;
 
-public class Login extends JFrame{
+public class Login extends JFrame {
+	
 	private JButton jButton1;
     private JButton jButton2;
     private JLabel jLabel1;
@@ -90,118 +93,98 @@ public class Login extends JFrame{
 		
 		jPanel3 = new JPanel();
 		jPanel3.setLayout(new BoxLayout(jPanel3, BoxLayout.PAGE_AXIS));
+	 
+		
+	 		
+	 		jLabel2 = new JLabel();
+	 		jLabel2.setText("Email");
+	 		jLabel3 = new JLabel();
+	 		jLabel3.setText("Password");
+	 		
+	 		jTextField1 = new JTextField();
+	 		jTextField2 = new JPasswordField();
+	 		
+	 		
+	 		Box box1 = Box.createHorizontalBox();
+	 		
+	 		box1.add(jLabel2);
+	 		box1.add(jTextField1);
+	 		
+	 		box1.add(jLabel3);
+	 		box1.add(jTextField2);
+	 		
+	
+	 		jPanel3.add(box1);
+	 		
+	 		jButton1 = new JButton("login");
+	 		jButton1.addActionListener(new ActionListener(){
+	 			public void actionPerformed (ActionEvent evtButton1) {
 
-/*		gbc.insets = new Insets(5, 5, 5, 5);
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		jPanel3.add(jLabel4, gbc);
+						jButton1ActionPerformed (evtButton1);
+	 			
+	 			}
+	 		});
 
-		gbc.gridx = 0;
-		gbc.gridy = 1;
-		jPanel3.add(nameField, gbc);
-
-		gbc.gridx = 0;
-		gbc.gridy = 2;
-		jPanel3.add(emailField);
-
-		gbc.gridx = 0;
-		gbc.gridy = 3;
-		jPanel3.add(passwordField);
-		
-		gbc.gridx = 0;
-		gbc.gridy = 4;
-		jPanel3.add(jButton2);
-*/	
-		
-		jLabel2 = new JLabel();
-		jLabel2.setText("Email");
-		
-		jLabel3 = new JLabel();
-		jLabel3.setText("Password");
-		
-		jTextField1 = new JTextField();
-		jTextField2 = new JPasswordField();
-		
-		
-		Box box1 = Box.createHorizontalBox();
-		
-		box1.add(jLabel2);
-		box1.add(jTextField1);
-		
-		box1.add(jLabel3);
-		box1.add(jTextField2);
-		
-
-/*		gbc_box1.weighty = 1.0;
-		gbc_box1.weightx = 1.0;
-		gbc_box1.ipady = 6;
-		gbc_box1.ipadx = 4;
-		gbc_box1.gridwidth = 8;
-		gbc_box1.fill = GridBagConstraints.HORIZONTAL;
-		gbc_box1.anchor = GridBagConstraints.NORTH;
-		gbc_box1.insets = new Insets(5, 5, 5, 5);
-*/
-/*		gbc.gridx = 0;
-		gbc.gridy = 0;
-		GridBagConstraints gbc_box1 = new GridBagConstraints();
-		gbc_box1.weighty = 5.0;
-		gbc_box1.weightx = 4.0;
-		gbc_box1.fill = GridBagConstraints.HORIZONTAL;
-		gbc_box1.anchor = GridBagConstraints.NORTH;
-		gbc_box1.ipady = 4;
-		gbc_box1.ipadx = 6;
-		gbc_box1.gridwidth = 6;
-		gbc_box1.insets = new Insets(5, 5, 5, 5);
-		gbc_box1.gridy = 0;
-		gbc_box1.gridx = 0;
-*/
-		jPanel3.add(box1);
-		
-		jButton1 = new JButton("login");
-		jButton1.addActionListener(new ActionListener(){
-			public void actionPerformed (ActionEvent evtButton1) {
-					jButton2ActionPerformed (evtButton1);
+	 		
+	 		jPanel3.add(jButton1);
+	 		 
+	 		jPanel3.add(jLabel4);
+	 
+	 		jPanel3.add(nameField);
+	 
+	 		jPanel3.add(emailField);
+	 
+	 		jPanel3.add(passwordField);
+	 		
+	 		jPanel3.add(jButton2);
+	 		
+	 
+	 		
+	 		
+	 		getContentPane().add(jPanel3, BorderLayout.CENTER);
+	 		pack();
+	 
+	 		
+	 	}
+	 	
+	 	private void jButton2ActionPerformed (ActionEvent evt) {
+	 		String inputName = nameField.getText();
+	 		String inputEmail = emailField.getText();
+	 		char[] inputPw = passwordField.getPassword();
+	 		
+	 		Person user = new Person(inputName, inputEmail, inputPw);
+	 		
+	 		UserDatabase.addProfile(user);
+	 		Profile userProfile = new Profile();
+			FileWriter fw = new FileWriter();
+			fw.write(user);
+	 	}
+	 	
+		private void jButton1ActionPerformed (ActionEvent evt) {
+			Boolean match = false;
+			String inputEmail = jTextField1.getText();
+			char[] inputPw = jTextField2.getPassword();
+			ArrayList<Person> p = UserDatabase.getUsers();
+			Person loginPerson = null;
 			
+			for (Person user: p) {
+				if (Arrays.equals(user.getPassword(), inputPw) && inputEmail.equals(user.getEmail())) {
+					match = true;
+					loginPerson = user;
+				}
 			}
-		});
-
-
-		jPanel3.add(jButton1);
-
-		jPanel3.add(jLabel4);
-
-		jPanel3.add(nameField);
-
-		jPanel3.add(emailField);
-
-		jPanel3.add(passwordField);
-		
-		jPanel3.add(jButton2);
-		
-
-		
-		
-		getContentPane().add(jPanel3, BorderLayout.CENTER);
-		pack();
-
-		
-	}
-	
-	private void jButton2ActionPerformed (ActionEvent evt) {
-		String inputName = nameField.getText();
-		String inputEmail = emailField.getText();
-		char[] inputPw = passwordField.getPassword();
-		
-		Person user = new Person(inputName, inputEmail, inputPw);
-		
-		UserDatabase.addProfile(user);
-		Profile userProfile = new Profile();
-	}
-	
-	
-	public static void main (String args[]) {
-		Login newLogin = new Login();
-	}
-	
-
+			
+			if (match == true) {
+				Profile pf = new Profile();
+				String filename = "";
+				filename = filename + loginPerson.getId();
+	//			FileReader fd = new FileReader();
+				
+			}
+		}
+	 	
+	 	public static void main (String args[]) {
+	 		Login newLogin = new Login();
+	 	}
+	 	
 }
