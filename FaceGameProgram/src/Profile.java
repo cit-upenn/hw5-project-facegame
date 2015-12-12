@@ -132,7 +132,7 @@ public class Profile extends JFrame {
 		
 		b3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent pictureButtonEvt) {
-				pictureButtonActionPerformed(pictureButtonEvt);
+				//pictureButtonActionPerformed(pictureButtonEvt);
 
 			}
 		});
