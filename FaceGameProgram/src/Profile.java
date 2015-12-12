@@ -5,6 +5,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferStrategy;
 
 public class Profile extends JFrame{
 	private JPanel p1 = new JPanel();
@@ -22,7 +23,7 @@ public class Profile extends JFrame{
 	private JTextField tf2 = new JTextField("Search Friends", 15);
 	private JTextField tf3 = new JTextField("New Friends", 15);
 	private JTextField tf4 = new JTextField ("Picture Path", 15);
-	private ImageIcon img;
+	private Image img;
 
 	
 	public Profile() {
@@ -110,18 +111,24 @@ public class Profile extends JFrame{
 	private void pictureButtonActionPerformed (ActionEvent evt) {
 		//paint a picture to profile
 		String imgPath = tf4.getText();
-		img = new ImageIcon(getClass().getResource("bomb.png"));
+//		img = new ImageIcon(getClass().getResource("./bomb.png"));
+		
+//		BufferStrategy strategy = getBufferStrategy() ;
+//		Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
+//		img = new Image ("bomb.png");
+		
+		
 		
 //		pCenter = new JPanel();
 //		pCenter.setLayout(new BoxLayout(pCenter, BoxLayout.PAGE_AXIS));
 
-		imageLabel = new JLabel (img);
+//		imageLabel = new JLabel (img);
 //		pCenter.add (imageLabel);
 		
-		add(imageLabel);
+//		add(imageLabel);
 		
-		add(pCenter, BorderLayout.CENTER);
-		System.out.println("I come here!");
+//		add(pCenter, BorderLayout.CENTER);
+//		System.out.println("I come here!");
 				
 	}
 
