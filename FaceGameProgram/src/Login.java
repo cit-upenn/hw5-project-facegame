@@ -44,6 +44,7 @@ public class Login extends JFrame {
     private JTextField emailField;
     private JPasswordField passwordField;
     private UserDatabase ud = new UserDatabase();
+    private Person user;
 //    private GridBagConstraints gbc = new GridBagConstraints();
     
 	public Login () {
@@ -152,10 +153,10 @@ public class Login extends JFrame {
 	 		String inputEmail = emailField.getText();
 	 		char[] inputPw = passwordField.getPassword();
 	 		
-	 		Person user = new Person(inputName, inputEmail, inputPw);
+	 		user = new Person(inputName, inputEmail, inputPw);
 	 		
 	 		UserDatabase.addProfile(user);
-	 		Profile userProfile = new Profile();
+	 		Profile userProfile = new Profile(user);
 			FileWriter fw = new FileWriter();
 			fw.write(user);
 	 	}
@@ -165,22 +166,25 @@ public class Login extends JFrame {
 			String inputEmail = jTextField1.getText();
 			char[] inputPw = jTextField2.getPassword();
 			ArrayList<Person> p = UserDatabase.getUsers();
-			Person loginPerson = null;
 			
-			for (Person user: p) {
-				if (Arrays.equals(user.getPassword(), inputPw) && inputEmail.equals(user.getEmail())) {
+			for (Person person: p) {
+				if (Arrays.equals(person.getPassword(), inputPw) && inputEmail.equals(person.getEmail())) {
 					match = true;
-					loginPerson = user;
+					user = person;
 				}
 			}
 			
 			if (match == true) {
-				Profile pf = new Profile();
+				Profile pf = new Profile(user);
 				String filename = "";
-				filename = filename + loginPerson.getId();
+				filename = filename + user.getId();
 	//			FileReader fd = new FileReader();
 				
 			}
+		}
+		
+		public Person getPerson() {
+			return user;
 		}
 	 	
 	 	public static void main (String args[]) {

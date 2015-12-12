@@ -36,8 +36,11 @@ public class Profile extends JFrame {
 	private BufferedImage image;
 	private JFrame container = new JFrame("Drone Wars");
 	private GameThread game;
+	
+	private Person loginUser;
 
-	public Profile() {
+	public Profile(Person p) {
+		loginUser = p;
 		gui();
 
 	}
@@ -73,7 +76,7 @@ public class Profile extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		b1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent updateStatusEvt) {
-				tf1ActionPerformed(updateStatusEvt);
+				b1ActionPerformed(updateStatusEvt);
 			
 			}
 		});
@@ -163,7 +166,7 @@ public class Profile extends JFrame {
 
 	}
 
-	private void tf1ActionPerformed(ActionEvent evt) {
+	private void b1ActionPerformed(ActionEvent evt) {
 		
 		
 		JTextArea statusArea = new JTextArea("");
@@ -184,10 +187,5 @@ public class Profile extends JFrame {
 
 	}
 
-	public static void main(String[] args) throws IOException {
-		Profile startingProfile = new Profile();
-		
-
-	}
 
 }

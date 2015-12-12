@@ -4,6 +4,7 @@ import java.util.ArrayList;
  public class UserDatabase {
  	private static ArrayList <Person> users;
  	public UserDatabase(){
+ 		
 		FileReader rd = new FileReader("userDatabase.txt");
 		ArrayList <String> lines = rd.getLines();
 		if (lines != null) {
@@ -13,19 +14,17 @@ import java.util.ArrayList;
 				ArrayList<String> userInfo = userFile.getLines();
 				Person p = new Person (userInfo.get(0), userInfo.get(1),userInfo.get(2).toCharArray());
 				
-				p.setPicturePath(userInfo.get(3));
-				
-				String gameScoreLine = userInfo.get(4);
-				String[] gameScores = gameScoreLine.split(",");
-				ArrayList<Integer> scores = new ArrayList<Integer>();
-				
-				for (int i = 0; i < gameScores.length; i++) {
-					scores.add(Integer.parseInt(gameScores[i]));
-				}
-				
-				p.setGameScore (scores);
-				
-				
+//				p.setPicturePath(userInfo.get(3));
+//				
+//				String gameScoreLine = userInfo.get(4);
+//				String[] gameScores = gameScoreLine.split(",");
+//				ArrayList<Integer> scores = new ArrayList<Integer>();
+//				
+//				for (int i = 0; i < gameScores.length; i++) {
+//					scores.add(Integer.parseInt(gameScores[i]));
+//				}
+//				
+//				p.setGameScore (scores);		
 				
 			}
 		}

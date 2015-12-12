@@ -28,9 +28,9 @@ public class Person {
  		id = friendsCount;
  		friendsCount ++;
 		picturePath = "";
-		gameScore = null;
-		listOfFriends = null;
-		posts = null;
+		gameScore = new ArrayList<Integer>();
+		listOfFriends = new ArrayList<Integer>();
+		posts = new ArrayList<String>();
  	}
  	
  	public int getId () {
