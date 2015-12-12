@@ -1,17 +1,20 @@
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class FileReader {
+public class UserProfileReader {
 	private String filename;
 	private ArrayList<String> lines;
 	
-	public FileReader (String file) {
+	public UserProfileReader (String file) {
 		filename = file;
 		lines = new ArrayList<String> ();
 		
 		readFile();
+	}
+	
+	public ArrayList<String> getDatabaseLines() {
+		return lines;
 	}
 	
 	private void readFile() {
@@ -29,10 +32,5 @@ public class FileReader {
 			e.printStackTrace();
 		}
 	}
-	
-	public ArrayList<String> getLines() {
-		return lines;
-	}
-	
 	
 }

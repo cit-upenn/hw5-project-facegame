@@ -1,14 +1,25 @@
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
-public class FileWriter {
+public class UserProfileWriter {
+	
 	public void write(Person p) {
 		try {
-			
-			PrintWriter out2 = new PrintWriter("userDatabase.txt");
-			out2.println(p.getId());
-			out2.flush();
-			out2.close();
+//			File file = new File("userDatabase.txt");
+			OutputStreamWriter writer = new OutputStreamWriter (new FileOutputStream("userDatabase.txt", true));
+//			FileWriter fw = new FileWriter("userDatabase.txt");
+//			FileWriter fw = new FileWriter (file.getAbsoluteFile());
+			BufferedWriter fbw = new BufferedWriter(writer); 
+//			PrintWriter out2 = new PrintWriter(new FileWriter("userDatabase.txt",true));
+			String id = "" +p.getId();
+			fbw.write(id);
+			fbw.newLine();
+			fbw.close();
 			
 			String filename = "";
 			filename = p.getId() + ".txt";
@@ -28,8 +39,6 @@ public class FileWriter {
 			}
 			out.println();
 			
-			out.println(p.getGameScore());
-			
 			if (p.getFriends() != null) {
 				for (int f: p.getFriends()) {
 					out.print(f + ",");
@@ -37,13 +46,12 @@ public class FileWriter {
 			}
 			out.println();
 			
-			String posts = "";
 			if (p.getPosts() != null) {
 				for (String s: p.getPosts()) {
-					posts += s;
+					out.print(s);
 				}
 			}
-			out.println(posts);
+			out.println();
 			
 			out.flush();
 			out.close();
@@ -55,3 +63,4 @@ public class FileWriter {
 	}
 	
 }
+

@@ -19,14 +19,10 @@ public class Person {
  	
  	public Person (String name, String email, char[] pw) {
  		
+ 		id = UserDatabase.getNumberOfUsers();
  		this.name = name;
  		this.email = email;
  		password = pw;
- 		id = friendsCount;
- 		friendsCount ++;
- 		password = pw;
- 		id = friendsCount;
- 		friendsCount ++;
 		picturePath = "";
 		gameScore = new ArrayList<Integer>();
 		listOfFriends = new ArrayList<Integer>();
@@ -35,6 +31,9 @@ public class Person {
  	
  	public int getId () {
  		return id;
+ 	}
+ 	public void setId (int id) {
+ 		this.id = id;
  	}
  	public String getName () {
  		return name;
@@ -54,7 +53,13 @@ public class Person {
  		this.picturePath = picturePath;
  	}
 
+ 	public void setFriendList (ArrayList<Integer> list) {
+ 		listOfFriends = list;
+ 	}
  	
+ 	public void setPostList (ArrayList<String> list) {
+ 		posts = list;
+ 	}
 
 	public void setGameScore (ArrayList<Integer> gs) {
 		gameScore = gs;
@@ -79,6 +84,8 @@ public class Person {
  			return false;
  		}
  	}
+ 	
+
  	
  		
  }

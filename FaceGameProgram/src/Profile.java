@@ -15,6 +15,11 @@ public class Profile extends JFrame {
 	private JPanel p3 = new JPanel();
 	private JPanel p4 = new JPanel();
 	private JPanel pCenter = new JPanel();
+	private JPanel pCenter1 = new JPanel();
+	private JPanel pCenter2 = new JPanel();
+	private JPanel pCenter3 = new JPanel();
+	private JPanel pCenter4 = new JPanel();
+	
 
 	private JButton b1 = new JButton("Update Status");
 	private JButton b2 = new JButton("Search!");
@@ -44,11 +49,31 @@ public class Profile extends JFrame {
 		gui();
 
 	}
+	
+	public Profile() {
+		gui();
+
+	}
 
 	public void gui() {
 		setVisible(true);
 		setSize(1200, 800);
-		// setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+//		pCenter.setBackground(new Color(0.9f, 1.0f, 1.0f));
+//		pCenter.setLayout(new GridLayout(2, 2, 10, 10));
+//		add(pCenter);
+//		pCenter.setLocation(300,300);
+//		pCenter.setSize(300,300);
+//		pCenter.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+//		
+//		pCenter1.setLayout(new BoxLayout(pCenter1,BoxLayout.LINE_AXIS));
+//		
+//		pCenter2.setBackground(new Color(0.9f, 1.0f, 1.0f));
+//		
+//		pCenter3.setBackground(new Color(0.9f, 0.9f, 0.9f));
+//		
+//		pCenter4.setBackground(new Color(0.9f, 1.0f, 1.0f));
+
 
 		p1.setBackground(new Color(0.9f, 1.0f, 1.0f));
 		p1.add(tf1);
@@ -71,7 +96,6 @@ public class Profile extends JFrame {
 		add(p2, BorderLayout.WEST);
 		add(p3, BorderLayout.SOUTH);
 		add(p4, BorderLayout.EAST);
-		p1.add(b4, BorderLayout.SOUTH);
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		b1.addActionListener(new ActionListener() {
@@ -96,11 +120,13 @@ public class Profile extends JFrame {
 		
 		
 		try {
-			BufferedImage image = ImageIO.read(new File("./1.jpg"));
+			BufferedImage image = ImageIO.read(new File("penguin.png"));
 			JLabel picLabel = new JLabel(new ImageIcon(image));
+//			pCenter1.add(picLabel);
 			add(picLabel);
 			picLabel.setLocation(340, 100);
 			picLabel.setSize(200, 200);
+
 
 			JTextArea textArea = new JTextArea("Name", 6, 20);
 			textArea.setFont(new Font("Serif", Font.ITALIC, 32));
@@ -108,15 +134,25 @@ public class Profile extends JFrame {
 			textArea.setWrapStyleWord(false);
 			textArea.setOpaque(false);
 			textArea.setEditable(false);
+//			pCenter1.add(textArea);
 			add(textArea);
 			textArea.setLocation(600, 120);
 			textArea.setSize(200, 200);
+
 			
 			
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+//		pCenter.add(pCenter1);
+//		pCenter.add(pCenter2);
+//		pCenter.add(pCenter3);
+//		pCenter.add(pCenter4);
+		
+//		add(pCenter1, BorderLayout.CENTER);
+		
 
 	}
 
@@ -185,6 +221,10 @@ public class Profile extends JFrame {
 //		statusArea.setCaretPosition(statusArea.getDocument().getLength());
 		
 
+	}
+	
+	public static void main (String[] args) {
+		Profile newProfile = new Profile();
 	}
 
 

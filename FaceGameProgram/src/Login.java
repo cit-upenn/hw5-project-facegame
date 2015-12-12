@@ -12,6 +12,7 @@ import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -35,9 +36,7 @@ public class Login extends JFrame {
     private JLabel jLabel3;
     private JLabel jLabel4;
     private JPanel jPanel1;
-    private JPanel jPanel2;
     private JPanel jPanel3;
-    private JPanel jPanel4;
     private JTextField jTextField1;
     private JPasswordField jTextField2;
     private JTextField nameField;
@@ -156,9 +155,12 @@ public class Login extends JFrame {
 	 		user = new Person(inputName, inputEmail, inputPw);
 	 		
 	 		UserDatabase.addProfile(user);
-	 		Profile userProfile = new Profile(user);
-			FileWriter fw = new FileWriter();
+	 		
+			UserProfileWriter fw = new UserProfileWriter();
 			fw.write(user);
+			
+	 		Profile userProfile = new Profile(user);
+
 	 	}
 	 	
 		private void jButton1ActionPerformed (ActionEvent evt) {
@@ -176,10 +178,10 @@ public class Login extends JFrame {
 			
 			if (match == true) {
 				Profile pf = new Profile(user);
-				String filename = "";
-				filename = filename + user.getId();
 	//			FileReader fd = new FileReader();
 				
+			} else {
+				JOptionPane.showMessageDialog(null, "Username or Password is not correct! Please sign up or type agin!", "Failed", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		
