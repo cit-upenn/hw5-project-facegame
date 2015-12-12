@@ -69,11 +69,12 @@ public class Profile extends JFrame {
 		add(p3, BorderLayout.SOUTH);
 		add(p4, BorderLayout.EAST);
 		p1.add(b4, BorderLayout.SOUTH);
-
+		
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		b1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent updateStatusEvt) {
 				tf1ActionPerformed(updateStatusEvt);
-
+			
 			}
 		});
 
@@ -89,7 +90,8 @@ public class Profile extends JFrame {
 			//	launchGame();
 			}
 		});
-
+		
+		
 		try {
 			BufferedImage image = ImageIO.read(new File("./1.jpg"));
 			JLabel picLabel = new JLabel(new ImageIcon(image));
@@ -106,6 +108,8 @@ public class Profile extends JFrame {
 			add(textArea);
 			textArea.setLocation(600, 120);
 			textArea.setSize(200, 200);
+			
+			
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -160,19 +164,29 @@ public class Profile extends JFrame {
 	}
 
 	private void tf1ActionPerformed(ActionEvent evt) {
+		
+		
+		JTextArea statusArea = new JTextArea("");
+		statusArea.setFont(new Font("Serif", Font.PLAIN, 16));
+		statusArea.setLineWrap(false);
+		statusArea.setWrapStyleWord(false);
+		statusArea.setOpaque(false);
+		statusArea.setEditable(false);
+		
+		statusArea.setLocation(600, 800);
+		statusArea.setSize(1000, 50);
+		add(statusArea);
 		String input = tf1.getText();
-		statusArea.append(input + "\n");
-		tf1.selectAll();
-		statusArea.setCaretPosition(statusArea.getDocument().getLength());
+		statusArea.append(input);
+//		tf1.selectAll();
+//		statusArea.setCaretPosition(statusArea.getDocument().getLength());
+		
 
-		// Person user = new Person(inputName, inputEmail, inputPw);
-
-		// UserDatabase.addProfile(user);
-		// Profile userProfile = new Profile();
 	}
 
 	public static void main(String[] args) throws IOException {
 		Profile startingProfile = new Profile();
+		
 
 	}
 
