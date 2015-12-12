@@ -4,15 +4,14 @@ import java.util.ArrayList;
 
 public class Person {
 	
-	private int id;
 	private String name;
 	private String email;
 	private char[] password;
 	private String picturePath;
-	private ArrayList<Integer> gameScore;
+	private String status;
+	private int id;
 	private ArrayList<Integer> listOfFriends;
-	private ArrayList<String> posts ;
-
+	
 	public static int friendsCount;
 	
 	public Person (String name, String email, char[] pw) {
@@ -21,10 +20,6 @@ public class Person {
 		password = pw;
 		id = friendsCount;
 		friendsCount ++;
-		picturePath = "";
-		gameScore = null;
-		listOfFriends = null;
-		posts = null;
 	}
 	
 	public int getId () {
@@ -32,13 +27,6 @@ public class Person {
 	}
 	public String getName () {
 		return name;
-	}
-	public char[] getPassword () {
-		return password;
-	}
-	
-	public String getEmail() {
-		return email;
 	}
 	
 	public String getPicturePath () {
@@ -49,15 +37,12 @@ public class Person {
 		this.picturePath = picturePath;
 	}
 	
-	public void setGameScore (ArrayList<Integer> gs) {
-		gameScore = gs;
-	}
-	public ArrayList<Integer> getGameScore() {
-		return gameScore;
+	public void setStatus(String status) {
+		this.status = status;
 	}
 	
-	public ArrayList<String> getPosts() {
-		return posts;
+	public String getStatus () {
+		return status;
 	}
 	
 	public ArrayList<Integer> getFriends () {
@@ -71,6 +56,7 @@ public class Person {
 			return false;
 		}
 	}
+	
 	
 	
 }

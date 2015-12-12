@@ -6,13 +6,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-<<<<<<< HEAD
-import java.awt.image.BufferStrategy;
-=======
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
->>>>>>> 912f2b3a47ab5d0d790f2c4ddba09868d611a58d
 
 public class Profile extends JFrame {
 	private JPanel p1 = new JPanel();
@@ -20,7 +16,6 @@ public class Profile extends JFrame {
 	private JPanel p3 = new JPanel();
 	private JPanel p4 = new JPanel();
 	private JPanel pCenter = new JPanel();
-	
 	
 	private JButton b1 = new JButton("Update Status");
 	private JButton b2 = new JButton("Search!");
@@ -30,31 +25,57 @@ public class Profile extends JFrame {
 
 	private JLabel imageLabel;
 	private JTextArea textArea;
+	private JTextArea statusArea;
+	
 	private JTextField tf1= new JTextField("New Status", 15);
 	private JTextField tf2 = new JTextField("Search Friends", 15);
 	private JTextField tf3 = new JTextField("New Friends", 15);
 	private JTextField tf4 = new JTextField ("Picture Path", 15);
-<<<<<<< HEAD
-	private Image img;
-=======
 	private ImageIcon img;
 	
 	private BufferedImage image;
 	private JFrame container = new JFrame("Drone Wars");
 	private GameThread game;
 	
-	
->>>>>>> 912f2b3a47ab5d0d790f2c4ddba09868d611a58d
-
-	
 	public Profile() {
 		gui();
+	
 	}
 	
 	public void gui() {
 		setVisible(true);
 		setSize(1200, 800);
 		//setDefaultCloseOperation(EXIT_ON_CLOSE);
+		
+		p1.setBackground(new Color (0.9f, 1.0f, 1.0f));
+		p1.add(tf1);
+		p1.add(b1);
+	
+		p1.add(tf3);
+		p1.add(b5);
+		//added the image path input Textfield
+		p1.add(tf4);
+		p1.add(b3);
+				
+		p2.setBackground(new Color (0.9f, 0.9f, 0.9f));
+		p2.add(tf2);
+		p2.add(b2,  BorderLayout.SOUTH);
+		
+		p3.setBackground(new Color(0.9f, 0.9f, 0.9f));
+		p4.setBackground(new Color(0.9f, 0.9f, 0.9f));
+		
+		add(p1, BorderLayout.NORTH);
+		add(p2, BorderLayout.WEST);
+		add(p3, BorderLayout.SOUTH);
+		add(p4, BorderLayout.EAST);
+		p1.add(b4, BorderLayout.SOUTH);
+		
+		b1.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent updateStatusEvt) {
+				tf1ActionPerformed(updateStatusEvt);
+				
+			}
+		});
 		
 		b3.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent pictureButtonEvt) {
@@ -63,42 +84,6 @@ public class Profile extends JFrame {
 			}
 		});
 		
-		p1.setBackground(new Color (0.9f, 1.0f, 1.0f));
-		p1.add(tf1);
-		p1.add(b1);
-		
-		p1.add(tf3);
-		p1.add(b5);
-
-		//added the image path input Textfield
-		p1.add(tf4);
-		p1.add(b3);
-		
-		
-		p2.setBackground(new Color (0.9f, 0.9f, 0.9f));
-		p2.add(tf2);
-		p2.add(b2,  BorderLayout.SOUTH);
-		
-
-		p3.setBackground(new Color(0.9f, 0.9f, 0.9f));
-		p4.setBackground(new Color(0.9f, 0.9f, 0.9f));
-		
-		tf1.addActionListener(new ActionListener() 
-		{
-			public void actionPerformed (ActionEvent e)
-			{
-				String input = tf1.getText();
-			}
-		});
-		
-
-		add(p1, BorderLayout.NORTH);
-		add(p2, BorderLayout.WEST);
-		add(p3, BorderLayout.SOUTH);
-		add(p4, BorderLayout.EAST);
-		
-		p1.add(b4,  BorderLayout.SOUTH);
-		
 		b4.addActionListener(new ActionListener() 
 		{
 			public void actionPerformed (ActionEvent e)
@@ -106,7 +91,7 @@ public class Profile extends JFrame {
 				launchGame();
 			}
 		});
-		
+
 		try
 		{
 			
@@ -125,6 +110,11 @@ public class Profile extends JFrame {
 	        add(textArea);
 	        textArea.setLocation(600, 120);
 	        textArea.setSize(200, 200);
+	        
+	       
+	        
+	    
+	        
 		}
 		catch (Exception e)
 		{
@@ -167,18 +157,6 @@ public class Profile extends JFrame {
 	private void pictureButtonActionPerformed (ActionEvent evt) {
 		//paint a picture to profile
 		String imgPath = tf4.getText();
-<<<<<<< HEAD
-//		img = new ImageIcon(getClass().getResource("./bomb.png"));
-		
-//		BufferStrategy strategy = getBufferStrategy() ;
-//		Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
-//		img = new Image ("bomb.png");
-		
-		
-		
-//		pCenter = new JPanel();
-//		pCenter.setLayout(new BoxLayout(pCenter, BoxLayout.PAGE_AXIS));
-=======
 		img = new ImageIcon(getClass().getResource("bomb.png"));
 		String path = "penguin.png";
 		File file = new File(path);
@@ -197,21 +175,25 @@ public class Profile extends JFrame {
 	
 	
 
->>>>>>> 912f2b3a47ab5d0d790f2c4ddba09868d611a58d
 
-//		imageLabel = new JLabel (img);
+		imageLabel = new JLabel (img);
 //		pCenter.add (imageLabel);
 		
-//		add(imageLabel);
+		add(imageLabel);
 		
-<<<<<<< HEAD
-//		add(pCenter, BorderLayout.CENTER);
-//		System.out.println("I come here!");
-				
-=======
->>>>>>> 912f2b3a47ab5d0d790f2c4ddba09868d611a58d
 	}
 	
+	private void tf1ActionPerformed (ActionEvent evt) {
+		String input = tf1.getText();
+		statusArea.append(input + "\n");
+		tf1.selectAll();
+		statusArea.setCaretPosition(statusArea.getDocument().getLength());
+		
+		//Person user = new Person(inputName, inputEmail, inputPw);
+		
+		//UserDatabase.addProfile(user);
+		//Profile userProfile = new Profile();
+	}
 
 
 	public static void main(String[] args) throws IOException {
