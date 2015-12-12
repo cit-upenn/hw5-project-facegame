@@ -9,7 +9,7 @@ public class MainRun
 		System.setProperty("sun.java2d.opengl","True");
 		//GameThread game = new GameThread();
 		//game.run();
-		MainWindow win = new MainWindow();
+		GameEngine win = new GameEngine(null);
 		win.gameLoop();
 	}
 

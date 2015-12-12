@@ -7,12 +7,12 @@ import javax.swing.JFrame;
 
 public class GameThread extends Thread
 {
-	MainWindow window;
+	GameEngine window;
 	long currentTime;
 	
 	public GameThread()
 	{
-		this.window = new MainWindow();
+		this.window = new GameEngine(null);
 		this.currentTime = System.currentTimeMillis();
 	}
 	
