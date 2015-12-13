@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class Person {
 
 	private int id;
-<<<<<<< HEAD
+
  	private String name;
  	private String email;
  	private char[] password;
@@ -24,23 +24,7 @@ public class Person {
 
  	public static int friendsCount;
  	
- 	public Person (String name, String email, char[] pw) {
- 		
- 		id = UserDatabase.getNumberOfUsers();
- 		this.name = name;
- 		this.email = email;
- 		password = pw;
-=======
-	private String name;
-	private String email;
-	private char[] password;
-	private String picturePath;
-
-	private ArrayList<Integer> gameScore;
-	private ArrayList<Integer> listOfFriends;
-	private ArrayList<String> posts;
-
-	public static int friendsCount;
+ 	
 
 	/**
 	 * constructor -- initialize an object person with arguments name, email and
@@ -50,13 +34,13 @@ public class Person {
 	 * @param email
 	 * @param pw
 	 */
+	
 	public Person(String name, String email, char[] pw) {
 
 		// id = UserDatabase.getNumberOfUsers();
 		this.name = name;
 		this.email = email;
 		password = pw;
->>>>>>> c6260023f64c4ae2f1009a86b843bd85c756c333
 		picturePath = "";
 		gameScore = new ArrayList<Integer>();
 		listOfFriends = new ArrayList<Integer>();

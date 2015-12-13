@@ -157,36 +157,36 @@ public class Login extends JFrame {
 		String inputEmail = emailField.getText();
 		char[] inputPw = passwordField.getPassword();
 
-<<<<<<< HEAD
 		if (inputName.equals("Name")) {
-=======
-		// if name/email/password user input is null, show error messages.
-		if (inputName.equals("")) {
->>>>>>> c6260023f64c4ae2f1009a86b843bd85c756c333
-			JOptionPane.showMessageDialog(null,
-					"Please try to enter your name.", "Failed",
-					JOptionPane.ERROR_MESSAGE);
 
-		} else if (inputEmail.equals("Email")) {
-			JOptionPane.showMessageDialog(null,
-					"Please try to enter your email.", "Failed",
-					JOptionPane.ERROR_MESSAGE);
+			// if name/email/password user input is null, show error messages.
+			if (inputName.equals("Name")) {
+	
+				JOptionPane.showMessageDialog(null,
+						"Please try to enter your name.", "Failed",
+						JOptionPane.ERROR_MESSAGE);
+	
+			} else if (inputEmail.equals("Email")) {
+				JOptionPane.showMessageDialog(null,
+						"Please try to enter your email.", "Failed",
+						JOptionPane.ERROR_MESSAGE);
+	
+			} else if (String.valueOf(inputPw).equals("New Password")) {
+				JOptionPane.showMessageDialog(null,
+						"Please try again and enter your password.", "Failed",
+						JOptionPane.ERROR_MESSAGE);
+	
+			} else {
+				user = new Person(inputName, inputEmail, inputPw);
+				UserDatabase.addProfile(user);
+	
+				UserProfileWriter fw = new UserProfileWriter();
+				fw.write(user);
+	
+				Profile userProfile = new Profile(user);
+			}
 
-		} else if (String.valueOf(inputPw).equals("New Password")) {
-			JOptionPane.showMessageDialog(null,
-					"Please try again and enter your password.", "Failed",
-					JOptionPane.ERROR_MESSAGE);
-
-		} else {
-			user = new Person(inputName, inputEmail, inputPw);
-			UserDatabase.addProfile(user);
-
-			UserProfileWriter fw = new UserProfileWriter();
-			fw.write(user);
-
-			Profile userProfile = new Profile(user);
 		}
-
 	}
 
 	/**

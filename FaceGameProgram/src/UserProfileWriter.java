@@ -13,7 +13,6 @@ import java.util.ArrayList;
  *
  */
 public class UserProfileWriter {
-<<<<<<< HEAD
 	
 	public void createUserInividuleData (Person p) {
 		try {
@@ -63,8 +62,6 @@ public class UserProfileWriter {
 		}
 		
 	}
-	
-=======
 
 	/**
 	 * This method writes in an ID into the userDatabase and creates a new file
@@ -72,7 +69,7 @@ public class UserProfileWriter {
 	 * 
 	 * @param p
 	 */
->>>>>>> c6260023f64c4ae2f1009a86b843bd85c756c333
+
 	public void write(Person p) {
 		try {
 
