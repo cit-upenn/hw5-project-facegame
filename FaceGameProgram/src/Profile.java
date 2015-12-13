@@ -22,25 +22,23 @@ public class Profile extends JFrame {
 
 	private JButton b1 = new JButton("Update!");
 	private JButton b2 = new JButton("Search!");
-	private JButton b3 = new JButton("Update Avatar");
+	private JButton b3 = new JButton("Update profile picture");
 	private JButton b4 = new JButton("Enjoy Game!");
 	private JButton b5 = new JButton("Add Friends");
 
 	private JLabel imageLabel;
-	private JTextArea textArea;
+	private JLabel nameArea = new JLabel("");
+	private JTextArea statusArea = new JTextArea("");
 	
-	private JTextField tf1 = new JTextField("What are you doing?", 20);
+	private JTextField tf1 = new JTextField("How are you going?", 20);
 	private JTextField tf2 = new JTextField("Search Friends", 15);
 	private JTextField tf3 = new JTextField("Search users", 15);
 	private JTextField tf4 = new JTextField("Image path", 15);
+	
 	private ImageIcon img;
-	private JTextArea statusField = new JTextArea("");
-
 	private BufferedImage image;
 	private JFrame container = new JFrame("Drone Wars");
 	private GameThread game;
-	
-	
 	
 	private static Person loginUser;
 
@@ -79,45 +77,24 @@ public class Profile extends JFrame {
 		p1.add(b4, BorderLayout.SOUTH);
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		
-		
-
+			
 		try {
-			String imagePath = "./2.pic.jpg";
-			BufferedImage image = ImageIO.read(new File(imagePath));
-			JLabel picLabel = new JLabel(new ImageIcon(image));
-			add(picLabel);
-			picLabel.setLocation(340, 50);
-			picLabel.setSize(300, 300);
 			
-			String username = "                                                       Xinxin Ma";
-  			this.textArea = new JTextArea(username, 6, 30);
-			this.textArea.setFont(new Font("Serif", Font.ITALIC, 32));
-			this.textArea.setLineWrap(false);
-			this.textArea.setWrapStyleWord(false);
-			this.textArea.setOpaque(false);
-			this.textArea.setEditable(false);
-			add(this.textArea);
-			this.textArea.setLocation(300, 40);
-			this.textArea.setSize(800, 100);
-			
-			Dimension m = new Dimension();
-			m.setSize(400, 400);
-			this.textArea.setAlignmentX(100);
-			this.textArea.setAlignmentX(200);
-			this.textArea.setPreferredSize(m);
-			
-			Dimension preferredSize = new Dimension(20, 30);
-			this.textArea.setPreferredSize(preferredSize);
-			
-			//pack();
-			
-			this.statusField.setLocation(300, 600);
-			this.statusField.setOpaque(false);
-			add(this.statusField);
-			
-
+			add(this.statusArea);
+			statusArea.setLocation(340, 400);
+			this.statusArea.setOpaque(false);
+			statusArea.setText(null);
+		
+			updatePictureProfile();
+			add(this.imageLabel);
+			imageLabel.setLocation(340, 50);
+			this.imageLabel.setSize(300, 300);
+					
+			add(this.nameArea);
+			nameArea.setLocation(650, 50);
+			this.nameArea.setOpaque(false);
+			updateNameArea();
+		
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -125,16 +102,16 @@ public class Profile extends JFrame {
 		
 		b1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent updateStatusEvt) {
-				updateStatusField();
+				updateStatusArea();
 			}
 		});
 
 		
 		b3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent pictureButtonEvt) {
-				//pictureButtonActionPerformed(pictureButtonEvt);
-
+				updatePictureProfile();
 			}
+		
 		});
 
 		b4.addActionListener(new ActionListener() {
@@ -144,10 +121,17 @@ public class Profile extends JFrame {
 		});
 		
 	}
+	
+	private void updateNameArea() {
+		
+		String username = "Xinxin Ma";
+		this.nameArea.setText(username);			
+		this.nameArea.setFont(new Font("Serif", Font.ITALIC, 40));
+	}
 
-	private void updateStatusField()
+	private void updateStatusArea()
 	{
-		this.statusField.setText("");
+		this.statusArea.setText("");
 		String input = tf1.getText();
 		
 		DateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
@@ -157,12 +141,51 @@ public class Profile extends JFrame {
 		gl.getLocationData();
 		String[] glStrings = gl.getLocationStrings();
 		String finalLocation = "";
-		for(String s : glStrings)
-		{
-			finalLocation +=  s  + System.lineSeparator();
+		String s;
+		for(int i = 1; i < glStrings.length - 5; i++)
+		{	
+			s = glStrings[glStrings.length - 5 - i];
+			finalLocation +=  s  + ", ";
 		}
+		s = glStrings[glStrings.length - 5];
+		finalLocation += s;
 		
-		this.statusField.setText(input + " " + df.format(dateobj) + finalLocation);
+		this.statusArea.setText(input + "\n" + "Date: " + df.format(dateobj) + "\n" + "Location: " + finalLocation);
+		this.statusArea.setFont(new Font("Calibri", Font.PLAIN, 16));
+		this.statusArea.setLocation(340, 450);
+		//this.imageLabel.setLocation(340, 50);
+			
+	}
+	
+	private void updatePictureProfile() {
+		// TODO Auto-generated method stub
+		String imagePath = "./penguin.png";
+		//String imagePath = tf4.getText();
+		
+//		img = new ImageIcon(getClass().getResource("bomb.png"));
+//		BufferStrategy strategy = getBufferStrategy() ;
+//		Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
+//		//img = new Image ("bomb.png");
+//		
+//		//Component buf = ImageIO.read(file);
+//
+//		//pCenter.add(buf);
+//		add(pCenter, BorderLayout.CENTER);
+//		pCenter.setLayout(new BoxLayout(pCenter, BoxLayout.PAGE_AXIS));
+//
+//		imageLabel = new JLabel(img);
+//		pCenter.add (imageLabel);
+//
+//		add(imageLabel);
+//		
+		BufferedImage image = null;
+		try {
+			image = ImageIO.read(new File(imagePath));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		this.imageLabel = new JLabel(new ImageIcon(image));
 		
 	}
 	/*
@@ -212,7 +235,7 @@ public class Profile extends JFrame {
 	
 	public static void main(String[] args) throws IOException {
 		Profile startingProfile = new Profile(loginUser);
-						
+				
 	}
 
 
