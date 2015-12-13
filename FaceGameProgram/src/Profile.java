@@ -25,6 +25,7 @@ public class Profile extends JFrame {
 	private JPanel pPosts = new JPanel();
 	private JPanel gamePanel = new JPanel();
 	private JPanel imagePanel = new JPanel();
+	private JPanel gameScorePanel = new JPanel();
 
 	private JButton b1 = new JButton("Add Status");
 	private JButton b2 = new JButton("Search!");
@@ -35,6 +36,8 @@ public class Profile extends JFrame {
 	private JLabel imageLabel;
 	private JLabel postTag;
 	private JLabel status;
+	private JLabel gameScoreLabel;
+	private JLabel gameScoreTag;
 //	private JLabel nameArea = new JLabel("");
 //	private JTextArea statusArea = new JTextArea("");
 	
@@ -136,10 +139,14 @@ public class Profile extends JFrame {
 		pPosts.add(status);
 		
 		gamePanel.add(b4, BorderLayout.NORTH);
+		gameScoreLabel = new JLabel ("" + gameScore);
+		gameScoreTag = new JLabel ("Your most recent game score is: ");
+		gameScorePanel.add(gameScoreTag);
+		gameScorePanel.add(gameScoreLabel);
+		
+		gamePanel.add(gameScorePanel, BorderLayout.CENTER);
+		
 		pCenter.add(gamePanel);
-		
-		
-
 		
 		
 			
@@ -224,6 +231,20 @@ public class Profile extends JFrame {
 //		this.statusArea.setFont(new Font("Calibri", Font.PLAIN, 16));
 //		this.statusArea.setLocation(340, 450);
 		
+	}
+	
+	public void updateScore(int score) {
+		gameScore = score;
+		ArrayList<Integer> gs = new ArrayList<Integer>();
+		gs.add(gameScore);
+		loginUser.setGameScore(gs);
+		JLabel newScore = new JLabel ("" + score);
+		gameScorePanel = new JPanel ();
+		gameScoreLabel = new JLabel ("" + gameScore);
+		gameScoreTag = new JLabel ("Your most recent game score is: ");
+		gameScorePanel.add(gameScoreTag);
+		gameScorePanel.add(gameScoreLabel);
+		gamePanel.add(gameScorePanel, BorderLayout.CENTER);
 	}
 
 //	private void updateStatusArea()
@@ -343,11 +364,13 @@ public class Profile extends JFrame {
 //
 //	}
 	
-//	public static void main(String[] args) throws IOException {
-//		char[] pw ={'a','b','c'};
-//		Profile startingProfile = new Profile(loginUser);
-//				
-//	}
+	public static void main(String[] args) throws IOException {
+		char[] pw ={'a','b','c'};
+		Person loginUser = new Person("Xinxin", "sss@upenn.edu", pw);
+		Profile startingProfile = new Profile(loginUser);
+		startingProfile.updateScore (5);
+				
+	}
 
 
 }
