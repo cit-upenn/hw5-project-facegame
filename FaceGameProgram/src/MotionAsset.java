@@ -1,5 +1,10 @@
 import java.awt.Rectangle;
 
+/**
+ * abstract class for motion assets.  This will be used for all emenies
+ * @author Rony Edde
+ *
+ */
 public abstract class MotionAsset extends Asset
 {
 	Sprite entity;
@@ -9,6 +14,10 @@ public abstract class MotionAsset extends Asset
 	private double dirThreshold;
 	private double steps;
 	
+	/**
+	 * default behavior of all enemy initialization
+	 * @param enemyPath the path to the image file
+	 */
 	public MotionAsset(String enemyPath)
 	{
 		super();
@@ -17,58 +26,89 @@ public abstract class MotionAsset extends Asset
 		this.targetDir = 0.0;
 		this.dirThreshold = 0.01;
 		this.steps = 0.0;
-		//URL location = Player.class.getProtectionDomain().getCodeSource().getLocation();
-		//String pwd = location.toString().replace("file:", "");
-		
-		//String enemyPath = "./penguin.png";
 		
 		this.add(enemyPath);
-		//this.add("./src/bullet.png");
+
 		this.entity = this.sprites.get(0);
 		this.entity.setCentroid((-this.entity.getWidth())*0.5,
 							    (-this.entity.getHeight())*0.5);
 	}
 	
+	/**
+	 * The step number if being incremented return that value
+	 * @return
+	 */
 	public double getSteps()
 	{
 		return this.steps;
 	}
 	
+	/**
+	 * set the number of steps the asset has been updated
+	 * @param step number of steps to set
+	 */
 	public void setSteps(double step)
 	{
 		this.steps = step;
 	}
 	
+	/**
+	 * get the speed value
+	 * @return the asset's speed
+	 */
 	public double getSpeed()
 	{
 		return this.speed;
 	}
 	
+	/**
+	 * set the speed value of the asset
+	 * @param value the speed value
+	 */
 	public void setSpeed(double value)
 	{
 		this.speed = value;
 	}
 	
+	/**
+	 * get the directional angle of the asset in radians
+	 * @return the angle
+	 */
 	public double getDirection()
 	{
 		return this.direction;
 	}
 	
+	/**
+	 * set the directional angle of the asset in radians
+	 * @param dir the angular direction
+	 */
 	public void setDirection(double dir)
 	{
 		this.direction = dir;
 	}
 	
+	/**
+	 * gets the target direction 
+	 * @return the angle to the target's position
+	 */
 	public double getTargetDir()
 	{
 		return this.targetDir;
 	}
 	
+	/**
+	 * set the angular direction to the target
+	 * @param dir
+	 */
 	public void setTargetDir(double dir)
 	{
 		this.targetDir = dir;
 	}
 	
+	/**
+	 * blends the current angle with the target angle
+	 */
 	private void blendToDirection()
 	{
 		if(this.targetDir - this.direction < this.dirThreshold)
@@ -77,7 +117,10 @@ public abstract class MotionAsset extends Asset
 			this.direction -= 0.01;
 	}
 	
-	
+	/**
+	 * aims current asset to the target destination
+	 * @param target the target asset to aim to
+	 */
 	public void aim(Asset target)
 	{
 		Rectangle srcBBox = this.getBBox(0);
@@ -96,6 +139,9 @@ public abstract class MotionAsset extends Asset
 		
 	}
 	
+	/**
+	 * default step animation logig behavior
+	 */
 	public void step()
 	{
 		double x = this.speed * Math.cos(this.direction);

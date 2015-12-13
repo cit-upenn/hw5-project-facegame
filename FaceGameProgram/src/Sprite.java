@@ -17,7 +17,11 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-
+/**
+ * The sprite class for displaying sprites
+ * @author Rony Edde
+ *
+ */
 public class Sprite extends JFrame
 {
 	private File imageFile;
@@ -35,6 +39,10 @@ public class Sprite extends JFrame
 	private double scaleY;
 	private Rectangle bounds;
 
+	/**
+	 * constructor for sprite class that takes an image path
+	 * @param imageFile the path to the image
+	 */
 	public Sprite(String imageFile)
 	{
 		this.transform = new AffineTransform();
@@ -82,12 +90,20 @@ public class Sprite extends JFrame
 		}
 	}
 	
+	/**
+	 * set the centrod of the sprite
+	 * @param x the x centroid coordinate
+	 * @param y the y centroid coordinate
+	 */
 	public void setCentroid(double x, double y)
 	{
 		this.centroidX = x;
 		this.centroidY = y;
 	}
 	
+	/**
+	 * updates the transform coordinates of the sprite
+	 */
 	public void updateTransform()
 	{
 		this.transform.setToIdentity();		
@@ -95,14 +111,23 @@ public class Sprite extends JFrame
 		this.transform.rotate(this.angle, this.width * 0.5, this.height * 0.5);
 		this.transform.scale(this.scaleX, this.scaleY);
 		this.updateBounds();
-		//this.transform.translate(this.posx, this.posy);
 	}
 	
+	/**
+	 * sets the bounds of the bounding box of the sprite
+	 * @param x the x coordinate
+	 * @param x the x coordinate
+	 * @param width the width of the box
+	 * @param height the height of the box
+	 */
 	public void setBounds(double x, double y, double width, double height)
 	{
 		this.bounds.setRect((int)x, (int)y, (int)width, (int)height);
 	}
 	
+	/**
+	 * automatically computes the bounds of the box after any transformation occurs
+	 */
 	public void updateBounds()
 	{
 		this.setBounds(this.posX+this.centroidX, 
@@ -111,11 +136,19 @@ public class Sprite extends JFrame
                        this.height);
 	}
 	
+	/**
+	 * get the current bounds of the sprite
+	 */
 	public Rectangle getBounds()
 	{
 		return this.bounds;
 	}
 	
+	/**
+	 * sets the position of the sprite
+	 * @param x the x position
+	 * @param y the y position
+	 */
 	public void setPos(double x, double y)
 	{
 		this.posX = x;
@@ -123,6 +156,11 @@ public class Sprite extends JFrame
 		this.updateTransform();
 	}
 	
+	/**
+	 * moves the sprite relative to the current position
+	 * @param x the x value to move by
+	 * @param y the y value to move by
+	 */
 	public void moveBy(double x, double y)
 	{
 		this.posX += x;
@@ -130,12 +168,22 @@ public class Sprite extends JFrame
 		this.updateTransform();		
 	}
 	
+	/**
+	 *  rotates the sprite by the angle offset
+	 * @param angle the angle value to rotate by
+	 */
 	public void rotateBy(double angle)
 	{
 		this.angle += angle;
 		this.updateTransform();	
 	}
 	
+	/**
+	 * moves and rotates the sprite relative to current position and angle
+	 * @param x the x offset
+	 * @param y the y offset
+	 * @param rotate the angle offset
+	 */
 	public void moveAndRotateBy(double x, double y, double rotate)
 	{
 		this.posX += x;
@@ -144,12 +192,21 @@ public class Sprite extends JFrame
 		this.updateTransform();		
 	}
 	
+	/**
+	 * sets the rotation of the sprite
+	 * @param angle the angle to set the rotation to
+	 */
 	public void setRot(double angle)
 	{
 		this.angle = angle;
 		this.updateTransform();
 	}
 	
+	/**
+	 * sets the scale of the sprite
+	 * @param scaleX the X scale to set
+	 * @param scaleY the Y scale to set
+	 */
 	public void setScale(double scaleX, double scaleY)
 	{
 		this.scaleX = scaleX;
@@ -158,65 +215,74 @@ public class Sprite extends JFrame
 	}
 	
 	
+	/**
+	 * get the BufferedImage object
+	 * @return a BufferedImage of the sprite
+	 */
 	public BufferedImage getImageBuffer()
 	{
 		return this.bufferedImage;
 	}
 	
+	/*
+	 * gets the Image of the sprite
+	 */
 	public Image getImage()
 	{
 		return this.image;
 	}
 	
+	/**
+	 * gets the x position of the sprite
+	 * @return the x position
+	 */
 	public double getPosX()
 	{
 		return this.posX;
 	}
 	
+	/**
+	 * gets the y postion of the sprite
+	 * @return the y position of the sprite
+	 */
 	public double getPosY()
 	{
 		return this.posY;
 	}
 	
+	/**
+	 * gets the angle of the sprite
+	 * @return the angle in radians
+	 */
 	public double getAngle()
 	{
 		return this.angle;
 	}
 	
+	/**
+	 * get the transformation matrix of the sprite
+	 * @return the AffineTransform matrix
+	 */
 	public AffineTransform getTransform()
 	{
 		return this.transform;
 	}
 	
+	/**
+	 * gets the width of the sprite
+	 * @return width the width of the sprite
+	 */
 	public int getWidth()
 	{
 		return (int)this.width;
 	}
 	
+	/**
+	 * gets the heigth of the sprite
+	 * @return width the heigth of the sprite
+	 */
 	public int getHeight()
 	{
 		return (int)this.height;
 	}
-	
-	
-	/*
-	@Override(non-Javadoc)
-	protected void paintComponent(Graphics g) {
-	      super.paintComponent(g);
-	      g.drawImage(this.image, (int)this.posx, (int)this.posx, this);
-	      g.setColor(Color.yellow);
-	      int rectCount = 10;
-	      //g.drawImage(img1, myX, myY, this);
-	      int height = getHeight() / rectCount;
-	      int width = 27;
-	      int x = getWidth() - width;
-	      for (int i = 0; i < rectCount; i++) {
-	         int y = i * height;
-	         g.drawRect(x, y, width, height);
-	      }
-	      Font font1 = new Font("Serif", Font.BOLD, 36);
-	      g.setFont(font1);
-	      g.drawString(Integer.toString(10), 500, 100);
-	   }
-	   */
 }

@@ -1,10 +1,17 @@
 
-
+/**
+ * Bullet asset class for managing bullet behavior
+ * @author Rony Edde
+ *
+ */
 public class Bullet extends Asset
 {
 	Sprite bullet;
 	double speed;
 	
+	/**
+	 * constructor for the bullet class
+	 */
 	public Bullet()
 	{
 		super();
@@ -21,11 +28,18 @@ public class Bullet extends Asset
 							    (-this.bullet.getHeight())*0.5);
 	}
 	
+	/**
+	 * sets the speed of the bullet
+	 * @param value
+	 */
 	public void setSpeed(double value)
 	{
 		this.speed = value;
 	}
 	
+	/**
+	 * bullet animation logic 
+	 */
 	public void step()
 	{
 		double x = this.speed * Math.cos(this.bullet.getAngle());
