@@ -17,8 +17,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * @author Fanglin Lu and Xinxin Ma
  * This program provides Login and sign up interface for users.
+ * 
+ * @author Fanglin Lu and Xinxin Ma
  */
 public class Login extends JFrame {
 
@@ -113,11 +114,11 @@ public class Login extends JFrame {
 		jTextField2 = new JPasswordField();
 
 		Box box1 = Box.createHorizontalBox();
-		
+
 		// email
 		box1.add(jLabel2);
 		box1.add(jTextField1);
-		
+
 		// password
 		box1.add(jLabel3);
 		box1.add(jTextField2);
@@ -132,7 +133,7 @@ public class Login extends JFrame {
 
 			}
 		});
-		
+
 		// put everything on the panel
 		jPanel3.add(jButton1);
 		jPanel3.add(jLabel4);
@@ -147,16 +148,21 @@ public class Login extends JFrame {
 	}
 
 	/**
+	 * This method shows what will happen after click the "sign on" button.
+	 * 
 	 * @param evt
-	 *            This method shows what will happen after click the "sign on"
-	 *            button.
 	 */
 	private void jButton2ActionPerformed(ActionEvent evt) {
 		String inputName = nameField.getText();
 		String inputEmail = emailField.getText();
 		char[] inputPw = passwordField.getPassword();
 
+<<<<<<< HEAD
 		if (inputName.equals("Name")) {
+=======
+		// if name/email/password user input is null, show error messages.
+		if (inputName.equals("")) {
+>>>>>>> c6260023f64c4ae2f1009a86b843bd85c756c333
 			JOptionPane.showMessageDialog(null,
 					"Please try to enter your name.", "Failed",
 					JOptionPane.ERROR_MESSAGE);
@@ -184,9 +190,9 @@ public class Login extends JFrame {
 	}
 
 	/**
+	 * This method shows what will happen after clicking the "login" button.
+	 * 
 	 * @param evt
-	 *            This method shows what will happen after clicking the "login"
-	 *            button.
 	 */
 	private void jButton1ActionPerformed(ActionEvent evt) {
 		Boolean match = false;
@@ -194,38 +200,62 @@ public class Login extends JFrame {
 		char[] inputPw = jTextField2.getPassword();
 		ArrayList<Person> p = UserDatabase.getUsers();
 
-		for (Person person : p) {
-			if (Arrays.equals(person.getPassword(), inputPw)
-					&& inputEmail.equals(person.getEmail())) {
-				match = true;
-				user = person;
+		// if email or password input is null, show error messages
+		if (inputEmail.equals("")) {
+			JOptionPane.showMessageDialog(null,
+					"Please try again and enter your email.", "Failed",
+					JOptionPane.ERROR_MESSAGE);
+
+		} else if (inputPw.length == 0) {
+			JOptionPane.showMessageDialog(null,
+					"Please try again and enter your password.", "Failed",
+					JOptionPane.ERROR_MESSAGE);
+
+		} else {
+			// if the email and password input are both match tuple in database,
+			// the boolean match shows true, otherwise it will be false (false
+			// default)
+			for (Person person : p) {
+				if (Arrays.equals(person.getPassword(), inputPw)
+						&& inputEmail.equals(person.getEmail())) {
+					match = true;
+					user = person;
+				}
+			}
+
+			// if match is true then show the profile, otherwise show another
+			// error message
+			if (match == true) {
+				Profile pf = new Profile(user);
+				// FileReader fd = new FileReader();
+
+			} else {
+				JOptionPane
+						.showMessageDialog(
+								null,
+								"Username or Password is not correct! Please sign up or type agin!",
+								"Failed", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 
-		if (match == true) {
-			Profile pf = new Profile(user);
-			// FileReader fd = new FileReader();
-
-		} else {
-			JOptionPane
-					.showMessageDialog(
-							null,
-							"Username or Password is not correct! Please sign up or type agin!",
-							"Failed", JOptionPane.ERROR_MESSAGE);
-		}
 	}
 
 	/**
-	 * @return user This method get a new person.
+	 * This method get a new person.
+	 * 
+	 * @return user
+	 * 
 	 */
 	public Person getPerson() {
 		return user;
 	}
 
 	/**
+	 * Main method -- a new Login and Sign on panel and all related functions
+	 * are displayed.
+	 * 
 	 * @param args
-	 *            Main method -- a new Login and Signon panel and all related
-	 *            functions are displayed.
+	 * 
 	 */
 	public static void main(String args[]) {
 		Login newLogin = new Login();
