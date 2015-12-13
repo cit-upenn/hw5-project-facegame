@@ -1,6 +1,6 @@
-Name
-Email
-New Password
+Xinxin Ma
+xinxinma@gmail.com
+123
 
 
 

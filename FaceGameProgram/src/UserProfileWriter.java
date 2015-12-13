@@ -5,8 +5,58 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
 public class UserProfileWriter {
+	
+	public void createUserInividuleData (Person p) {
+		try {
+			String filename = "";
+			filename = p.getId() + ".txt";
+			PrintWriter out = new PrintWriter(filename);
+			
+			out.println(p.getName());
+			out.println(p.getEmail());
+			String password = new String (p.getPassword());
+			out.println(password);
+			
+			out.println(p.getPicturePath());
+			
+			if (p.getGameScore() != null) {
+				for (int s: p.getGameScore()) {
+					out.print(s + ",");
+				}
+			}
+			out.println();
+			
+			if (p.getFriends() != null) {
+				int f = 0;
+				ArrayList<Integer> friendsIdx = p.getFriends();
+
+				for (f=0; f < friendsIdx.size() - 1; f++) {
+					out.print( friendsIdx.get(f) + ",");
+				}
+				if(friendsIdx.size() > 0)
+					out.print(friendsIdx.get(f));
+			}
+			out.println();
+			
+			if (p.getPosts() != null) {
+				for (String s: p.getPosts()) {
+					out.print(s);
+				}
+			}
+			out.println();
+			
+			out.flush();
+			out.close();
+			
+	
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
 	
 	public void write(Person p) {
 		try {

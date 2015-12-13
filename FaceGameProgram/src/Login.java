@@ -156,17 +156,17 @@ public class Login extends JFrame {
 		String inputEmail = emailField.getText();
 		char[] inputPw = passwordField.getPassword();
 
-		if (inputName.equals("")) {
+		if (inputName.equals("Name")) {
 			JOptionPane.showMessageDialog(null,
-					"Please try again and enter your name.", "Failed",
+					"Please try to enter your name.", "Failed",
 					JOptionPane.ERROR_MESSAGE);
 
-		} else if (inputEmail.equals("")) {
+		} else if (inputEmail.equals("Email")) {
 			JOptionPane.showMessageDialog(null,
-					"Please try again and enter your email.", "Failed",
+					"Please try to enter your email.", "Failed",
 					JOptionPane.ERROR_MESSAGE);
 
-		} else if (inputPw.length == 0) {
+		} else if (String.valueOf(inputPw).equals("New Password")) {
 			JOptionPane.showMessageDialog(null,
 					"Please try again and enter your password.", "Failed",
 					JOptionPane.ERROR_MESSAGE);

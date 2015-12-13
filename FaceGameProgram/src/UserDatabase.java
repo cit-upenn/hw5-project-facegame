@@ -60,6 +60,7 @@ import javax.swing.plaf.synth.SynthSeparatorUI;
 					
 					p.setPostList(postLists);
 				}
+				System.out.println(p.getName());
 				users.add(p);
 			}
 		}

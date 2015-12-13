@@ -20,7 +20,7 @@ public class Person {
  	
  	public Person (String name, String email, char[] pw) {
  		
- //		id = UserDatabase.getNumberOfUsers();
+ 		id = UserDatabase.getNumberOfUsers();
  		this.name = name;
  		this.email = email;
  		password = pw;

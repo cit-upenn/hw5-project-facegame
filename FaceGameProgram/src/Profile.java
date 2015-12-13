@@ -42,6 +42,7 @@ public class Profile extends JFrame {
 	private JLabel gameScoreLabel;
 	private JLabel gameScoreTag;
 //	private JLabel nameArea = new JLabel("");
+	
 	private JTextArea statusArea = new JTextArea("");
 	
 	private JTextField tf1 = new JTextField("New Status", 20);
@@ -61,6 +62,8 @@ public class Profile extends JFrame {
 //	private String picturePath = "penguin.png";
 	private int gameScore = 0;
 	private String post = "";
+	
+	private JComboBox searchFriends;
 	
 //	public Profile () {
 //		gui();
@@ -95,8 +98,29 @@ public class Profile extends JFrame {
 		p1.setBackground(new Color(0.9f, 1.0f, 1.0f));
 		p1.add(tf1);
 		p1.add(b1);
+		
+		ArrayList<Person> usersFromDatabase = UserDatabase.getUsers();
+		System.out.println(usersFromDatabase.size());
+		int databaseSize = UserDatabase.getNumberOfUsers();
+		System.out.println(databaseSize);
+		
+		String[] userNameArray = new String[databaseSize];
+		
+		int j = 0;
+		
+		for (int i = 0; i < databaseSize;i++) {
+			String userName = usersFromDatabase.get(i).getName();
+			if (!userName.equals(loginUser.getName())){
+				userNameArray[j] = userName;
+				j++;
+			}
 
-		p1.add(tf3);
+		}
+		
+		searchFriends = new JComboBox(userNameArray);
+
+//		p1.add(tf3);
+		p1.add(searchFriends);
 		p1.add(b5);
 		// added the image path input Textfield
 		p1.add(tf4);
@@ -165,6 +189,7 @@ public class Profile extends JFrame {
 //		pPosts.add(status);
 		
 		statusArea.setText(post);
+		statusArea.setBackground(new Color(0.9f, 1.0f, 1.0f));
 		pPosts.add(statusArea);
 		
 		b4.setFont(new Font("Serif", Font.ITALIC, 30));
@@ -223,6 +248,7 @@ public class Profile extends JFrame {
 			public void actionPerformed(ActionEvent pictureButtonEvt) {
 				picturePath = tf4.getText();
 				updatePictureProfile(picturePath);
+				System.out.println(imageLabel.getText());
 				imagePanel.add(imageLabel);
 		
 			}
@@ -232,6 +258,25 @@ public class Profile extends JFrame {
 		b4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				launchGame();
+			}
+		});
+		
+		b5.addActionListener(new ActionListener(){
+			public void actionPerformed (ActionEvent addFriendsEvent){
+				ArrayList <Person> userListInfo = UserDatabase.getUsers();
+				int found = -1;
+				for (int i = 0; i < userListInfo.size(); i++) {
+					if (userListInfo.get(i).getName().compareTo(searchFriends.getSelectedItem().toString()) == 0) {
+						found = i;
+						break;
+					}
+				}
+				if (found != -1) {
+					loginUser.addFriend(found);
+					System.out.println(loginUser.getFriends());
+					UserProfileWriter upw = new UserProfileWriter();
+					upw.createUserInividuleData(loginUser);
+				}
 			}
 		});
 		
@@ -302,7 +347,7 @@ public class Profile extends JFrame {
 		for(int i = 1; i < glStrings.length - 5; i++)
 		{	
 			s = glStrings[glStrings.length - 5 - i];
-			finalLocation +=  s  + ", ";
+			finalLocation +=  s  + "\n";
 		}
 		s = glStrings[glStrings.length - 5];
 		finalLocation += s;
@@ -335,6 +380,7 @@ public class Profile extends JFrame {
 //		pCenter.add (imageLabel);
 //
 //		add(imageLabel);
+		System.out.println(picturePath);
 		
 		
 		BufferedImage originalImage = null;
@@ -352,6 +398,7 @@ public class Profile extends JFrame {
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
+			System.out.println("Come to catch!");
 			e.printStackTrace();
 		}
 		this.imageLabel = new JLabel(new ImageIcon(image));
