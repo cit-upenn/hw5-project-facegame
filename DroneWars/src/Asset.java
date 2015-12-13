@@ -1,11 +1,20 @@
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
+/**
+ * Asset class that manages 2D elements
+ * Collisions images, transforms and behaviors
+ * @author Rony Edde
+ *
+ */
 public class Asset 
 {
 	ArrayList<Sprite> sprites;
 
-	
+	/**
+	 * constructor initialization
+	 * @param spritePaths
+	 */
 	public Asset(ArrayList<String> spritePaths)
 	{
 		this.sprites = new ArrayList<Sprite>();
@@ -15,13 +24,18 @@ public class Asset
 		}
 	}
 
+	/**
+	 * checks if sprite collides with another rectangle
+	 * @param index the index of the sprite
+	 * @param rec the rectangle to check against
+	 * @return true if a collision occurred
+	 */
 	public boolean collidesWith(int index, Rectangle rec)
 	{
 		if(this.sprites.size() >= 1)
 		{
-			//Sprite sprite = this.sprites.get(index);
-			Rectangle bounds = getBBox(index);//new Rectangle((int)sprite.getPosX(), (int)sprite.getPosY(),
-		     		  					     //(int)sprite.getPosX(), (int)sprite.getPosY());
+			// get bounds
+			Rectangle bounds = getBBox(index);
 			
 			if(bounds.intersects(rec))
 				return true;
@@ -29,6 +43,11 @@ public class Asset
 		return false;
 	}
 	
+	/**
+	 * gets the bounding box of the sprite index
+	 * @param index the sprite index
+	 * @return bounding box
+	 */
 	public Rectangle getBBox(int index)
 	{
 		Rectangle bBox = new Rectangle();
@@ -40,6 +59,12 @@ public class Asset
 		return bBox;
 	}
 	
+	/**
+	 * gets an eroded bounding box 
+	 * @param index the sprite index
+	 * @param scale the number of pixels to erode
+	 * @return
+	 */
 	public Rectangle getErodedBBox(int index, int scale)
 	{
 		Rectangle bBox = this.sprites.get(index).getBounds();
@@ -49,23 +74,40 @@ public class Asset
 							 (bBox.height-scale*2));		
 	}
 	
+	/**
+	 * constructor that takes a sprite as initialiser
+	 * @param spritePath
+	 */
 	public Asset(String spritePath)
 	{
 		this.sprites = new ArrayList<Sprite>();
 		this.add(spritePath);
 	}
 	
+	/**
+	 * constructor that takes no parameters
+	 * default operation for an empty asset
+	 */
 	public Asset()
 	{
 		this.sprites = new ArrayList<Sprite>();
 	}
 	
+	/**
+	 * creates and adds a sprite from the specified path
+	 * @param spritePath to the image on disk
+	 */
 	public void add(String spritePath)
 	{
 		Sprite sprite = new Sprite(spritePath);
 		this.sprites.add(sprite);
 	}
 	
+	/**
+	 * moves the asset on screen offset from the current location
+	 * @param x the x coordinate offset
+	 * @param y the y coordinate offset
+	 */
 	public void moveBy(double x, double y)
 	{
 		for(Sprite sprite : this.sprites)
@@ -74,6 +116,10 @@ public class Asset
 		}
 	}
 	
+	/**
+	 * rotates the asset by the specified angle
+	 * @param x the offset angle in radians from the current angle
+	 */
 	public void rotateBy(double x)
 	{
 		for(Sprite sprite : this.sprites)

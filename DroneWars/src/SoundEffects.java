@@ -4,12 +4,21 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 
+/**
+ * Threaded Sound Effects class for playing sounds
+ * @author Rony Edde
+ *
+ */
 public class SoundEffects extends Thread
 {
 	Clip clip;
 	File url;
 	AudioInputStream audioIn;
 	
+	/**
+	 * Constructor to SoundEffects that tries to load audio for playing
+	 * @param soundPath the path to the audio file
+	 */
 	public SoundEffects(String soundPath)
 	{
 		try 
@@ -24,7 +33,9 @@ public class SoundEffects extends Thread
 			e.printStackTrace();
 		}
 	}
-		
+	/**
+	 * plays the audio until
+	 */
 	public void run()
 	{
 		//this.clip.stop();

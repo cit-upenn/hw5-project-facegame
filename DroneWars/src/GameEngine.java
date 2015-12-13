@@ -25,76 +25,82 @@ import java.awt.geom.AffineTransform;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-
+/**
+ * Game engine class for all the game engine logic.
+ * Enemies, player, score, sound graphics etc are all handled here
+ * @author Rony Edde
+ *
+ */
 public class GameEngine extends Canvas {
 
 	private BufferStrategy strategy;
 	private boolean gameRunning = true;
 	
 	//private final Object redrawLock;
-	JFrame win;
-	JPanel panel;
-	Graphics graphics;
-	Graphics2D g2d;
-	double rotate;
-	int width;
-	int height;
-	HashMap<Character, Integer> keysPressed;
-	ArrayList<Bullet> bullets;
-	ArrayList<MotionAsset> enemies;
-	ArrayList<PowerUp> powerUps;
-	ArrayList<HeartUp> heartUps;
-	Player player;
-	ImageAsset lifeAsset;
-	ImageAsset bombAsset;
+	private JFrame win;
+	private JPanel panel;
+	private Graphics graphics;
+	private Graphics2D g2d;
+	private double rotate;
+	private int width;
+	private int height;
+	private HashMap<Character, Integer> keysPressed;
+	private ArrayList<Bullet> bullets;
+	private ArrayList<MotionAsset> enemies;
+	private ArrayList<PowerUp> powerUps;
+	private ArrayList<HeartUp> heartUps;
+	private Player player;
+	private ImageAsset lifeAsset;
+	private ImageAsset bombAsset;
 	
-	double difficulty;
-	int numLives;
-	int numBombs;
-	int numBombBullets;
-	boolean paused;
-	boolean gameOver;
-	double playerSpeed;
-	boolean moveUp;
-	boolean moveDown;
-	boolean moveLeft;
-	boolean moveRight;
-	boolean rotateLeft;
-	boolean rotateRight;
-	boolean fireUp;
-	boolean fireDown;
-	boolean fireLeft;
-	boolean fireRight;
-	boolean useBomb;
-	int powerUpCount;
+	private double difficulty;
+	private int numLives;
+	private int numBombs;
+	private int numBombBullets;
+	private boolean paused;
+	private boolean gameOver;
+	private double playerSpeed;
+	private boolean moveUp;
+	private boolean moveDown;
+	private boolean moveLeft;
+	private boolean moveRight;
+	private boolean rotateLeft;
+	private boolean rotateRight;
+	private boolean fireUp;
+	private boolean fireDown;
+	private boolean fireLeft;
+	private boolean fireRight;
+	private boolean useBomb;
+	private int powerUpCount;
 	
-	boolean firstLoop;
-	boolean gameStarted;
-	long lastFireTime;
-	long fireInterval;
-	long lastSpawnTime;
-	long spawnInterval;
-	long lastPowerUpSpawnTime;
-	long powerUpSpawnInterval;
-	long lastHeartUpSpawnTime;
-	long heartUpSpawnInterval;
-	long lastSoundTime;
-	long soundInterval;
+	private boolean firstLoop;
+	private boolean gameStarted;
+	private long lastFireTime;
+	private long fireInterval;
+	private long lastSpawnTime;
+	private long spawnInterval;
+	private long lastPowerUpSpawnTime;
+	private long powerUpSpawnInterval;
+	private long lastHeartUpSpawnTime;
+	private long heartUpSpawnInterval;
+	private long lastSoundTime;
+	private long soundInterval;
 	
-	int playerScore;
-	int collisionThreshold;
+	private int playerScore;
+	private int collisionThreshold;
 	
-	String enemyPath1;
-	String enemyPath2;
+	private String enemyPath1;
+	private String enemyPath2;
 	
-	SoundEffects bulletSound;
-	SoundEffects bombSound;
-	SoundEffects hitSound;
-	
-	//private KeyEventListener listener;
+	private SoundEffects bulletSound;
+	private SoundEffects bombSound;
+	private SoundEffects hitSound;
 	
 	
-	
+	/**
+	 * game Engine constructor
+	 * @param containerFrame an optional JFrame to inherit as a parent
+	 */
 	public GameEngine(JFrame containerFrame) 
 	{
 		// the frame where we will draw everything
@@ -141,10 +147,12 @@ public class GameEngine extends Canvas {
 		strategy = getBufferStrategy();
 		
 		// setup main game parameters
-		// TODO integrate with main window once everything works
 		this.setup();
 	}
 	
+	/**
+	 * setup default values and startup for a new game and for restarting a game
+	 */
 	public void setup()
 	{
 		this.width = 640;
@@ -192,13 +200,15 @@ public class GameEngine extends Canvas {
 		this.player.moveBy(this.width * 0.5 - this.player.getBBox(0).getCenterX(),
 						   this.height * 0.5 - this.player.getBBox(0).getCenterY());
     	
+		// initialise the entities so there's something to see
     	// temp testing of enemies
-    	this.spawnEnemies(10);
-		// initialise the entities in our game so there's something
-		// to see at startup
+    	// this.spawnEnemies(10);
 	}
 	
 
+	/**
+	 * Main game loop where enemy logic, updates and draw calls take place
+	 */
 	public void gameLoop() 
 	{
 		long lastLoopTime = System.currentTimeMillis();
@@ -307,8 +317,6 @@ public class GameEngine extends Canvas {
 	    		boolean collision = this.player.collidesWith(0, bBox);
 				if(collision)
 				{
-					//System.out.println("enemy  bbox = " + bBox);
-					//System.out.println("player bbox = " + this.player.getBBox(0));
 					this.powerUps.remove(i);
 					this.powerUpCount = 100;
 				}
@@ -332,8 +340,6 @@ public class GameEngine extends Canvas {
 	    		boolean collision = this.player.collidesWith(0, bBox);
 				if(collision)
 				{
-					//System.out.println("enemy  bbox = " + bBox);
-					//System.out.println("player bbox = " + this.player.getBBox(0));
 					this.heartUps.remove(i);
 					this.numLives+=2;
 				}
@@ -358,7 +364,7 @@ public class GameEngine extends Canvas {
 						this.bullets.remove(j);
 						this.playerScore+=10;
 						this.hitSound.run();
-						//System.out.println("Collision occurred");
+
 						break;
 					}
 				}
@@ -367,8 +373,6 @@ public class GameEngine extends Canvas {
 				collision = this.player.collidesWith(0, bBox);
 				if(collision)
 				{
-					//System.out.println("enemy  bbox = " + bBox);
-					//System.out.println("player bbox = " + this.player.getBBox(0));
 					this.enemies.remove(i);
 					this.numLives--;
 				}
@@ -396,6 +400,10 @@ public class GameEngine extends Canvas {
 		}
 	}
 
+	/**
+	 * check if enough time has elapsed to enable firing
+	 * @return true if enough time elapsed to fire
+	 */
 	public boolean canFire() 
 	{
 		// test if enough time elapsed to fire
@@ -411,6 +419,11 @@ public class GameEngine extends Canvas {
 		return true;
 	}
 
+	/**
+	 * check if enough time elapsed to play sound.
+	 * avoids clashing sound noise and slowdown
+	 * @return true if enough time elapsed to play sound
+	 */
 	public boolean canPlaySound() 
 	{
 		// test if enough time elapsed to fire
@@ -423,6 +436,10 @@ public class GameEngine extends Canvas {
 		return true;
 	}
 	
+	/**
+	 * check if enough time has elapsed to spawn new enemies
+	 * @return true if enough time elapsed
+	 */
 	public boolean canSpawn()
 	{
 		// test if enough time elapsed to spawn
@@ -435,6 +452,10 @@ public class GameEngine extends Canvas {
 		return true;
 	}
 	
+	/**
+	 * check if enough time elapsed to spawn power ups
+	 * @return true if enough time elapsed
+	 */
 	public boolean canSpawnPowerUps()
 	{
 		// test if enough time elapsed to spawn
@@ -447,6 +468,10 @@ public class GameEngine extends Canvas {
 		return true;
 	}
 	
+	/**
+	 * check if enough time elapsed to spawn heart power ups
+	 * @return true if enough time elapsed
+	 */
 	public boolean canSpawnHeartUps()
 	{
 		// test if enough time elapsed to spawn
@@ -459,6 +484,10 @@ public class GameEngine extends Canvas {
 		return true;
 	}
 	
+	/**
+	 * fire shots.  Creates new bullets with initial speed and direction 
+	 * following the gun
+	 */
 	public void fireShots()
 	{
 		// compute fire interval
@@ -535,6 +564,10 @@ public class GameEngine extends Canvas {
 		}
 	}
 	
+	/**
+	 * create a radial firing of bombs and decrement the bomb number
+	 * @param numBullets the number of bullets to fire
+	 */
 	public void useBomb(int numBullets)
 	{
 		double angle = 0.0;
@@ -551,7 +584,10 @@ public class GameEngine extends Canvas {
 		}
 	}
 
-
+	/**
+	 * spawn enemies
+	 * @param num the number of enemies to spawn
+	 */
 	public void spawnEnemies(int num)
 	{
 		if(this.canSpawn())
@@ -600,6 +636,10 @@ public class GameEngine extends Canvas {
 		}
 	}
 	
+	/**
+	 * spawn power ups
+	 * @param num the number of power ups to spawn
+	 */
 	public void spawnPowerUps(int num)
 	{
 		if(this.canSpawnPowerUps())
@@ -644,6 +684,10 @@ public class GameEngine extends Canvas {
 		}
 	}
 	
+	/**
+	 * spawn hears to the player
+	 * @param num the number of hearts to spawn
+	 */
 	public void spawnHeartUps(int num)
 	{
 		if(this.canSpawnHeartUps())
@@ -688,6 +732,10 @@ public class GameEngine extends Canvas {
 		}
 	}
 	
+	/**
+	 * increments difficulty
+	 * @param val the amount of difficulty to increment by
+	 */
 	public void incrementDifficulty(double val)
 	{
 		this.difficulty += val;
@@ -702,55 +750,59 @@ public class GameEngine extends Canvas {
 		}
 	}
 	
+	/**
+	 * draws the player ship to the graphics context.
+	 * @param g the graphics context
+	 */
 	public void drawPlayer(Graphics2D g)
 	{
 		g.drawImage(this.player.ship.getImage(), this.player.ship.getTransform(), null);
     	g.drawImage(this.player.gun.getImage(), this.player.gun.getTransform(), null);
-    	
-    	//Rectangle r = this.player.getErodedBBox(0, 5);
-    	//g.setColor(Color.RED);
-    	//g.drawRect(r.x, r.y, r.width, r.height);
 	}
 	
+	/**
+	 * draws the enemy ships to the graphics context.
+	 * @param g the graphics context
+	 */
 	public void drawEnemies(Graphics2D g)
 	{
 		for(int i=0; i<this.enemies.size(); i++)
     	{
     		MotionAsset motionAsset = this.enemies.get(i);
     		g.drawImage(motionAsset.entity.getImage(), motionAsset.entity.getTransform(), null);
-    		
-    		//Rectangle r = enemy.getErodedBBox(0, 5);
-        	//g.setColor(Color.BLUE);
-        	//g.drawRect(r.x, r.y, r.width, r.height);
     	}
 	}
 	
+	/**
+	 * draws the power ups to the graphics context.
+	 * @param g the graphics context
+	 */
 	public void drawPowerUps(Graphics2D g)
 	{
 		for(int i=0; i<this.powerUps.size(); i++)
     	{
     		PowerUp powerUp = this.powerUps.get(i);
     		g.drawImage(powerUp.entity.getImage(), powerUp.entity.getTransform(), null);
-    		
-    		//Rectangle r = enemy.getErodedBBox(0, 5);
-        	//g.setColor(Color.BLUE);
-        	//g.drawRect(r.x, r.y, r.width, r.height);
     	}
 	}
 	
+	/**
+	 * draws the hearts to the graphics context.
+	 * @param g the graphics context
+	 */
 	public void drawHeartUps(Graphics2D g)
 	{
 		for(int i=0; i<this.heartUps.size(); i++)
     	{
     		HeartUp heartUp = this.heartUps.get(i);
     		g.drawImage(heartUp.entity.getImage(), heartUp.entity.getTransform(), null);
-    		
-    		//Rectangle r = enemy.getErodedBBox(0, 5);
-        	//g.setColor(Color.BLUE);
-        	//g.drawRect(r.x, r.y, r.width, r.height);
     	}
 	}
 	
+	/**
+	 * draws the player score to the graphics context.
+	 * @param g the graphics context
+	 */
 	public void drawScore(Graphics2D g)
 	{
 		String scoreStr = "Player Score:" + this.playerScore;
@@ -760,6 +812,10 @@ public class GameEngine extends Canvas {
         this.drawFont(g, scoreStr, 10, 30, new Color(1.0f, 0.6f, 0.0f));
 	}
 
+	/**
+	 * draws the number of lives to the graphics context.
+	 * @param g the graphics context
+	 */
 	public void drawLives(Graphics2D g)
 	{
 		String lifeStr = "lives";
@@ -776,6 +832,10 @@ public class GameEngine extends Canvas {
 		}
 	}
 	
+	/**
+	 * draws the number of bombs to the graphics context.
+	 * @param g the graphics context
+	 */
 	public void drawBombs(Graphics2D g)
 	{
 		String lifeStr = "bombs";
@@ -792,6 +852,14 @@ public class GameEngine extends Canvas {
 		}
 	}
 	
+	/**
+	 * draws the string as a font to the graphics context.
+	 * @param g the graphics context
+	 * @param str the string to draw
+	 * @param x the x coordinate
+	 * @param y the y coordinate
+	 * @param c the color of the text
+	 */
 	public void drawFont(Graphics2D g, String str, int x, int y, Color c)
 	{
 		float RGB[] = {0.0f, 0.0f, 0.0f, 0.0f};
@@ -809,6 +877,10 @@ public class GameEngine extends Canvas {
         g.drawString(str, x, y); 
 	}
 	
+	/**
+	 * draws the pause menu 
+	 * @param g the graphics context
+	 */
 	public void drawPauseMenu(Graphics2D g)
 	{
 		if(this.gameOver)
@@ -823,11 +895,12 @@ public class GameEngine extends Canvas {
         this.drawFont(g, str2, 220, 180, new Color(0.1f, 1.0f, 0.1f));
 	}
 
+	/**
+	 * draws the start menu
+	 * @param g the graphics context
+	 */
 	public void drawStartMenu(Graphics2D g)
 	{
-		//if(this.gameOver)
-		//	return;
-		
 		String str1 = "W A S D to move";
 		String str2 = "Up Down Left Right arrows to shoot";
 		String str3 = "press any key to start";
@@ -839,12 +912,20 @@ public class GameEngine extends Canvas {
         this.drawFont(g, str3, 215, 210, new Color(0.5f, 0.5f, 0.5f));
 	}
 	
+/**
+ * ends the game and sets it to game over
+ * @param g the graphics context
+ */
 	public void setGameOver(Graphics2D g)
 	{
 		this.drawGameOverMenu(g);
 		this.gameOver = true;
 	}
 	
+	/**
+	 * draws a game over menu
+	 * @param g the graphics context
+	 */
 	public void drawGameOverMenu(Graphics2D g)
 	{
 		String str1 = "Game Over";
@@ -858,11 +939,20 @@ public class GameEngine extends Canvas {
         this.drawFont(g, str3, 150, 210, new Color(0.5f, 0.5f, 0.5f));
 	}
 	
+	/**
+	 * gets the player score
+	 * @return the current score of the player
+	 */
 	public int getPlayerScore()
 	{
 		return this.playerScore;
 	}
 	
+	/**
+	 * Event handler class
+	 * @author Rony Edde
+	 *
+	 */
 	private class KeyInputHandler extends KeyAdapter 
 	{
 
@@ -931,10 +1021,11 @@ public class GameEngine extends Canvas {
 	    	}
 		}
 
+		/**
+		 * disabled
+		 */
 		public void keyTyped(KeyEvent e) 
-		{
-			// nothing for now
-		}
+		{}
 	}
 }
 

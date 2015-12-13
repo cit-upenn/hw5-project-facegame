@@ -5,17 +5,28 @@ import java.awt.event.KeyListener;
 
 import javax.swing.JFrame;
 
+/**
+ * Threading class for running the game in a separate thread
+ * @author Rony Edde
+ *
+ */
 public class GameThread extends Thread
 {
 	GameEngine window;
 	long currentTime;
 	
+	/**
+	 * constructor to initialize
+	 */
 	public GameThread()
 	{
 		this.window = new GameEngine(null);
 		this.currentTime = System.currentTimeMillis();
 	}
 	
+	/**
+	 * runs the thread
+	 */
 	public void run()
 	{
 		this.window.repaint(17);
@@ -27,11 +38,9 @@ public class GameThread extends Thread
 			{	    	
 				//this.window.eval();
 				//this.window.draw();
-				//System.out.println("draw " + (now - this.currentTime));
 				this.currentTime = System.currentTimeMillis();
 				
 			}
-			//System.out.println("	TIME ELAPSED " + (now - this.currentTime));
 		}
 	}
 }
