@@ -33,6 +33,7 @@ public class Profile extends JFrame {
 	private JButton b3 = new JButton("Update profile picture");
 	private JButton b4 = new JButton("Play Game!");
 	private JButton b5 = new JButton("Add Friends");
+	private JButton b6 = new JButton ("Delete Freinds");
 
 	private JLabel welcome;
 	private JLabel penguin;
@@ -64,6 +65,7 @@ public class Profile extends JFrame {
 	private String post = "";
 	
 	private JComboBox searchFriends;
+	private JComboBox deleteFriends;
 	
 //	public Profile () {
 //		gui();
@@ -238,6 +240,7 @@ public class Profile extends JFrame {
 	//			updateStatus();
 				updateStatusArea();
 				pPosts.add(statusArea);
+				
 //				System.out.println(statusArea.getText());
 				
 			}
