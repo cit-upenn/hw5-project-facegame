@@ -2,6 +2,7 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.synth.SynthSeparatorUI;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -55,7 +56,7 @@ public class Profile extends JFrame {
 	private JTextField tf1;
 	private JTextField tf2;
 	private JTextField tf3;
-	private JTextField tf4;
+	//private JTextField tf4;
 	
 	private ImageIcon img;
 	private BufferedImage image;
@@ -118,7 +119,7 @@ public class Profile extends JFrame {
 		this.tf1 = new JTextField("New Status", 20);
 		this.tf2 = new JTextField("Search Friends", 15);
 		this.tf3 = new JTextField("Search users", 15);
-		this.tf4 = new JTextField("Image path", 15);
+		//this.tf4 = new JTextField("Image path", 15);
 		
 		this.container = new JFrame("Drone Wars");
 		this.picturePath = "emptyProfilePicture2.jpg";
@@ -149,7 +150,7 @@ public class Profile extends JFrame {
 		p1.add(tf3);
 		p1.add(b5);
 		// added the image path input Textfield
-		p1.add(tf4);
+		//p1.add(tf4);
 		p1.add(b3);
 
 		p2.setBackground(new Color(0.9f, 0.9f, 0.9f));
@@ -213,8 +214,6 @@ public class Profile extends JFrame {
 			this.model.setValueAt(friendPerson.getName(), i, 0);
 		}
 		
-		
-		
 		JLabel friendsLabelField = new JLabel("Friends List");
 		friendsLabelField.setFont(new Font("Serif", Font.ITALIC, 20));
 		
@@ -252,7 +251,7 @@ public class Profile extends JFrame {
 		pCenter.add(imagePanel);
 		
 		try {
-			updatePictureProfile(picturePath);
+			updatePictureProfile(picturePath, false);
 			this.imageLabel.setSize(300, 300);
 			this.imagePanel.setSize(300, 300);
 			imagePanel.add(imageLabel);
@@ -336,8 +335,8 @@ public class Profile extends JFrame {
 		
 		b3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent pictureButtonEvt) {
-				picturePath = tf4.getText();
-				updatePictureProfile(picturePath);
+				//picturePath = tf4.getText();
+				updatePictureProfile(picturePath, true);
 				imagePanel.add(imageLabel);
 		
 			}
@@ -442,7 +441,7 @@ public class Profile extends JFrame {
 			
 	}
 	
-	private void updatePictureProfile(String picturePath) {
+	private void updatePictureProfile(String picturePath, boolean dialog) {
 		// TODO Auto-generated method stub
 //		String imagePath = "./penguin.png";
 		//String imagePath = tf4.getText();
@@ -463,6 +462,27 @@ public class Profile extends JFrame {
 //
 //		add(imageLabel);
 		
+		//FileDialog fd = new FileDialog(this, "Choose a file", FileDialog.LOAD);
+		//fd.setDirectory(".");
+		
+		if (dialog)
+		{
+			JFileChooser chooser = new JFileChooser();
+			FileNameExtensionFilter filter = new FileNameExtensionFilter(
+					"JPG, PNG Images", "jpg", "PNG");
+			chooser.setFileFilter(filter);
+			chooser.getCurrentDirectory();
+
+			int returnVal = chooser.showOpenDialog(this);
+			if(returnVal == JFileChooser.APPROVE_OPTION) 
+			{
+				picturePath = chooser.getSelectedFile().getAbsolutePath();
+			}
+			File currentPic = new File(picturePath);
+			this.picturePath = picturePath;
+			if (currentPic.exists() == false)
+				return;
+		}
 		
 		BufferedImage originalImage = null;
 		BufferedImage image = null;
@@ -490,6 +510,8 @@ public class Profile extends JFrame {
 			this.imagePanel.remove(0);
 		
 		this.imagePanel.add(this.imageLabel, BorderLayout.NORTH);
+		imageLabel.setSize(300, 300);
+		imagePanel.setSize(300, 300);
 		//this.imagePanel.repaint();
 		//this.imageLabel.repaint();
 		repaint();
