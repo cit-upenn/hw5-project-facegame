@@ -1,5 +1,6 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -56,6 +57,10 @@ public class Login extends JFrame {
 	private void setup() {
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		setSize(450, 300);
+		setPreferredSize(new Dimension(450, 300));
+		setLocationRelativeTo(null);
 
 		// JPanel1 is the light blue panel
 		jPanel1 = new JPanel();

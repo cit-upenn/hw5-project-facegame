@@ -1,6 +1,6 @@
-Name
-Email
-New Password
+rony
+rony@rony.com
+1234
 
 
 
