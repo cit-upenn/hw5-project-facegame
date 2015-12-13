@@ -1,11 +1,16 @@
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.plaf.synth.SynthSeparatorUI;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferStrategy;
@@ -18,22 +23,26 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class Profile extends JFrame {
-	private JPanel p1 = new JPanel();
-	private JPanel p2 = new JPanel();
-	private JPanel p3 = new JPanel();
-	private JPanel p4 = new JPanel();
-	private JPanel pCenter = new JPanel();
-	private JPanel pPosts = new JPanel();
-	private JPanel gamePanel = new JPanel();
-	private JPanel imagePanel = new JPanel();
-	private JPanel gameScorePanel = new JPanel();
 
-	private JButton b1 = new JButton("Add Status");
-	private JButton b2 = new JButton("Search!");
-	private JButton b3 = new JButton("Update profile picture");
-	private JButton b4 = new JButton("Play Game!");
-	private JButton b5 = new JButton("Add Friends");
-	private JButton b6 = new JButton ("Delete Freinds");
+	private JPanel p1;
+	private JPanel p2;
+	private JPanel p3;
+	private JPanel p4;
+	private JPanel pCenter;
+	private JPanel pPosts;
+	private JPanel gamePanel;
+	private JPanel imagePanel;
+	private JPanel gameScorePanel;
+	private JTable friendsTable;
+	private TableModel model;
+	private JTextArea friendsInfo;
+	
+	private JButton b1;
+	private JButton b2;
+	private JButton b3;
+	private JButton b4;
+	private JButton b5;
+
 
 	private JLabel welcome;
 	private JLabel penguin;
@@ -42,27 +51,29 @@ public class Profile extends JFrame {
 	private JLabel status;
 	private JLabel gameScoreLabel;
 	private JLabel gameScoreTag;
+
 //	private JLabel nameArea = new JLabel("");
+
+	private JTextArea statusArea;
+
 	
-	private JTextArea statusArea = new JTextArea("");
-	
-	private JTextField tf1 = new JTextField("New Status", 20);
-	private JTextField tf2 = new JTextField("Search Friends", 15);
-	private JTextField tf3 = new JTextField("Search users", 15);
-	private JTextField tf4 = new JTextField("Image path", 15);
+	private JTextField tf1;
+	private JTextField tf2;
+	private JTextField tf3;
+	private JTextField tf4;
 	
 	private ImageIcon img;
 	private BufferedImage image;
-	private JFrame container = new JFrame("Drone Wars");
+	private JFrame container;
 	private GameThread game;
 	
 	private Person loginUser;
 	
 	private JLabel name;
-	private String picturePath = "emptyProfilePicture2.jpg";
-//	private String picturePath = "penguin.png";
-	private int gameScore = 0;
-	private String post = "";
+	private String picturePath;
+
+	private int gameScore;
+	private String post;
 	
 	private JComboBox searchFriends;
 	private JComboBox deleteFriends;
@@ -93,10 +104,52 @@ public class Profile extends JFrame {
 	}
 
 	public void gui() {
+		
+		this.p1 = new JPanel();
+		this.p2 = new JPanel();
+		this.p3 = new JPanel();
+		this.p4 = new JPanel();
+		this.pCenter = new JPanel();
+		this.pPosts = new JPanel();
+		this.gamePanel = new JPanel();
+		this.imagePanel = new JPanel();
+		this.gameScorePanel = new JPanel();
+		this.friendsInfo = new JTextArea("");
+		this.b1 = new JButton("Add Status");
+		this.b2 = new JButton("Search!");
+		this.b3 = new JButton("Update profile picture");
+		this.b4 = new JButton("Play Game!");
+		this.b5 = new JButton("Add Friends");
+		
+		this.statusArea = new JTextArea("");
+		
+		this.tf1 = new JTextField("New Status", 20);
+		this.tf2 = new JTextField("Search Friends", 15);
+		this.tf3 = new JTextField("Search users", 15);
+		this.tf4 = new JTextField("Image path", 15);
+		
+		this.container = new JFrame("Drone Wars");
+		this.picturePath = "emptyProfilePicture2.jpg";
+		this.gameScore = 0;
+		
+		this.post = "";
+		
 		setVisible(true);
 		setSize(1200, 800);
+		setPreferredSize(new Dimension(1200, 800));
+		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 
+		this.imagePanel.setSize(600, 600);
+		this.model = new DefaultTableModel(50, 1){
+			   @Override
+			   public boolean isCellEditable(int row, int column) {
+			       //Only the third column
+			       return column == 3;
+			   }
+			};
+		this.friendsTable = new JTable(model);
+		
 		p1.setBackground(new Color(0.9f, 1.0f, 1.0f));
 		p1.add(tf1);
 		p1.add(b1);
@@ -142,17 +195,76 @@ public class Profile extends JFrame {
 		}
 		
 		penguin = new JLabel(new ImageIcon(image));
-		JLabel penguin2 = new JLabel (new ImageIcon(image)); 
-		
-		JLabel penguin3 = new JLabel (new ImageIcon(image));
-		JLabel penguin4 = new JLabel (new ImageIcon(image));
+		//JLabel penguin2 = new JLabel (new ImageIcon(image)); 
+		//JLabel penguin3 = new JLabel (new ImageIcon(image));
+		//JLabel penguin4 = new JLabel (new ImageIcon(image));
 
 		
-		p2.add(welcome);
-		p2.add(penguin);
-		p2.add(penguin2);
-		p2.add(penguin3);
-		p2.add(penguin4);
+
+		this.friendsTable = new JTable(model);
+		this.friendsTable.setShowHorizontalLines(false);
+		this.friendsTable.setBackground(new Color(0.8f, 0.8f, 0.8f));
+		this.friendsTable.setShowVerticalLines(false);
+		this.friendsTable.setShowVerticalLines(false);
+		this.friendsTable.setRowHeight(20);
+
+		// fore testing purposes
+		this.model.setValueAt("friend1", 0, 0);
+		this.model.setValueAt("friend2", 1, 0);
+		// test end
+		
+		this.friendsTable.addMouseListener(new MouseAdapter()
+		{
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+            	int index = friendsTable.getSelectedRow();
+            	if(index != -1)
+            	{
+            		if (model.getValueAt(index, 0) != null)
+            		{
+            			String strValue = model.getValueAt(index, 0).toString();
+            			System.out.println(strValue);
+            			friendsInfo.setText("You have clicked on:\n" + strValue);
+            			
+            		}
+            	}
+                System.out.println("clicekd on table");
+            }
+        });
+		
+		ArrayList<Integer> friendIds = loginUser.getFriends();
+		ArrayList<Person> users = UserDatabase.getUsers();
+		
+		for (int i=0; i<friendIds.size(); i++)
+		{
+			Person friendPerson = users.get(i);
+			this.model.setValueAt(friendPerson.getName(), i, 0);
+		}
+		
+		
+		
+		JLabel friendsLabelField = new JLabel("Friends List");
+		friendsLabelField.setFont(new Font("Serif", Font.ITALIC, 20));
+		
+		JLabel friendsInfoLabel = new JLabel("Friend Info");
+		p2.add(friendsInfoLabel);
+		
+		p2.add(this.friendsInfo);
+		
+		// add friends title for friends list
+		p2.add(friendsLabelField);
+		// add friends table
+		p2.add(this.friendsTable);
+
+		// update table
+		this.updateFriendsTable();
+		
+		//p2.add(welcome);
+		//p2.add(penguin);
+		//p2.add(penguin2);
+		//p2.add(penguin3);
+		//p2.add(penguin4);
 
 		p3.setBackground(new Color(0.9f, 0.9f, 0.9f));
 		p4.setBackground(new Color(0.9f, 0.9f, 0.9f));
@@ -170,7 +282,8 @@ public class Profile extends JFrame {
 		
 		try {
 			updatePictureProfile(picturePath);
-			this.imageLabel.setSize(40, 40);
+			this.imageLabel.setSize(300, 300);
+			this.imagePanel.setSize(300, 300);
 			imagePanel.add(imageLabel);
 
 		} catch (Exception e){
@@ -189,7 +302,12 @@ public class Profile extends JFrame {
 //		status = new JLabel (post);
 //		status.setFont (new Font("Calibri", Font.PLAIN, 16));
 //		pPosts.add(status);
+		//JScrollPane scroll = new JScrollPane (statusArea, 
+		//		   JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
+		//pPosts.add(scroll);
 		
+		statusArea.setAutoscrolls(true);
 		statusArea.setText(post);
 		statusArea.setBackground(new Color(0.9f, 1.0f, 1.0f));
 		pPosts.add(statusArea);
@@ -239,8 +357,7 @@ public class Profile extends JFrame {
 			public void actionPerformed(ActionEvent updateStatusEvt) {
 	//			updateStatus();
 				updateStatusArea();
-				pPosts.add(statusArea);
-				
+				//pPosts.add(statusArea);
 //				System.out.println(statusArea.getText());
 				
 			}
@@ -334,9 +451,21 @@ public class Profile extends JFrame {
 		//gamePanel.add(gameScorePanel, BorderLayout.CENTER);
 	}
 
+	private void updateFriendsTable()
+	{
+		ArrayList<Integer> friendIds = loginUser.getFriends();
+		ArrayList<Person> users = UserDatabase.getUsers();
+		
+		for (int i=0; i<friendIds.size(); i++)
+		{
+			Person friendPerson = users.get(i);
+			this.model.setValueAt(friendPerson.getName(), i, 0);
+		}
+	}
+	
 	private void updateStatusArea()
 	{
-		this.statusArea.setText("");
+		//this.statusArea.setText("");
 		String input = tf1.getText();
 		
 		DateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
@@ -356,7 +485,7 @@ public class Profile extends JFrame {
 		finalLocation += s;
 		String textAreaInput = input + "\n" + "Date: " + df.format(dateobj) + "\n" + "Location: " + finalLocation;
 		System.out.println(textAreaInput);
-		this.statusArea.setText(textAreaInput);
+		this.statusArea.setText(textAreaInput + "\n\n" + this.statusArea.getText());
 		this.statusArea.setFont(new Font("Calibri", Font.PLAIN, 16));
 //		this.statusArea.setLocation(340, 450);
 		//this.imageLabel.setLocation(340, 50);
@@ -390,12 +519,12 @@ public class Profile extends JFrame {
 		BufferedImage image = null;
 		try {
 			originalImage = ImageIO.read(new File(picturePath));
-			image = new BufferedImage (originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+			image = new BufferedImage (300, 300, BufferedImage.TYPE_INT_ARGB);
 			
 			AffineTransform at = new AffineTransform();
-			double scaleX = 150.0 / originalImage.getWidth();
-			double scaleY = 150.0 / originalImage.getHeight();
-			at.scale(scaleX,  scaleY);
+			double scaleX = 1.0 * 300.0 / originalImage.getWidth();
+			double scaleY = 1.0 * 300.0 / originalImage.getHeight();
+			at.scale(scaleX,  scaleX);
 			AffineTransformOp ato = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
 			ato.filter(originalImage, image);
 			
@@ -407,6 +536,19 @@ public class Profile extends JFrame {
 		this.imageLabel = new JLabel(new ImageIcon(image));
 		Dimension d = new Dimension(10, 10);
 		this.imageLabel.setSize(d);;
+		//this.imagePanel.setSize(new Dimension(600, 600));
+		
+		if (this.imagePanel.getComponentCount() > 0)
+			this.imagePanel.remove(0);
+		
+		this.imagePanel.add(this.imageLabel, BorderLayout.NORTH);
+		//this.imagePanel.repaint();
+		//this.imageLabel.repaint();
+		repaint();
+		//this.pCenter.repaint();
+		//this.imagePanel.repaint();
+		//this.imageLabel.repaint();
+		//this.imagePanel.update(null);
 		
 	}
 	/*
@@ -416,7 +558,7 @@ public class Profile extends JFrame {
 
 	private void launchGame() 
 	{
-		this.updateScore(50);
+		this.updateScore(0);
 		
 		game = new GameThread(this.container, this);
 		//game.window.gameInit();
