@@ -1,66 +1,87 @@
-
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
+/**
+ * This class write something into a given file "userDatabase" and make a new
+ * file for each user to store user's name, email, password, game score, friends
+ * and posts information.
+ * 
+ * @author Fanglin
+ *
+ */
 public class UserProfileWriter {
-	
+
+	/**
+	 * This method writes in an ID into the userDatabase and creates a new file
+	 * storing all information of the user.
+	 * 
+	 * @param p
+	 */
 	public void write(Person p) {
 		try {
-//			File file = new File("userDatabase.txt");
-			OutputStreamWriter writer = new OutputStreamWriter (new FileOutputStream("userDatabase.txt", true));
-//			FileWriter fw = new FileWriter("userDatabase.txt");
-//			FileWriter fw = new FileWriter (file.getAbsoluteFile());
-			BufferedWriter fbw = new BufferedWriter(writer); 
-//			PrintWriter out2 = new PrintWriter(new FileWriter("userDatabase.txt",true));
-			String id = "" +p.getId();
+
+			// write ID into the userDatabase
+
+			// File file = new File("userDatabase.txt");
+			OutputStreamWriter writer = new OutputStreamWriter(
+					new FileOutputStream("userDatabase.txt", true));
+			// FileWriter fw = new FileWriter("userDatabase.txt");
+			// FileWriter fw = new FileWriter (file.getAbsoluteFile());
+			BufferedWriter fbw = new BufferedWriter(writer);
+			// PrintWriter out2 = new PrintWriter(new
+			// FileWriter("userDatabase.txt",true));
+			String id = "" + p.getId();
 			fbw.write(id);
 			fbw.newLine();
 			fbw.close();
-			
+
+			// get a ID and make a file named by ID of the new user.
 			String filename = "";
 			filename = p.getId() + ".txt";
 			PrintWriter out = new PrintWriter(filename);
-			
+
+			// store name, email and password information of the user
 			out.println(p.getName());
 			out.println(p.getEmail());
-			String password = new String (p.getPassword());
+			String password = new String(p.getPassword());
 			out.println(password);
-			
+			// store the picture profile information of the user
 			out.println(p.getPicturePath());
-			
+
+			// if game score is not null then all the game scores are printed
+			// out
 			if (p.getGameScore() != null) {
-				for (int s: p.getGameScore()) {
+				for (int s : p.getGameScore()) {
 					out.print(s + ",");
 				}
 			}
 			out.println();
-			
+
+			// if friends are not null then all friends of the user are printed
+			// out
 			if (p.getFriends() != null) {
-				for (int f: p.getFriends()) {
+				for (int f : p.getFriends()) {
 					out.print(f + ",");
 				}
 			}
 			out.println();
-			
+
+			// if posts are not null the all posts of the user are printed out
 			if (p.getPosts() != null) {
-				for (String s: p.getPosts()) {
+				for (String s : p.getPosts()) {
 					out.print(s);
 				}
 			}
 			out.println();
-			
+
 			out.flush();
 			out.close();
-			
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
-}
 
+}
