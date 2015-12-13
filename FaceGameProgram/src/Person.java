@@ -10,10 +10,11 @@ public class Person {
  	private char[] password;
  	private String picturePath;
 
-	private ArrayList<Integer> gameScore;
+ 	private ArrayList<Integer> gameScore;
+ 	
  	private ArrayList<Integer> listOfFriends;
 	
-	private ArrayList<String> posts ;
+ 	private ArrayList<String> posts ;
 
  	public static int friendsCount;
  	
