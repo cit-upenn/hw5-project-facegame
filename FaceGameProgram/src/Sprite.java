@@ -1,9 +1,4 @@
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Rectangle;
@@ -11,11 +6,10 @@ import java.awt.Transparency;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
+
 
 /**
  * The sprite class for displaying sprites
@@ -24,6 +18,10 @@ import javax.swing.JPanel;
  */
 public class Sprite extends JFrame
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2L;
 	private File imageFile;
 	private BufferedImage bufferedImage;
 	private Image image;

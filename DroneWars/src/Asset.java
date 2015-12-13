@@ -63,7 +63,7 @@ public class Asset
 	 * gets an eroded bounding box 
 	 * @param index the sprite index
 	 * @param scale the number of pixels to erode
-	 * @return
+	 * @return Rectangle bbox
 	 */
 	public Rectangle getErodedBBox(int index, int scale)
 	{
@@ -126,5 +126,19 @@ public class Asset
 		{
 			sprite.rotateBy(x);
 		}
-	}	
+	}
+	
+	/**
+	 * gets the sprite at the index of the asset
+	 * @param index the index of the sprite
+	 * @return Sprite at index
+	 */
+	public Sprite getSprite(int index)
+	{
+		if (index < this.sprites.size())
+		{
+			return this.sprites.get(index);
+		}
+		return null;
+	}
 }

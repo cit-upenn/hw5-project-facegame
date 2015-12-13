@@ -1,4 +1,4 @@
-import java.lang.*;
+
 /**
  * Game main run method for running the game on the same thread
  * @author Rony Edde
@@ -17,8 +17,7 @@ public class MainRun
 		System.setProperty("sun.java2d.opengl","True");
 		//GameThread game = new GameThread();
 		//game.run();
-		GameEngine win = new GameEngine(null);
+		GameEngine win = new GameEngine(null, null);
 		win.gameLoop();
 	}
-
 }

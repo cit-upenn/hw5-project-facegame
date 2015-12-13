@@ -1,9 +1,3 @@
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-
-import javax.swing.JFrame;
 
 /**
  * Threading class for running the game in a separate thread
@@ -30,6 +24,8 @@ public class GameThread extends Thread
 	public void run()
 	{
 		this.window.repaint(17);
+		
+		this.window.gameLoop();
 		
 		while(true)
 		{

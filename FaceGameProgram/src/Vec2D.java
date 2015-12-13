@@ -45,7 +45,8 @@ public class Vec2D
 	 */
 	public double getMag()
 	{
-		return Math.sqrt(this.x * this.x + this.y * this.y);
+		this.magnitude = Math.sqrt(this.x * this.x + this.y * this.y);
+		return this.magnitude;
 	}
 	
 	/**

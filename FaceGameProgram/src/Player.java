@@ -1,6 +1,3 @@
-import java.net.URL;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
 
 /**
  * The player class  that contains sprites.  Inherits from Asset class

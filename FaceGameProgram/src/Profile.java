@@ -1,6 +1,7 @@
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.plaf.synth.SynthSeparatorUI;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -33,13 +34,15 @@ public class Profile extends JFrame {
 	private JButton b4 = new JButton("Play Game!");
 	private JButton b5 = new JButton("Add Friends");
 
+	private JLabel welcome;
+	private JLabel penguin;
 	private JLabel imageLabel;
 	private JLabel postTag;
 	private JLabel status;
 	private JLabel gameScoreLabel;
 	private JLabel gameScoreTag;
 //	private JLabel nameArea = new JLabel("");
-//	private JTextArea statusArea = new JTextArea("");
+	private JTextArea statusArea = new JTextArea("");
 	
 	private JTextField tf1 = new JTextField("New Status", 20);
 	private JTextField tf2 = new JTextField("Search Friends", 15);
@@ -54,7 +57,7 @@ public class Profile extends JFrame {
 	private Person loginUser;
 	
 	private JLabel name;
-	private String picturePath = "emptyProfilePicture.jpg";
+	private String picturePath = "emptyProfilePicture2.jpg";
 //	private String picturePath = "penguin.png";
 	private int gameScore = 0;
 	private String post = "";
@@ -100,8 +103,30 @@ public class Profile extends JFrame {
 		p1.add(b3);
 
 		p2.setBackground(new Color(0.9f, 0.9f, 0.9f));
-		p2.add(tf2);
-		p2.add(b2, BorderLayout.SOUTH);
+		p2.setLayout(new BoxLayout(p2, BoxLayout.PAGE_AXIS));
+		welcome = new JLabel ("We Love FaceGame!");
+		welcome.setFont(new Font("Superclarendon", Font.BOLD | Font.ITALIC, 14));
+		
+		BufferedImage image= null;
+		
+		try {
+			image = ImageIO.read(new File("penguin.png"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		penguin = new JLabel(new ImageIcon(image));
+		JLabel penguin2 = new JLabel (new ImageIcon(image)); 
+		
+		JLabel penguin3 = new JLabel (new ImageIcon(image));
+		JLabel penguin4 = new JLabel (new ImageIcon(image));
+
+		
+		p2.add(welcome);
+		p2.add(penguin);
+		p2.add(penguin2);
+		p2.add(penguin3);
+		p2.add(penguin4);
 
 		p3.setBackground(new Color(0.9f, 0.9f, 0.9f));
 		p4.setBackground(new Color(0.9f, 0.9f, 0.9f));
@@ -128,23 +153,34 @@ public class Profile extends JFrame {
 		
 		pCenter.add(name);
 		
+		pPosts.setLayout(new BoxLayout(pPosts,BoxLayout.PAGE_AXIS));
 		pPosts.setBackground(new Color(0.9f, 1.0f, 1.0f));
 		postTag = new JLabel ("Post Area: ");
 		postTag.setFont(new Font("Serif", Font.ITALIC, 30));
-		pPosts.add(postTag, BorderLayout.NORTH);
+		pPosts.add(postTag);
 		pCenter.add(pPosts);
 		
-		status = new JLabel (post);
-		status.setFont (new Font("Calibri", Font.PLAIN, 16));
-		pPosts.add(status);
+//		status = new JLabel (post);
+//		status.setFont (new Font("Calibri", Font.PLAIN, 16));
+//		pPosts.add(status);
 		
-		gamePanel.add(b4, BorderLayout.NORTH);
+		statusArea.setText(post);
+		pPosts.add(statusArea);
+		
+		b4.setFont(new Font("Serif", Font.ITALIC, 30));
+		
+		gamePanel.setLayout(new BoxLayout(gamePanel,BoxLayout.PAGE_AXIS));;
+		gamePanel.add(b4);
+
 		gameScoreLabel = new JLabel ("" + gameScore);
 		gameScoreTag = new JLabel ("Your most recent game score is: ");
+		gameScoreTag.setFont (new Font("Calibri", Font.PLAIN, 16));
+		gameScoreLabel.setFont (new Font("Serif", Font.ITALIC, 30));
+		
 		gameScorePanel.add(gameScoreTag);
 		gameScorePanel.add(gameScoreLabel);
 		
-		gamePanel.add(gameScorePanel, BorderLayout.CENTER);
+		gamePanel.add(gameScorePanel);
 		
 		pCenter.add(gamePanel);
 		
@@ -174,8 +210,10 @@ public class Profile extends JFrame {
 		
 		b1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent updateStatusEvt) {
-				updateStatus();
-				pPosts.add(status);
+	//			updateStatus();
+				updateStatusArea();
+				pPosts.add(statusArea);
+//				System.out.println(statusArea.getText());
 				
 			}
 		});
@@ -193,7 +231,7 @@ public class Profile extends JFrame {
 
 		b4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-			//	launchGame();
+				launchGame();
 			}
 		});
 		
@@ -208,7 +246,49 @@ public class Profile extends JFrame {
 		this.nameArea.setFont(new Font("Serif", Font.ITALIC, 40));
 	}
 */
-	private void updateStatus() {
+//	private void updateStatus() {
+//		String input = tf1.getText();
+//		
+//		DateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+//		Date dateobj = new Date();
+//		
+//		GeoLocation gl = new GeoLocation();
+//		gl.getLocationData();
+//		String[] glStrings = gl.getLocationStrings();
+//		String finalLocation = "";
+//		String s;
+//		for (int i = 1; i < glStrings.length - 5; i++)
+//		{	
+//			s = glStrings[glStrings.length - 5 - i];
+//			finalLocation +=  s  + ", ";
+//		}
+//		s = glStrings[glStrings.length - 5];
+//		finalLocation += s;
+//		
+//		this.status.setText(input + "\n" + "Date: " + df.format(dateobj) + "\n" + "Location: " + finalLocation);
+//		this.statusArea.setFont(new Font("Calibri", Font.PLAIN, 16));
+//		this.statusArea.setLocation(340, 450);
+		
+//	}
+	
+	public void updateScore(int score) {
+		gameScore = score;
+		ArrayList<Integer> gs = new ArrayList<Integer>();
+		gs.add(gameScore);
+		loginUser.setGameScore(gs);
+		this.gameScoreLabel.setText("" + score);
+		//JLabel newScore = new JLabel ("" + score);
+		//gameScorePanel = new JPanel ();
+		//gameScoreLabel = new JLabel ("" + gameScore);
+		//gameScoreTag = new JLabel ("Your most recent game score is: ");
+		//gameScorePanel.add(gameScoreTag);
+		//gameScorePanel.add(gameScoreLabel);
+		//gamePanel.add(gameScorePanel, BorderLayout.CENTER);
+	}
+
+	private void updateStatusArea()
+	{
+		this.statusArea.setText("");
 		String input = tf1.getText();
 		
 		DateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
@@ -226,54 +306,14 @@ public class Profile extends JFrame {
 		}
 		s = glStrings[glStrings.length - 5];
 		finalLocation += s;
-		
-		this.status.setText(input + "\n" + "Date: " + df.format(dateobj) + "\n" + "Location: " + finalLocation);
-//		this.statusArea.setFont(new Font("Calibri", Font.PLAIN, 16));
+		String textAreaInput = input + "\n" + "Date: " + df.format(dateobj) + "\n" + "Location: " + finalLocation;
+		System.out.println(textAreaInput);
+		this.statusArea.setText(textAreaInput);
+		this.statusArea.setFont(new Font("Calibri", Font.PLAIN, 16));
 //		this.statusArea.setLocation(340, 450);
-		
+		//this.imageLabel.setLocation(340, 50);
+			
 	}
-	
-	public void updateScore(int score) {
-		gameScore = score;
-		ArrayList<Integer> gs = new ArrayList<Integer>();
-		gs.add(gameScore);
-		loginUser.setGameScore(gs);
-		JLabel newScore = new JLabel ("" + score);
-		gameScorePanel = new JPanel ();
-		gameScoreLabel = new JLabel ("" + gameScore);
-		gameScoreTag = new JLabel ("Your most recent game score is: ");
-		gameScorePanel.add(gameScoreTag);
-		gameScorePanel.add(gameScoreLabel);
-		gamePanel.add(gameScorePanel, BorderLayout.CENTER);
-	}
-
-//	private void updateStatusArea()
-//	{
-//		this.statusArea.setText("");
-//		String input = tf1.getText();
-//		
-//		DateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
-//		Date dateobj = new Date();
-//		
-//		GeoLocation gl = new GeoLocation();
-//		gl.getLocationData();
-//		String[] glStrings = gl.getLocationStrings();
-//		String finalLocation = "";
-//		String s;
-//		for(int i = 1; i < glStrings.length - 5; i++)
-//		{	
-//			s = glStrings[glStrings.length - 5 - i];
-//			finalLocation +=  s  + ", ";
-//		}
-//		s = glStrings[glStrings.length - 5];
-//		finalLocation += s;
-//		
-//		this.statusArea.setText(input + "\n" + "Date: " + df.format(dateobj) + "\n" + "Location: " + finalLocation);
-//		this.statusArea.setFont(new Font("Calibri", Font.PLAIN, 16));
-//		this.statusArea.setLocation(340, 450);
-//		//this.imageLabel.setLocation(340, 50);
-//			
-//	}
 	
 	private void updatePictureProfile(String picturePath) {
 		// TODO Auto-generated method stub
@@ -304,8 +344,8 @@ public class Profile extends JFrame {
 			image = new BufferedImage (originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
 			
 			AffineTransform at = new AffineTransform();
-			double scaleX = 100.0 / originalImage.getWidth();
-			double scaleY = 100.0 / originalImage.getHeight();
+			double scaleX = 150.0 / originalImage.getWidth();
+			double scaleY = 150.0 / originalImage.getHeight();
 			at.scale(scaleX,  scaleY);
 			AffineTransformOp ato = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
 			ato.filter(originalImage, image);
@@ -324,18 +364,21 @@ public class Profile extends JFrame {
 	 * game = new GameThread(); game.run(); add(game.window);
 	 */
 
-//	private void launchGame() {
-//		game = new GameThread(this.container);
-//		game.window.gameInit();
-//		game.start();
-//		// p1.add(container, BorderLayout.CENTER);
-//		game.window.getPlayerScore();
-//		// game.run();
-//
-//		// add(game.window, BorderLayout.EAST);//, BorderLayout.EAST);
-//		// game.window.run();
-//		// pack();
-//	}
+	private void launchGame() 
+	{
+		this.updateScore(50);
+		
+		game = new GameThread(this.container, this);
+		//game.window.gameInit();
+		game.start();
+		// p1.add(container, BorderLayout.CENTER);
+		//game.window.getPlayerScore();
+		// game.run();
+
+		// add(game.window, BorderLayout.EAST);//, BorderLayout.EAST);
+		// game.window.run();
+		// pack();
+	}
 
 	/*
 	 * private void launchGame() { MainWindow win = new MainWindow();
@@ -368,7 +411,7 @@ public class Profile extends JFrame {
 		char[] pw ={'a','b','c'};
 		Person loginUser = new Person("Xinxin", "sss@upenn.edu", pw);
 		Profile startingProfile = new Profile(loginUser);
-		startingProfile.updateScore (5);
+//		startingProfile.updateScore (5);
 				
 	}
 

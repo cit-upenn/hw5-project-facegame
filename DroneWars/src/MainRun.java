@@ -1,4 +1,4 @@
-import java.lang.*;
+
 /**
  * Game main run method for running the game on the same thread
  * @author Rony Edde

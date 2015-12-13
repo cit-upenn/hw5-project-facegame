@@ -1,22 +1,14 @@
 
 import java.awt.Color;
 import java.awt.Dimension;
-
 import java.awt.Font;
-
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
-
-
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.awt.Canvas;
-
 import java.awt.event.KeyAdapter;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -31,20 +23,25 @@ import javax.swing.JPanel;
  * @author Rony Edde
  *
  */
-public class GameEngine extends Canvas {
+public class GameEngine extends Canvas 
+{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private BufferStrategy strategy;
 	private boolean gameRunning = true;
 	
 	//private final Object redrawLock;
-	private JFrame win;
-	private JPanel panel;
-	private Graphics graphics;
-	private Graphics2D g2d;
-	private double rotate;
+	//private JFrame win;
+	//private JPanel panel;
+	//private Graphics graphics;
+	//private Graphics2D g2d;
+	//private double rotate;
 	private int width;
 	private int height;
-	private HashMap<Character, Integer> keysPressed;
+	//private HashMap<Character, Integer> keysPressed;
 	private ArrayList<Bullet> bullets;
 	private ArrayList<MotionAsset> enemies;
 	private ArrayList<PowerUp> powerUps;
@@ -64,8 +61,6 @@ public class GameEngine extends Canvas {
 	private boolean moveDown;
 	private boolean moveLeft;
 	private boolean moveRight;
-	private boolean rotateLeft;
-	private boolean rotateRight;
 	private boolean fireUp;
 	private boolean fireDown;
 	private boolean fireLeft;
@@ -95,14 +90,16 @@ public class GameEngine extends Canvas {
 	private SoundEffects bulletSound;
 	private SoundEffects bombSound;
 	private SoundEffects hitSound;
+	private Profile faceGame;
 	
 	
 	/**
 	 * game Engine constructor
 	 * @param containerFrame an optional JFrame to inherit as a parent
 	 */
-	public GameEngine(JFrame containerFrame) 
+	public GameEngine(JFrame containerFrame, Profile p) 
 	{
+		this.faceGame = p;
 		// the frame where we will draw everything
 		JFrame container = new JFrame("Drone Wars");
 		
@@ -163,7 +160,7 @@ public class GameEngine extends Canvas {
 		this.numBombBullets = 20;
 		this.paused = true;
 		this.gameOver = false;
-		this.keysPressed = new HashMap<Character, Integer>();
+		//this.keysPressed = new HashMap<Character, Integer>();
 		this.bullets = new ArrayList<Bullet>();
 		this.enemies = new ArrayList<MotionAsset>();
 		this.powerUps = new ArrayList<PowerUp>();
@@ -221,7 +218,7 @@ public class GameEngine extends Canvas {
 			        		   RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 			
 			// check running time passed
-			long delta = System.currentTimeMillis() - lastLoopTime;
+			//long delta = System.currentTimeMillis() - lastLoopTime;
 			lastLoopTime = System.currentTimeMillis();
 			
 			g.setColor(Color.black);
@@ -271,10 +268,6 @@ public class GameEngine extends Canvas {
 				this.player.moveBy(0, -this.playerSpeed);
 			if (this.moveDown)
 				this.player.moveBy(0, this.playerSpeed);
-			if (this.rotateLeft)
-				this.player.rotateBy(-this.playerSpeed*0.1);
-			if (this.rotateRight)
-				this.player.rotateBy(this.playerSpeed*0.1);
 			if (this.useBomb && this.numBombs > 0)
 			{
 				this.useBomb(20);
@@ -741,6 +734,15 @@ public class GameEngine extends Canvas {
 		this.difficulty += val;
 	}
 	
+	/**
+	 * gets the difficulty
+	 * @return the difficulty level
+	 */
+	public double getDifficulty()
+	{
+		return this.difficulty;
+	}
+	
 	public void drawBullets(Graphics2D g)
 	{
 		for(int i=0; i<this.bullets.size(); i++)
@@ -920,6 +922,7 @@ public class GameEngine extends Canvas {
 	{
 		this.drawGameOverMenu(g);
 		this.gameOver = true;
+		this.faceGame.updateScore(this.getPlayerScore());
 	}
 	
 	/**
@@ -956,7 +959,7 @@ public class GameEngine extends Canvas {
 	private class KeyInputHandler extends KeyAdapter 
 	{
 
-		private int pressCount = 1;
+		//private int pressCount = 1;
 		
 		public void keyPressed(KeyEvent e) {
 			// if the keys were pressed, update movement
@@ -968,10 +971,6 @@ public class GameEngine extends Canvas {
 	    		moveUp = true;
 	    	if (e.getKeyCode() == KeyEvent.VK_S)
 	    		moveDown = true;
-	    	if (e.getKeyCode() == KeyEvent.VK_Q)
-	    		rotateLeft = true;
-	    	if (e.getKeyCode() == KeyEvent.VK_E)
-	    		rotateRight = true;
 	    	if (e.getKeyCode() == KeyEvent.VK_UP)
 	    		fireUp = true;
 	    	if (e.getKeyCode() == KeyEvent.VK_DOWN)
@@ -1001,10 +1000,6 @@ public class GameEngine extends Canvas {
 	    		moveUp = false;
 	    	if (e.getKeyCode() == KeyEvent.VK_S)
 	    		moveDown = false;
-	    	if (e.getKeyCode() == KeyEvent.VK_Q)
-	    		rotateLeft = false;
-	    	if (e.getKeyCode() == KeyEvent.VK_E)
-	    		rotateRight = false;
 	    	if (e.getKeyCode() == KeyEvent.VK_UP)
 	    		fireUp = false;
 	    	if (e.getKeyCode() == KeyEvent.VK_DOWN)

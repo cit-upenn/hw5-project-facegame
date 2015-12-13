@@ -1,6 +1,6 @@
-Donald Duck
-donal@disney.com
-Donalrocks!
+Name
+Email
+New Password
 
 
 

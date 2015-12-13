@@ -1,6 +1,6 @@
-Xinxin Ma
-xinxin@seas.upenn.edu
-XINXIN
+Name
+Email
+New Password
 
 
 

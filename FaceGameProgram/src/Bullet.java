@@ -38,6 +38,15 @@ public class Bullet extends Asset
 	}
 	
 	/**
+	 * sets the speed of the bullet
+	 * @param value
+	 */
+	public double getSpeed()
+	{
+		return this.speed;
+	}
+	
+	/**
 	 * bullet animation logic 
 	 */
 	public void step()

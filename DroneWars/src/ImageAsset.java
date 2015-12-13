@@ -1,6 +1,3 @@
-import java.net.URL;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
 
 /**
  * The main asset that deals with images
