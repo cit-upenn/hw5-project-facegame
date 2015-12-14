@@ -35,7 +35,6 @@ public class UserDatabase {
 							userInfo.get(2).toCharArray());
 	
 					p.setId(Integer.parseInt(s));
-	
 					p.setPicturePath(userInfo.get(3));
 	
 					String gameScoreLine = userInfo.get(4);
