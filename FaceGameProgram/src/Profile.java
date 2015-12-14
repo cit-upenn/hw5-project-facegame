@@ -43,6 +43,7 @@ public class Profile extends JFrame {
 	private JButton b3;
 	private JButton b4;
 	private JButton b5;
+	private JButton deleteFriendButton;
 
 
 	private JLabel welcome;
@@ -75,6 +76,7 @@ public class Profile extends JFrame {
 
 	private int gameScore;
 	private String post;
+	private ArrayList<Integer> friendIds;
 	
 	private JComboBox searchFriends;
 	private JComboBox deleteFriends;
@@ -86,9 +88,10 @@ public class Profile extends JFrame {
 //	}
 
 	public Profile(Person p) {
-		post = "";
+		this.post = "";
 		this.picturePath = "emptyProfilePicture2.jpg";
 		this.gameScore = 0;
+		this.friendIds = new ArrayList<Integer>();
 		
 		loginUser = p;
 		name = new JLabel(loginUser.getName());
@@ -101,6 +104,11 @@ public class Profile extends JFrame {
 		ArrayList<Integer> gameScoreList = loginUser.getGameScore();
 		if (gameScoreList != null && gameScoreList.size() > 0) {
 			gameScore = gameScoreList.get(0);
+		}
+		
+		ArrayList<Integer> userFriendsIds = loginUser.getFriends();
+		if (userFriendsIds != null && userFriendsIds.size() > 0){
+			friendIds = userFriendsIds;
 		}
 		ArrayList<String> posts = loginUser.getPosts();
 		if(posts != null && posts.size() > 0) {
@@ -128,6 +136,7 @@ public class Profile extends JFrame {
 		this.b3 = new JButton("Update profile picture");
 		this.b4 = new JButton("Play Game!");
 		this.b5 = new JButton("Add Friends");
+		this.deleteFriendButton = new JButton("Delete Friends");
 		
 		this.statusArea = new JTextArea("");
 		
@@ -137,9 +146,10 @@ public class Profile extends JFrame {
 		//this.tf4 = new JTextField("Image path", 15);
 		
 		this.container = new JFrame("Drone Wars");
-
 		
 		upw = new UserProfileWriter();
+		
+		ArrayList<Person> users = UserDatabase.getUsers();
 		
 		setVisible(true);
 		setSize(1200, 800);
@@ -166,8 +176,20 @@ public class Profile extends JFrame {
 		int databaseSize = UserDatabase.getNumberOfUsers();
 		System.out.println(databaseSize);
 		
-		String[] userNameArray = new String[databaseSize];
 		
+		
+		String[] friendsListforDelete = new String[friendIds.size()];
+		for (int i=0; i<friendIds.size(); i++)
+		{
+			Person friendPerson = users.get(friendIds.get(i));
+			friendsListforDelete[i] = friendPerson.getName();
+			
+		}
+		
+//		String[] friendsList = new String[]
+		
+		
+		String[] userNameArray = new String[databaseSize];
 		int j = 0;
 		
 		for (int i = 0; i < databaseSize;i++) {
@@ -179,11 +201,16 @@ public class Profile extends JFrame {
 
 		}
 		
-		searchFriends = new JComboBox(userNameArray);
+		this.searchFriends = new JComboBox(userNameArray);
+		this.deleteFriends = new JComboBox(friendsListforDelete);
+
 
 //		p1.add(tf3);
 		p1.add(searchFriends);
 		p1.add(b5);
+		
+		p1.add(deleteFriends);
+		p1.add(deleteFriendButton);
 		// added the image path input Textfield
 		//p1.add(tf4);
 		p1.add(b3);
@@ -216,9 +243,12 @@ public class Profile extends JFrame {
 		this.friendsTable.setRowHeight(20);
 
 		// fore testing purposes
-		this.model.setValueAt("friend1", 0, 0);
-		this.model.setValueAt("friend2", 1, 0);
+//		this.model.setValueAt("friend1", 0, 0);
+//		this.model.setValueAt("friend2", 1, 0);
 		// test end
+		
+
+		
 		
 		this.friendsTable.addMouseListener(new MouseAdapter()
 		{
@@ -229,10 +259,13 @@ public class Profile extends JFrame {
             	if(index != -1)
             	{
             		if (model.getValueAt(index, 0) != null)
-            		{
-            			String strValue = model.getValueAt(index, 0).toString();
-            			System.out.println(strValue);
-            			friendsInfo.setText("You have clicked on:\n" + strValue);
+            		{	
+            			Person clickedFriend = users.get(friendIds.get(index));
+            			String strValue = clickedFriend.getPosts().get(0);
+            			friendsInfo.setText(clickedFriend.getName() + "'s status is: \n" + strValue);
+//            			String strValue = model.getValueAt(index, 0).toString();
+//            			System.out.println(strValue);
+//            			friendsInfo.setText("You have clicked on:\n" + strValue);
             			
             		}
             	}
@@ -240,19 +273,19 @@ public class Profile extends JFrame {
             }
         });
 		
-		ArrayList<Integer> friendIds = loginUser.getFriends();
-		ArrayList<Person> users = UserDatabase.getUsers();
+		
 		
 		for (int i=0; i<friendIds.size(); i++)
 		{
-			Person friendPerson = users.get(i);
+			Person friendPerson = users.get(friendIds.get(i));
 			this.model.setValueAt(friendPerson.getName(), i, 0);
 		}
 		
 		JLabel friendsLabelField = new JLabel("Friends List");
-		friendsLabelField.setFont(new Font("Serif", Font.ITALIC, 20));
+		friendsLabelField.setFont(new Font("Serif", Font.ITALIC, 27));
 		
 		JLabel friendsInfoLabel = new JLabel("Friend Info");
+		friendsInfoLabel.setFont(new Font("Serif", Font.ITALIC, 25));
 		p2.add(friendsInfoLabel);
 		
 		p2.add(this.friendsInfo);
@@ -394,19 +427,36 @@ public class Profile extends JFrame {
 		
 		b5.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent addFriendsEvent){
-				ArrayList <Person> userListInfo = UserDatabase.getUsers();
 				int found = -1;
-				for (int i = 0; i < userListInfo.size(); i++) {
-					if (userListInfo.get(i).getName().compareTo(searchFriends.getSelectedItem().toString()) == 0) {
+				for (int i = 0; i < users.size(); i++) {
+					if (users.get(i).getName().compareTo(searchFriends.getSelectedItem().toString()) == 0) {
 						found = i;
 						break;
 					}
 				}
 				if (found != -1) {
 					loginUser.addFriend(found);
-					System.out.println(loginUser.getFriends());
-					UserProfileWriter upw = new UserProfileWriter();
+					friendIds = loginUser.getFriends();
 					upw.createUserInividuleData(loginUser);
+					updateFriendsTable();
+				}
+			}
+		});
+		
+		deleteFriendButton.addActionListener(new ActionListener(){
+			public void actionPerformed (ActionEvent deleteFriendsEvent) {
+				int found = -1;
+				for (int i = 0; i < friendIds.size();i ++) {
+					if (users.get(friendIds.get(i)).getName().compareTo (deleteFriends.getSelectedItem().toString()) == 0){
+						found = i;
+						break;
+					}
+				}
+				if (found != -1) {
+					friendIds.remove(found);
+					loginUser.setFriendList(friendIds);
+					upw.createUserInividuleData(loginUser);
+					updateFriendsTable();
 				}
 			}
 		});
@@ -470,7 +520,7 @@ public class Profile extends JFrame {
 		
 		for (int i=0; i<friendIds.size(); i++)
 		{
-			Person friendPerson = users.get(i);
+			Person friendPerson = users.get(friendIds.get(i));
 			this.model.setValueAt(friendPerson.getName(), i, 0);
 		}
 	}
