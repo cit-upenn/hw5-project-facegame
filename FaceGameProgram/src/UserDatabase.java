@@ -7,6 +7,10 @@ import java.util.ArrayList;
  *
  */
 public class UserDatabase {
+	
+	/**
+	 * instance variables
+	 */
 	private static ArrayList<Person> users;
 
 	/**

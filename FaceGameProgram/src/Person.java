@@ -9,6 +9,9 @@ import java.util.ArrayList;
 
 public class Person {
 
+	/**
+	 * instance variables
+	 */
 	private int id;
 
  	private String name;
@@ -22,6 +25,9 @@ public class Person {
 	
  	private ArrayList<String> posts ;
 
+ 	/**
+ 	 * class variable
+ 	 */
  	public static int friendsCount;
  	
  	

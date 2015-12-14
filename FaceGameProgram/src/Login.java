@@ -24,6 +24,9 @@ import java.util.Arrays;
  */
 public class Login extends JFrame {
 
+	/**
+	 * instance variables
+	 */
 	private JButton jButton1;
 	private JButton jButton2;
 

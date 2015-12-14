@@ -9,6 +9,9 @@ import java.util.Scanner;
  */
 public class UserProfileReader {
 
+	/**
+	 * instance variables
+	 */
 	private String filename;
 	private ArrayList<String> lines;
 
