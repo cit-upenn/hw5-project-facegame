@@ -22,6 +22,10 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+/**
+ * @author fanglinlu xinxinma Rony
+ * This is a class creating the main window for the FaceGame program.
+ */
 
 public class Profile extends JFrame {
 
@@ -39,33 +43,23 @@ public class Profile extends JFrame {
 	private JTextArea friendsInfo;
 	
 	private JButton b1;
-	private JButton b2;
 	private JButton b3;
 	private JButton b4;
 	private JButton b5;
-	private JButton deleteFriendButton;
 
 
 	private JLabel welcome;
-	private JLabel penguin;
 	private JLabel imageLabel;
 	private JLabel postTag;
-	private JLabel status;
 	private JLabel gameScoreLabel;
 	private JLabel gameScoreTag;
 
-//	private JLabel nameArea = new JLabel("");
 
 	private JTextArea statusArea;
 
 	
 	private JTextField tf1;
-	private JTextField tf2;
-	private JTextField tf3;
-	//private JTextField tf4;
-	
-	private ImageIcon img;
-	private BufferedImage image;
+
 	private JFrame container;
 	private GameThread game;
 	
@@ -78,15 +72,15 @@ public class Profile extends JFrame {
 	private String post;
 	private ArrayList<Integer> friendIds;
 	
-	private JComboBox searchFriends;
+	private JComboBox<String[]> searchFriends;
 
 	
  	private UserProfileWriter upw;
 	
-//	public Profile () {
-//		gui();
-//	}
-
+/**
+ * This is the constructor for the class.
+ * @param p
+ */
 	public Profile(Person p) {
 		this.post = "";
 		this.picturePath = "emptyProfilePicture2.jpg";
@@ -99,7 +93,6 @@ public class Profile extends JFrame {
 		
 		if (loginUser.getPicturePath().length() > 0) {
 			picturePath = loginUser.getPicturePath();
-//			System.out.println(picturePath);
 		}
 		ArrayList<Integer> gameScoreList = loginUser.getGameScore();
 		if (gameScoreList != null && gameScoreList.size() > 0) {
@@ -118,9 +111,13 @@ public class Profile extends JFrame {
 		gui();
 
 	}
-
+/**
+ * This is the gui method which dispalys everything on the frame. 
+ */
 	public void gui() {
-		
+/**
+ * initialize the variables
+ */
 		this.p1 = new JPanel();
 		this.p2 = new JPanel();
 		this.p3 = new JPanel();
@@ -132,7 +129,6 @@ public class Profile extends JFrame {
 		this.gameScorePanel = new JPanel();
 		this.friendsInfo = new JTextArea("");
 		this.b1 = new JButton("Add Status");
-		this.b2 = new JButton("Search!");
 		this.b3 = new JButton("Update profile picture");
 		this.b4 = new JButton("Play Game!");
 		this.b5 = new JButton("Add Friends");
@@ -140,9 +136,6 @@ public class Profile extends JFrame {
 		this.statusArea = new JTextArea("");
 		
 		this.tf1 = new JTextField("New Status", 20);
-		this.tf2 = new JTextField("Search Friends", 15);
-		this.tf3 = new JTextField("Search users", 15);
-		//this.tf4 = new JTextField("Image path", 15);
 		
 		this.container = new JFrame("Drone Wars");
 		
@@ -157,7 +150,7 @@ public class Profile extends JFrame {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 
 		this.imagePanel.setSize(600, 600);
-		this.model = new DefaultTableModel(50, 1){
+		this.model = new DefaultTableModel(50, 1) {
 			   @Override
 			   public boolean isCellEditable(int row, int column) {
 			       //Only the third column
@@ -175,9 +168,7 @@ public class Profile extends JFrame {
 		int databaseSize = UserDatabase.getNumberOfUsers();
 		System.out.println(databaseSize);
 		
-//		String[] friendsList = new String[]
-		
-		
+// Add information about the comboBox. 
 		String[] userNameArray = new String[databaseSize];
 		int j = 0;
 		
@@ -193,33 +184,17 @@ public class Profile extends JFrame {
 		this.searchFriends = new JComboBox(userNameArray);
 
 
-//		p1.add(tf3);
 		p1.add(searchFriends);
 		p1.add(b5);
 		
 		// added the image path input Textfield
-		//p1.add(tf4);
 		p1.add(b3);
-
+		
+// set up the west panel
 		p2.setBackground(new Color(0.9f, 0.9f, 0.9f));
 		p2.setLayout(new BoxLayout(p2, BoxLayout.PAGE_AXIS));
-		welcome = new JLabel ("We Love FaceGame!");
-		welcome.setFont(new Font("Superclarendon", Font.BOLD | Font.ITALIC, 14));
-		
-		BufferedImage image= null;
-		
-		try {
-			image = ImageIO.read(new File("penguin.png"));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		penguin = new JLabel(new ImageIcon(image));
-		//JLabel penguin2 = new JLabel (new ImageIcon(image)); 
-		//JLabel penguin3 = new JLabel (new ImageIcon(image));
-		//JLabel penguin4 = new JLabel (new ImageIcon(image));
-
-		
+	
+	
 
 		this.friendsTable = new JTable(model);
 		this.friendsTable.setShowHorizontalLines(false);
@@ -227,12 +202,6 @@ public class Profile extends JFrame {
 		this.friendsTable.setShowVerticalLines(false);
 		this.friendsTable.setShowVerticalLines(false);
 		this.friendsTable.setRowHeight(20);
-
-		// fore testing purposes
-//		this.model.setValueAt("friend1", 0, 0);
-//		this.model.setValueAt("friend2", 1, 0);
-		// test end
-		
 
 		
 		
@@ -281,17 +250,11 @@ public class Profile extends JFrame {
 
 		// update table
 		this.updateFriendsTable(friendIds.size());
-		
-		//p2.add(welcome);
-		//p2.add(penguin);
-		//p2.add(penguin2);
-		//p2.add(penguin3);
-		//p2.add(penguin4);
 
 		p3.setBackground(new Color(0.9f, 0.9f, 0.9f));
 		p4.setBackground(new Color(0.9f, 0.9f, 0.9f));
 		
-		
+		//add panels to the frame.
 
 		add(p1, BorderLayout.NORTH);
 		add(p2, BorderLayout.WEST);
@@ -313,21 +276,13 @@ public class Profile extends JFrame {
 		}		
 		
 		pCenter.add(name);
-		
+		//set up the post area
 		pPosts.setLayout(new BoxLayout(pPosts,BoxLayout.PAGE_AXIS));
 		pPosts.setBackground(new Color(0.9f, 1.0f, 1.0f));
 		postTag = new JLabel ("Post Area: ");
 		postTag.setFont(new Font("Serif", Font.ITALIC, 30));
 		pPosts.add(postTag);
 		pCenter.add(pPosts);
-		
-//		status = new JLabel (post);
-//		status.setFont (new Font("Calibri", Font.PLAIN, 16));
-//		pPosts.add(status);
-		//JScrollPane scroll = new JScrollPane (statusArea, 
-		//		   JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-
-		//pPosts.add(scroll);
 		
 		statusArea.setAutoscrolls(true);
 		statusArea.setText(post);
@@ -338,6 +293,7 @@ public class Profile extends JFrame {
 		
 		b4.setFont(new Font("Serif", Font.ITALIC, 30));
 		
+		// add the game panel
 		gamePanel.setLayout(new BoxLayout(gamePanel,BoxLayout.PAGE_AXIS));;
 		gamePanel.add(b4);
 
@@ -354,35 +310,11 @@ public class Profile extends JFrame {
 		pCenter.add(gamePanel);
 		
 		
-			
-//		try {
-//			
-//			add(this.statusArea);
-//			statusArea.setLocation(340, 400);
-//			this.statusArea.setOpaque(false);
-//			statusArea.setText(null);
-//		
-//			updatePictureProfile();
-//			add(this.imageLabel);
-//			imageLabel.setLocation(340, 50);
-//			this.imageLabel.setSize(300, 300);
-//					
-//			add(this.nameArea);
-//			nameArea.setLocation(650, 50);
-//			this.nameArea.setOpaque(false);
-//			updateNameArea();
-//		
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-			
+		//add actionListeners	
 		
 		b1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent updateStatusEvt) {
-	//			updateStatus();
 				updateStatusArea();
-				//pPosts.add(statusArea);
-//				System.out.println(statusArea.getText());
 				upw.createUserInividuleData(loginUser);
 				
 				
@@ -393,9 +325,7 @@ public class Profile extends JFrame {
 		b3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent pictureButtonEvt) {
 
-				//picturePath = tf4.getText();
 				updatePictureProfile(picturePath, true);
-//				imagePanel.add(imageLabel);
 				loginUser.setPicturePath(picturePath);
 				upw.createUserInividuleData(loginUser);
 		
@@ -432,37 +362,10 @@ public class Profile extends JFrame {
 		
 	}
 	
-/*	private void updateNameArea() {
-		
-		String username = "Xinxin Ma";
-		this.nameArea.setText(username);			
-		this.nameArea.setFont(new Font("Serif", Font.ITALIC, 40));
-	}
-*/
-//	private void updateStatus() {
-//		String input = tf1.getText();
-//		
-//		DateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
-//		Date dateobj = new Date();
-//		
-//		GeoLocation gl = new GeoLocation();
-//		gl.getLocationData();
-//		String[] glStrings = gl.getLocationStrings();
-//		String finalLocation = "";
-//		String s;
-//		for (int i = 1; i < glStrings.length - 5; i++)
-//		{	
-//			s = glStrings[glStrings.length - 5 - i];
-//			finalLocation +=  s  + ", ";
-//		}
-//		s = glStrings[glStrings.length - 5];
-//		finalLocation += s;
-//		
-//		this.status.setText(input + "\n" + "Date: " + df.format(dateobj) + "\n" + "Location: " + finalLocation);
-//		this.statusArea.setFont(new Font("Calibri", Font.PLAIN, 16));
-//		this.statusArea.setLocation(340, 450);
-		
-//	}
+/**
+ * This is a method to update scores.
+ * @param score
+ */
 	
 	public void updateScore(int score) {
 		gameScore = score;
@@ -471,15 +374,12 @@ public class Profile extends JFrame {
 		loginUser.setGameScore(gs);
 		upw.createUserInividuleData(loginUser);
 		this.gameScoreLabel.setText("" + score);
-		//JLabel newScore = new JLabel ("" + score);
-		//gameScorePanel = new JPanel ();
-		//gameScoreLabel = new JLabel ("" + gameScore);
-		//gameScoreTag = new JLabel ("Your most recent game score is: ");
-		//gameScorePanel.add(gameScoreTag);
-		//gameScorePanel.add(gameScoreLabel);
-		//gamePanel.add(gameScorePanel, BorderLayout.CENTER);
-	}
 
+	}
+/**
+ * This is a method to update friends' table. 
+ * @param clearSize
+ */
 	private void updateFriendsTable(int clearSize)
 	{
 		if (clearSize > 0){
@@ -496,7 +396,9 @@ public class Profile extends JFrame {
 			this.model.setValueAt(friendPerson.getName(), i, 0);
 		}
 	}
-	
+	/**
+	 * This is a method to update status area in the post areas. 
+	 */
 	private void updateStatusArea()
 	{
 		//this.statusArea.setText("");
@@ -526,35 +428,18 @@ public class Profile extends JFrame {
 		loginUser.setPostList(postListString);
 		System.out.println(postListString);
 		this.statusArea.setFont(new Font("Calibri", Font.PLAIN, 16));
-//		this.statusArea.setLocation(340, 450);
-		//this.imageLabel.setLocation(340, 50);
+
 			
 	}
-	
+	/**
+	 * This is a method to update profiel pictures. 
+	 * @param picturePath
+	 * @param dialog
+	 */
 	private void updatePictureProfile(String picturePath, boolean dialog) {
-		// TODO Auto-generated method stub
-//		String imagePath = "./penguin.png";
-		//String imagePath = tf4.getText();
-		
-//		img = new ImageIcon(getClass().getResource("bomb.png"));
-//		BufferStrategy strategy = getBufferStrategy() ;
-//		Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
-//		//img = new Image ("bomb.png");
-//		
-//		//Component buf = ImageIO.read(file);
-//
-//		//pCenter.add(buf);
-//		add(pCenter, BorderLayout.CENTER);
-//		pCenter.setLayout(new BoxLayout(pCenter, BoxLayout.PAGE_AXIS));
-//
-//		imageLabel = new JLabel(img);
-//		pCenter.add (imageLabel);
-//
-//		add(imageLabel);
+
 		System.out.println(picturePath);
-		
-		//FileDialog fd = new FileDialog(this, "Choose a file", FileDialog.LOAD);
-		//fd.setDirectory(".");
+	
 		
 		if (dialog)
 		{
@@ -596,7 +481,7 @@ public class Profile extends JFrame {
 		this.imageLabel = new JLabel(new ImageIcon(image));
 		Dimension d = new Dimension(10, 10);
 		this.imageLabel.setSize(d);;
-		//this.imagePanel.setSize(new Dimension(600, 600));
+
 		
 		if (this.imagePanel.getComponentCount() > 0)
 			this.imagePanel.remove(0);
@@ -604,18 +489,14 @@ public class Profile extends JFrame {
 		this.imagePanel.add(this.imageLabel, BorderLayout.NORTH);
 		imageLabel.setSize(300, 300);
 		imagePanel.setSize(300, 300);
-		//this.imagePanel.repaint();
-		//this.imageLabel.repaint();
+
 		repaint();
-		//this.pCenter.repaint();
-		//this.imagePanel.repaint();
-		//this.imageLabel.repaint();
-		//this.imagePanel.update(null);
+
 		
 	}
-	/*
-	 * MainWindow win = new MainWindow(); win.gameLoop(); add(win); GameThread
-	 * game = new GameThread(); game.run(); add(game.window);
+	
+	/**
+	 * This is a method to launch game. 
 	 */
 
 	private void launchGame() 
@@ -623,51 +504,10 @@ public class Profile extends JFrame {
 		this.updateScore(0);
 		
 		game = new GameThread(this.container, this);
-		//game.window.gameInit();
-		game.start();
-		// p1.add(container, BorderLayout.CENTER);
-		//game.window.getPlayerScore();
-		// game.run();
 
-		// add(game.window, BorderLayout.EAST);//, BorderLayout.EAST);
-		// game.window.run();
-		// pack();
+		game.start();
 	}
 
-	/*
-	 * private void launchGame() { MainWindow win = new MainWindow();
-	 * win.gameLoop(); add(win, BorderLayout.EAST);//, BorderLayout.EAST);
-	 * pack(); }
-	 */
-
-//	private void pictureButtonActionPerformed(ActionEvent evt) {
-//		
-//		String imgPath = tf4.getText();
-//		img = new ImageIcon(getClass().getResource("bomb.png"));
-//		BufferStrategy strategy = getBufferStrategy() ;
-//		Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
-//		//img = new Image ("bomb.png");
-//		
-//		Component buf = ImageIO.read(file);
-//
-//		pCenter.add(buf);
-//		add(pCenter, BorderLayout.CENTER);
-//		pCenter.setLayout(new BoxLayout(pCenter, BoxLayout.PAGE_AXIS));
-//
-//		imageLabel = new JLabel(img);
-//		pCenter.add (imageLabel);
-//
-//		add(imageLabel);
-//
-//	}
-	
-//	public static void main(String[] args) throws IOException {
-//		char[] pw ={'a','b','c'};
-//		Person loginUser = new Person("Xinxin", "sss@upenn.edu", pw);
-//		Profile startingProfile = new Profile(loginUser);
-////		startingProfile.updateScore (5);
-//				
-//	}
 
 
 }
