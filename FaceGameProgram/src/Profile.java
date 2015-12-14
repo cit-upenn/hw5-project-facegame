@@ -296,7 +296,7 @@ public class Profile extends JFrame {
 		p2.add(this.friendsTable);
 
 		// update table
-		this.updateFriendsTable();
+		this.updateFriendsTable(friendIds.size());
 		
 		//p2.add(welcome);
 		//p2.add(penguin);
@@ -438,7 +438,7 @@ public class Profile extends JFrame {
 					loginUser.addFriend(found);
 					friendIds = loginUser.getFriends();
 					upw.createUserInividuleData(loginUser);
-					updateFriendsTable();
+					updateFriendsTable(friendIds.size());
 				}
 			}
 		});
@@ -452,11 +452,13 @@ public class Profile extends JFrame {
 						break;
 					}
 				}
+				
+				int initialSize = friendIds.size();
 				if (found != -1) {
 					friendIds.remove(found);
 					loginUser.setFriendList(friendIds);
 					upw.createUserInividuleData(loginUser);
-					updateFriendsTable();
+					updateFriendsTable(initialSize);
 				}
 			}
 		});
@@ -513,8 +515,13 @@ public class Profile extends JFrame {
 		//gamePanel.add(gameScorePanel, BorderLayout.CENTER);
 	}
 
-	private void updateFriendsTable()
+	private void updateFriendsTable(int clearSize)
 	{
+		if (clearSize > 0){
+			for (int i = 0; i < clearSize; i++) {
+				this.model.setValueAt("", clearSize, 0);
+			}
+		}
 		ArrayList<Integer> friendIds = loginUser.getFriends();
 		ArrayList<Person> users = UserDatabase.getUsers();
 		
