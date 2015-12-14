@@ -25,6 +25,7 @@ public class Person {
  	public static int friendsCount;
  	
  	
+ 	
 
 	/**
 	 * constructor -- initialize an object person with arguments name, email and
@@ -112,6 +113,7 @@ public class Person {
 	 */
 	public void setPostList(ArrayList<String> list) {
 		posts = list;
+		
 	}
 
 	/**

@@ -27,15 +27,16 @@ public class UserProfileWriter {
 			
 			out.println(p.getPicturePath());
 			
-			if (p.getGameScore() != null) {
-				for (int s: p.getGameScore()) {
-					out.print(s + ",");
-				}
+			int f = 0;
+			
+			if (p.getGameScore() != null && p.getGameScore().size() > 0) {
+
+				out.println(p.getGameScore().get(0));
 			}
 			out.println();
 			
-			if (p.getFriends() != null) {
-				int f = 0;
+			if (p.getFriends() != null && p.getFriends().size() > 0) {
+
 				ArrayList<Integer> friendsIdx = p.getFriends();
 
 				for (f=0; f < friendsIdx.size() - 1; f++) {
@@ -46,7 +47,7 @@ public class UserProfileWriter {
 			}
 			out.println();
 			
-			if (p.getPosts() != null) {
+			if (p.getPosts() != null && p.getPosts().size() > 0) {
 				for (String s: p.getPosts()) {
 					out.print(s);
 				}
@@ -87,48 +88,89 @@ public class UserProfileWriter {
 			fbw.write(id);
 			fbw.newLine();
 			fbw.close();
-
-			// get a ID and make a file named by ID of the new user.
+			
 			String filename = "";
 			filename = p.getId() + ".txt";
 			PrintWriter out = new PrintWriter(filename);
-
-			// store name, email and password information of the user
+			
 			out.println(p.getName());
 			out.println(p.getEmail());
-			String password = new String(p.getPassword());
+			String password = new String (p.getPassword());
 			out.println(password);
-			// store the picture profile information of the user
+			
 			out.println(p.getPicturePath());
+			
+			int f = 0;
+			
+			if (p.getGameScore() != null && p.getGameScore().size() > 0) {
 
-			// if game score is not null then all the game scores are printed
-			// out
-			if (p.getGameScore() != null) {
-				for (int s : p.getGameScore()) {
-					out.print(s + ",");
-				}
+				out.println(p.getGameScore().get(0));
 			}
 			out.println();
+			
+			if (p.getFriends() != null && p.getFriends().size() > 0) {
 
-			// if friends are not null then all friends of the user are printed
-			// out
-			if (p.getFriends() != null) {
-				for (int f : p.getFriends()) {
-					out.print(f + ",");
+				ArrayList<Integer> friendsIdx = p.getFriends();
+
+				for (f=0; f < friendsIdx.size() - 1; f++) {
+					out.print( friendsIdx.get(f) + ",");
 				}
+				if(friendsIdx.size() > 0)
+					out.print(friendsIdx.get(f));
 			}
 			out.println();
-
-			// if posts are not null the all posts of the user are printed out
-			if (p.getPosts() != null) {
-				for (String s : p.getPosts()) {
+			
+			if (p.getPosts() != null && p.getPosts().size() > 0) {
+				for (String s: p.getPosts()) {
 					out.print(s);
 				}
 			}
 			out.println();
-
+			
 			out.flush();
 			out.close();
+
+//			// get a ID and make a file named by ID of the new user.
+//			String filename = "";
+//			filename = p.getId() + ".txt";
+//			PrintWriter out = new PrintWriter(filename);
+//
+//			// store name, email and password information of the user
+//			out.println(p.getName());
+//			out.println(p.getEmail());
+//			String password = new String(p.getPassword());
+//			out.println(password);
+//			// store the picture profile information of the user
+//			out.println(p.getPicturePath());
+//
+//			// if game score is not null then all the game scores are printed
+//			// out
+//			if (p.getGameScore() != null) {
+//				for (int s : p.getGameScore()) {
+//					out.print(s + ",");
+//				}
+//			}
+//			out.println();
+//
+//			// if friends are not null then all friends of the user are printed
+//			// out
+//			if (p.getFriends() != null) {
+//				for (int f : p.getFriends()) {
+//					out.print(f + ",");
+//				}
+//			}
+//			out.println();
+//
+//			// if posts are not null the all posts of the user are printed out
+//			if (p.getPosts() != null) {
+//				for (String s : p.getPosts()) {
+//					out.print(s);
+//				}
+//			}
+//			out.println();
+//
+//			out.flush();
+//			out.close();
 
 		} catch (Exception e) {
 			e.printStackTrace();

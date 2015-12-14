@@ -58,18 +58,26 @@ public class UserDatabase {
 					p.setFriendList(friendList);
 				}
 
-				String postList = userInfo.get(6);
-				if (postList.length() > 0) {
-					String[] posts = postList.split("Name: ");
-					ArrayList<String> postLists = new ArrayList<String>();
-
-					for (int i = 0; i < posts.length; i++) {
-						postLists.add(posts[i]);
-					}
-
-					p.setPostList(postLists);
+//				String postList = userInfo.get(6);
+//				if (postList.length() > 0) {
+//					String[] posts = postList.split("Name: ");
+//					ArrayList<String> postLists = new ArrayList<String>();
+//
+//					for (int i = 0; i < posts.length; i++) {
+//						postLists.add(posts[i]);
+//					}
+//
+//					p.setPostList(postLists);
+//				}
+				
+				String post = "";
+				for (int i = 6; i < userInfo.size(); i++){
+					post += "\n" + userInfo.get(i);
 				}
-				System.out.println(p.getName());
+				
+				ArrayList<String> postList = new ArrayList<String>();
+				postList.add(post);
+				p.setPostList(postList);
 				users.add(p);
 			}
 		}
