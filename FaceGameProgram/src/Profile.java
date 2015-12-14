@@ -79,7 +79,7 @@ public class Profile extends JFrame {
 	private ArrayList<Integer> friendIds;
 	
 	private JComboBox searchFriends;
-	private JComboBox deleteFriends;
+
 	
  	private UserProfileWriter upw;
 	
@@ -136,7 +136,6 @@ public class Profile extends JFrame {
 		this.b3 = new JButton("Update profile picture");
 		this.b4 = new JButton("Play Game!");
 		this.b5 = new JButton("Add Friends");
-		this.deleteFriendButton = new JButton("Delete Friends");
 		
 		this.statusArea = new JTextArea("");
 		
@@ -176,16 +175,6 @@ public class Profile extends JFrame {
 		int databaseSize = UserDatabase.getNumberOfUsers();
 		System.out.println(databaseSize);
 		
-		
-		
-		String[] friendsListforDelete = new String[friendIds.size()];
-		for (int i=0; i<friendIds.size(); i++)
-		{
-			Person friendPerson = users.get(friendIds.get(i));
-			friendsListforDelete[i] = friendPerson.getName();
-			
-		}
-		
 //		String[] friendsList = new String[]
 		
 		
@@ -202,15 +191,12 @@ public class Profile extends JFrame {
 		}
 		
 		this.searchFriends = new JComboBox(userNameArray);
-		this.deleteFriends = new JComboBox(friendsListforDelete);
 
 
 //		p1.add(tf3);
 		p1.add(searchFriends);
 		p1.add(b5);
 		
-		p1.add(deleteFriends);
-		p1.add(deleteFriendButton);
 		// added the image path input Textfield
 		//p1.add(tf4);
 		p1.add(b3);
@@ -443,25 +429,6 @@ public class Profile extends JFrame {
 			}
 		});
 		
-		deleteFriendButton.addActionListener(new ActionListener(){
-			public void actionPerformed (ActionEvent deleteFriendsEvent) {
-				int found = -1;
-				for (int i = 0; i < friendIds.size();i ++) {
-					if (users.get(friendIds.get(i)).getName().compareTo (deleteFriends.getSelectedItem().toString()) == 0){
-						found = i;
-						break;
-					}
-				}
-				
-				int initialSize = friendIds.size();
-				if (found != -1) {
-					friendIds.remove(found);
-					loginUser.setFriendList(friendIds);
-					upw.createUserInividuleData(loginUser);
-					updateFriendsTable(initialSize);
-				}
-			}
-		});
 		
 		pack();
 		
