@@ -246,16 +246,14 @@ public class Profile extends JFrame {
             	{
             		if (model.getValueAt(index, 0) != null)
             		{	
-            			Person clickedFriend = users.get(friendIds.get(index));
-            			String strValue = clickedFriend.getPosts().get(0);
-            			friendsInfo.setText(clickedFriend.getName() + "'s status is: \n" + strValue);
-//            			String strValue = model.getValueAt(index, 0).toString();
-//            			System.out.println(strValue);
-//            			friendsInfo.setText("You have clicked on:\n" + strValue);
-            			
+            			if (index<friendIds.size())
+            			{
+            				Person clickedFriend = users.get(friendIds.get(index));
+            				String strValue = clickedFriend.getPosts().get(0);
+            				friendsInfo.setText(clickedFriend.getName() + "'s status is: \n" + strValue);
+            			}
             		}
             	}
-                System.out.println("clicekd on table");
             }
         });
 		
