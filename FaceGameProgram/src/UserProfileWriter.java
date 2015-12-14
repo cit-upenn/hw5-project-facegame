@@ -21,19 +21,24 @@ public class UserProfileWriter {
 			PrintWriter out = new PrintWriter(filename);
 			
 			out.println(p.getName());
+			out.flush();
 			out.println(p.getEmail());
+			out.flush();
 			String password = new String (p.getPassword());
 			out.println(password);
+			out.flush();
 			
 			out.println(p.getPicturePath());
+			out.flush();
 			
 			int f = 0;
 			
 			if (p.getGameScore() != null && p.getGameScore().size() > 0) {
 
-				out.println(p.getGameScore().get(0));
+				out.print(p.getGameScore().get(0));
 			}
 			out.println();
+			out.flush();
 			
 			if (p.getFriends() != null && p.getFriends().size() > 0) {
 

@@ -88,6 +88,7 @@ public class Profile extends JFrame {
 	public Profile(Person p) {
 		post = "";
 		this.picturePath = "emptyProfilePicture2.jpg";
+		this.gameScore = 0;
 		
 		loginUser = p;
 		name = new JLabel(loginUser.getName());
@@ -136,7 +137,7 @@ public class Profile extends JFrame {
 		//this.tf4 = new JTextField("Image path", 15);
 		
 		this.container = new JFrame("Drone Wars");
-		this.gameScore = 0;
+
 		
 		upw = new UserProfileWriter();
 		
@@ -638,13 +639,13 @@ public class Profile extends JFrame {
 //
 //	}
 	
-	public static void main(String[] args) throws IOException {
-		char[] pw ={'a','b','c'};
-		Person loginUser = new Person("Xinxin", "sss@upenn.edu", pw);
-		Profile startingProfile = new Profile(loginUser);
-//		startingProfile.updateScore (5);
-				
-	}
+//	public static void main(String[] args) throws IOException {
+//		char[] pw ={'a','b','c'};
+//		Person loginUser = new Person("Xinxin", "sss@upenn.edu", pw);
+//		Profile startingProfile = new Profile(loginUser);
+////		startingProfile.updateScore (5);
+//				
+//	}
 
 
 }
