@@ -162,8 +162,6 @@ public class Login extends JFrame {
 		String inputEmail = emailField.getText();
 		char[] inputPw = passwordField.getPassword();
 
-		if (inputName.equals("Name")) {
-
 			// if name/email/password user input is null, show error messages.
 			if (inputName.equals("Name")) {
 	
@@ -192,7 +190,7 @@ public class Login extends JFrame {
 			}
 
 		}
-	}
+
 
 	/**
 	 * This method shows what will happen after clicking the "login" button.

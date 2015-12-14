@@ -87,6 +87,7 @@ public class Profile extends JFrame {
 
 	public Profile(Person p) {
 		post = "";
+		this.picturePath = "emptyProfilePicture2.jpg";
 		
 		loginUser = p;
 		name = new JLabel(loginUser.getName());
@@ -94,6 +95,7 @@ public class Profile extends JFrame {
 		
 		if (loginUser.getPicturePath().length() > 0) {
 			picturePath = loginUser.getPicturePath();
+//			System.out.println(picturePath);
 		}
 		ArrayList<Integer> gameScoreList = loginUser.getGameScore();
 		if (gameScoreList != null && gameScoreList.size() > 0) {
@@ -134,7 +136,6 @@ public class Profile extends JFrame {
 		//this.tf4 = new JTextField("Image path", 15);
 		
 		this.container = new JFrame("Drone Wars");
-		this.picturePath = "emptyProfilePicture2.jpg";
 		this.gameScore = 0;
 		
 		upw = new UserProfileWriter();
@@ -377,6 +378,8 @@ public class Profile extends JFrame {
 				//picturePath = tf4.getText();
 				updatePictureProfile(picturePath, true);
 //				imagePanel.add(imageLabel);
+				loginUser.setPicturePath(picturePath);
+				upw.createUserInividuleData(loginUser);
 		
 			}
 		
@@ -448,6 +451,7 @@ public class Profile extends JFrame {
 		ArrayList<Integer> gs = new ArrayList<Integer>();
 		gs.add(gameScore);
 		loginUser.setGameScore(gs);
+		upw.createUserInividuleData(loginUser);
 		this.gameScoreLabel.setText("" + score);
 		//JLabel newScore = new JLabel ("" + score);
 		//gameScorePanel = new JPanel ();
