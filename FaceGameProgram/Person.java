@@ -1,54 +1,162 @@
-
-
 import java.util.ArrayList;
 
+/**
+ * This class provides all information of a single user.
+ * 
+ * @author Fanglin
+ *
+ */
+
 public class Person {
-	
-	private String name;
-	private String email;
-	private char[] password;
-	private String picturePath;
-	private String status;
+
+	/**
+	 * instance variables
+	 */
 	private int id;
-	private ArrayList<Integer> listOfFriends;
+
+ 	private String name;
+ 	private String email;
+ 	private char[] password;
+ 	private String picturePath;
+
+ 	private ArrayList<Integer> gameScore;
+ 	
+ 	private ArrayList<Integer> listOfFriends;
 	
-	public static int friendsCount;
+ 	private ArrayList<String> posts ;
+
+ 	/**
+ 	 * class variable
+ 	 */
+ 	public static int friendsCount;
+ 	
+ 	
+ 	
+
+	/**
+	 * constructor -- initialize an object person with arguments name, email and
+	 * password
+	 * 
+	 * @param name
+	 * @param email
+	 * @param pw
+	 */
 	
-	public Person (String name, String email, char[] pw) {
+	public Person(String name, String email, char[] pw) {
+
+		id = UserDatabase.getNumberOfUsers();
 		this.name = name;
 		this.email = email;
 		password = pw;
-		id = friendsCount;
-		friendsCount ++;
+		picturePath = "";
+		gameScore = new ArrayList<Integer>();
+		listOfFriends = new ArrayList<Integer>();
+		posts = new ArrayList<String>();
 	}
-	
-	public int getId () {
+
+	/**
+	 * @return id
+	 */
+	public int getId() {
 		return id;
 	}
-	public String getName () {
+
+	/**
+	 * @param id
+	 */
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	/**
+	 * @return name
+	 */
+	public String getName() {
 		return name;
 	}
-	
-	public String getPicturePath () {
+
+	/**
+	 * @return password
+	 */
+	public char[] getPassword() {
+		return password;
+	}
+
+	/**
+	 * @return email
+	 */
+	public String getEmail() {
+		return email;
+	}
+
+	/**
+	 * @return picturePath
+	 */
+	public String getPicturePath() {
 		return picturePath;
 	}
-	
-	public void setPicturePath (String picturePath) {
+
+	/**
+	 * @param picturePath
+	 */
+	public void setPicturePath(String picturePath) {
 		this.picturePath = picturePath;
 	}
-	
-	public void setStatus(String status) {
-		this.status = status;
+
+	/**
+	 * id of friends
+	 * 
+	 * @param list
+	 */
+	public void setFriendList(ArrayList<Integer> list) {
+		listOfFriends = list;
 	}
-	
-	public String getStatus () {
-		return status;
+
+	/**
+	 * posts
+	 * 
+	 * @param list
+	 */
+	public void setPostList(ArrayList<String> list) {
+		posts = list;
+		
 	}
-	
-	public ArrayList<Integer> getFriends () {
-		return listOfFriends; 
+
+	/**
+	 * game scores
+	 * 
+	 * @param gs
+	 */
+	public void setGameScore(ArrayList<Integer> gs) {
+		gameScore = gs;
 	}
-	public boolean addFriend (int id) {
+
+	/**
+	 * @return gameScore
+	 */
+	public ArrayList<Integer> getGameScore() {
+		return gameScore;
+	}
+
+	/**
+	 * @return posts
+	 */
+	public ArrayList<String> getPosts() {
+		return posts;
+	}
+
+	/**
+	 * @return listOfFriends
+	 */
+	public ArrayList<Integer> getFriends() {
+		return listOfFriends;
+	}
+
+	/**
+	 * @param id
+	 * @return ture if the id is not in listOfFriends, otherwise return false
+	 */
+	public boolean addFriend(int id) {
 		if (!listOfFriends.contains(id)) {
 			listOfFriends.add(id);
 			return true;
@@ -56,7 +164,5 @@ public class Person {
 			return false;
 		}
 	}
-	
-	
-	
+
 }
