@@ -556,6 +556,14 @@ public class GameEngine extends Canvas
 			this.bulletSound.run();
 		}
 	}
+	/**
+	 * gets the number of bullets
+	 * @return bullet number
+	 */
+	public int getNumBullets()
+	{
+		return this.bullets.size();
+	}
 	
 	/**
 	 * create a radial firing of bombs and decrement the bomb number
@@ -575,6 +583,15 @@ public class GameEngine extends Canvas
 			bb.rotateBy(this.player.gun.getAngle() + angle);
 			this.bullets.add(bb);
 		}
+	}
+	
+	/**
+	 * get num bombs
+	 * return numBullets
+	 */
+	public int getNumBombs()
+	{
+		return this.numBombs;
 	}
 
 	/**
@@ -921,8 +938,9 @@ public class GameEngine extends Canvas
 	public void setGameOver(Graphics2D g)
 	{
 		this.drawGameOverMenu(g);
+		if(this.gameOver == false)
+			this.faceGame.updateScore(this.getPlayerScore());
 		this.gameOver = true;
-		this.faceGame.updateScore(this.getPlayerScore());
 	}
 	
 	/**

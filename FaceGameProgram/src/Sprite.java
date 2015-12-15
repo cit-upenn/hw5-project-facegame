@@ -212,6 +212,24 @@ public class Sprite extends JFrame
 		this.updateTransform();
 	}
 	
+	/**
+	 * gets the scale of the sprite
+	 * @return the scale x
+	 */
+	public double getScaleX()
+	{
+		return this.scaleX;
+	}
+	
+	/**
+	 * gets the scale of the sprite
+	 * @return the scale x
+	 */
+	public double getScaleY()
+	{
+		return this.scaleY;
+	}
+	
 	
 	/**
 	 * get the BufferedImage object

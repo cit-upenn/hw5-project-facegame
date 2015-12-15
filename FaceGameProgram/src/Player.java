@@ -42,12 +42,4 @@ public class Player extends Asset
 	{
 		this.gun.rotateBy(x);
 	}
-	
-	/**
-	 * no auto stepping loging for the time being
-	 */
-	public void step()
-	{
-		this.moveBy(0.0, 0.0);
-	}
 }
