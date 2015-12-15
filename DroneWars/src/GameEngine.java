@@ -23,7 +23,8 @@ import javax.swing.JPanel;
  * @author Rony Edde
  *
  */
-public class GameEngine extends Canvas {
+public class GameEngine extends Canvas 
+{
 
 	/**
 	 * 
@@ -89,14 +90,16 @@ public class GameEngine extends Canvas {
 	private SoundEffects bulletSound;
 	private SoundEffects bombSound;
 	private SoundEffects hitSound;
+	private Profile faceGame;
 	
 	
 	/**
 	 * game Engine constructor
 	 * @param containerFrame an optional JFrame to inherit as a parent
 	 */
-	public GameEngine(JFrame containerFrame) 
+	public GameEngine(JFrame containerFrame, Profile p) 
 	{
+		this.faceGame = p;
 		// the frame where we will draw everything
 		JFrame container = new JFrame("Drone Wars");
 		
@@ -205,7 +208,7 @@ public class GameEngine extends Canvas {
 	 */
 	public void gameLoop() 
 	{
-		//long lastLoopTime = System.currentTimeMillis();
+		long lastLoopTime = System.currentTimeMillis();
 		// keep looping until we exit
 		while (gameRunning) 
 		{		
@@ -216,7 +219,7 @@ public class GameEngine extends Canvas {
 			
 			// check running time passed
 			//long delta = System.currentTimeMillis() - lastLoopTime;
-			//lastLoopTime = System.currentTimeMillis();
+			lastLoopTime = System.currentTimeMillis();
 			
 			g.setColor(Color.black);
 			g.fillRect(0,0,640,480);
@@ -553,6 +556,14 @@ public class GameEngine extends Canvas {
 			this.bulletSound.run();
 		}
 	}
+	/**
+	 * gets the number of bullets
+	 * @return bullet number
+	 */
+	public int getNumBullets()
+	{
+		return this.bullets.size();
+	}
 	
 	/**
 	 * create a radial firing of bombs and decrement the bomb number
@@ -572,6 +583,15 @@ public class GameEngine extends Canvas {
 			bb.rotateBy(this.player.gun.getAngle() + angle);
 			this.bullets.add(bb);
 		}
+	}
+	
+	/**
+	 * get num bombs
+	 * return numBullets
+	 */
+	public int getNumBombs()
+	{
+		return this.numBombs;
 	}
 
 	/**
@@ -902,13 +922,15 @@ public class GameEngine extends Canvas {
 	{
 		String str1 = "W A S D to move";
 		String str2 = "Up Down Left Right arrows to shoot";
-		String str3 = "press any key to start";
+		String str3 = "Space Bar to release a bomb";
+		String str4 = "press any key to start";
     	Font font = new Font("Serif", Font.BOLD, 25);
         g.setFont(font);
         
         this.drawFont(g, str1, 240, 150, new Color(0.8f, 0.0f, 0.5f));
         this.drawFont(g, str2, 130, 180, new Color(0.1f, 1.0f, 0.1f));
-        this.drawFont(g, str3, 215, 210, new Color(0.5f, 0.5f, 0.5f));
+        this.drawFont(g, str3, 180, 210, new Color(0.1f, 1.0f, 0.1f));
+        this.drawFont(g, str4, 215, 250, new Color(0.5f, 0.5f, 0.5f));
 	}
 	
 /**
@@ -918,6 +940,8 @@ public class GameEngine extends Canvas {
 	public void setGameOver(Graphics2D g)
 	{
 		this.drawGameOverMenu(g);
+		if(this.gameOver == false)
+			this.faceGame.updateScore(this.getPlayerScore());
 		this.gameOver = true;
 	}
 	
