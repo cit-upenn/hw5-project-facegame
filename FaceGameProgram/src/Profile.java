@@ -374,6 +374,7 @@ public class Profile extends JFrame {
 		loginUser.setGameScore(gs);
 		upw.createUserInividuleData(loginUser);
 		this.gameScoreLabel.setText("" + score);
+		System.out.println(gameScore);
 
 	}
 /**
