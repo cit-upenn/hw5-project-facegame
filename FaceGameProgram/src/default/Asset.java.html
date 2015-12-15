@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>Asset.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">Login (Dec 14, 2015 9:00:23 PM)</a> &gt; <a href="../../index.html" class="el_group">FaceGameProgram</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">Asset.java</span></div><h1>Asset.java</h1><pre class="source lang-java linenums">import java.awt.Rectangle;
+import java.util.ArrayList;
+
+/**
+ * Asset class that manages 2D elements
+ * Collisions images, transforms and behaviors
+ * @author Rony Edde
+ *
+ */
+public class Asset 
+{
+	ArrayList&lt;Sprite&gt; sprites;
+
+	/**
+	 * constructor initialization
+	 * @param spritePaths
+	 */
+<span class="nc" id="L18">	public Asset(ArrayList&lt;String&gt; spritePaths)</span>
+	{
+<span class="nc" id="L20">		this.sprites = new ArrayList&lt;Sprite&gt;();</span>
+<span class="nc bnc" id="L21" title="All 2 branches missed.">		for(String path : spritePaths)</span>
+		{
+<span class="nc" id="L23">			this.add(path);</span>
+		}
+<span class="nc" id="L25">	}</span>
+
+	/**
+	 * checks if sprite collides with another rectangle
+	 * @param index the index of the sprite
+	 * @param rec the rectangle to check against
+	 * @return true if a collision occurred
+	 */
+	public boolean collidesWith(int index, Rectangle rec)
+	{
+<span class="pc bpc" id="L35" title="1 of 2 branches missed.">		if(this.sprites.size() &gt;= 1)</span>
+		{
+			// get bounds
+<span class="fc" id="L38">			Rectangle bounds = getBBox(index);</span>
+			
+<span class="fc bfc" id="L40" title="All 2 branches covered.">			if(bounds.intersects(rec))</span>
+<span class="fc" id="L41">				return true;</span>
+		}
+<span class="fc" id="L43">		return false;</span>
+	}
+	
+	/**
+	 * gets the bounding box of the sprite index
+	 * @param index the sprite index
+	 * @return bounding box
+	 */
+	public Rectangle getBBox(int index)
+	{
+<span class="fc" id="L53">		Rectangle bBox = new Rectangle();</span>
+<span class="pc bpc" id="L54" title="1 of 2 branches missed.">		if(this.sprites.size() &gt;= index-1)</span>
+		{
+<span class="fc" id="L56">			Sprite sprite = this.sprites.get(0);</span>
+<span class="fc" id="L57">			bBox = sprite.getBounds();</span>
+		}
+<span class="fc" id="L59">		return bBox;</span>
+	}
+	
+	/**
+	 * gets an eroded bounding box 
+	 * @param index the sprite index
+	 * @param scale the number of pixels to erode
+	 * @return Rectangle bbox
+	 */
+	public Rectangle getErodedBBox(int index, int scale)
+	{
+<span class="fc" id="L70">		Rectangle bBox = this.sprites.get(index).getBounds();</span>
+<span class="fc" id="L71">		return new Rectangle(bBox.x+scale, </span>
+<span class="fc" id="L72">							 bBox.y+scale, </span>
+<span class="fc" id="L73">							 (bBox.width-scale*2), </span>
+<span class="fc" id="L74">							 (bBox.height-scale*2));		</span>
+	}
+	
+	/**
+	 * constructor that takes a sprite as initialiser
+	 * @param spritePath
+	 */
+<span class="nc" id="L81">	public Asset(String spritePath)</span>
+	{
+<span class="nc" id="L83">		this.sprites = new ArrayList&lt;Sprite&gt;();</span>
+<span class="nc" id="L84">		this.add(spritePath);</span>
+<span class="nc" id="L85">	}</span>
+	
+	/**
+	 * constructor that takes no parameters
+	 * default operation for an empty asset
+	 */
+<span class="fc" id="L91">	public Asset()</span>
+	{
+<span class="fc" id="L93">		this.sprites = new ArrayList&lt;Sprite&gt;();</span>
+<span class="fc" id="L94">	}</span>
+	
+	/**
+	 * creates and adds a sprite from the specified path
+	 * @param spritePath to the image on disk
+	 */
+	public void add(String spritePath)
+	{
+<span class="fc" id="L102">		Sprite sprite = new Sprite(spritePath);</span>
+<span class="fc" id="L103">		this.sprites.add(sprite);</span>
+<span class="fc" id="L104">	}</span>
+	
+	/**
+	 * moves the asset on screen offset from the current location
+	 * @param x the x coordinate offset
+	 * @param y the y coordinate offset
+	 */
+	public void moveBy(double x, double y)
+	{
+<span class="fc bfc" id="L113" title="All 2 branches covered.">		for(Sprite sprite : this.sprites)</span>
+		{
+<span class="fc" id="L115">			sprite.moveBy(x, y);</span>
+		}
+<span class="fc" id="L117">	}</span>
+	
+	/**
+	 * rotates the asset by the specified angle
+	 * @param x the offset angle in radians from the current angle
+	 */
+	public void rotateBy(double x)
+	{
+<span class="fc bfc" id="L125" title="All 2 branches covered.">		for(Sprite sprite : this.sprites)</span>
+		{
+<span class="fc" id="L127">			sprite.rotateBy(x);</span>
+		}
+<span class="fc" id="L129">	}</span>
+	
+	/**
+	 * gets the sprite at the index of the asset
+	 * @param index the index of the sprite
+	 * @return Sprite at index
+	 */
+	public Sprite getSprite(int index)
+	{
+<span class="nc bnc" id="L138" title="All 2 branches missed.">		if (index &lt; this.sprites.size())</span>
+		{
+<span class="nc" id="L140">			return this.sprites.get(index);</span>
+		}
+<span class="nc" id="L142">		return null;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>Login (Dec 14, 2015 9:00:23 PM)</div></body></html>

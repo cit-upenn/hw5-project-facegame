@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>GeoLocation.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">Login (Dec 14, 2015 9:00:23 PM)</a> &gt; <a href="../../index.html" class="el_group">FaceGameProgram</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">GeoLocation.java</span></div><h1>GeoLocation.java</h1><pre class="source lang-java linenums">import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.URL;
+
+/**
+ * Geo location class for getting location from IP address
+ * @author Rony Edde
+ *
+ */
+public class GeoLocation 
+{
+	private String locationData;
+	
+	/**
+	 * constructor that tries to get the ip and extract the location by querying freegeoip
+	 */
+<span class="fc" id="L19">	public GeoLocation()</span>
+	{
+		try 
+		{      
+<span class="fc" id="L23">			String ip = InetAddress.getLocalHost().toString(); </span>
+<span class="fc" id="L24">			URL url = new URL(&quot;http://freegeoip.net/csv/&quot; + ip);</span>
+<span class="fc" id="L25">			HttpURLConnection connection = (HttpURLConnection) url.openConnection();</span>
+<span class="fc" id="L26">			connection.connect();</span>
+	
+<span class="fc" id="L28">			java.io.InputStream is = connection.getInputStream();</span>
+<span class="fc" id="L29">			int status = connection.getResponseCode();</span>
+			if (status != 300) {}
+			
+<span class="fc" id="L32">			BufferedReader reader = new BufferedReader(new InputStreamReader(is));</span>
+			//String line = &quot;&quot;;
+		        
+<span class="fc" id="L35">			String line = &quot;&quot;;</span>
+<span class="fc bfc" id="L36" title="All 2 branches covered.">			while ((line = reader.readLine()) != null)</span>
+			{
+<span class="fc" id="L38">				System.out.println(line);</span>
+<span class="fc" id="L39">				this.locationData = line;</span>
+			}		        
+<span class="fc" id="L41">			reader.close();</span>
+<span class="fc" id="L42">		} </span>
+<span class="nc" id="L43">		catch (Exception e) </span>
+		{
+<span class="nc" id="L45">			e.printStackTrace();</span>
+		}
+<span class="fc" id="L47">	}</span>
+	
+	/**
+	 * gets the latest geo location data as is
+	 * @return string that contains all the geo localisation info
+	 */
+	public String getLocationData()
+	{
+<span class="fc" id="L55">		return this.locationData;</span>
+	}
+	
+	/**
+	 * gets the location strings extracted from the data as a String array
+	 * @return string array with location info
+	 */
+	public String[] getLocationStrings()
+	{
+<span class="fc" id="L64">		String strings[] = this.locationData.split(&quot;,&quot;);</span>
+		
+<span class="fc" id="L66">		return strings;</span>
+	}
+	
+	/**
+	 * checks if location string is empty
+	 * @return true if empty
+	 */
+	public boolean isEmpty()
+	{
+<span class="nc bnc" id="L75" title="All 2 branches missed.">		if (this.locationData.compareTo(&quot;&quot;) == 0)</span>
+<span class="nc" id="L76">			return true;</span>
+<span class="nc" id="L77">		return false;</span>
+	}
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>Login (Dec 14, 2015 9:00:23 PM)</div></body></html>

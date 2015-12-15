@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>Bullet.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">Login (Dec 14, 2015 9:00:23 PM)</a> &gt; <a href="../../index.html" class="el_group">FaceGameProgram</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">Bullet.java</span></div><h1>Bullet.java</h1><pre class="source lang-java linenums">
+/**
+ * Bullet asset class for managing bullet behavior
+ * @author Rony Edde
+ *
+ */
+public class Bullet extends Asset
+{
+	Sprite bullet;
+	double speed;
+	
+	/**
+	 * constructor for the bullet class
+	 */
+	public Bullet()
+	{
+<span class="fc" id="L17">		super();</span>
+<span class="fc" id="L18">		this.speed = 40.0;</span>
+		//URL location = Player.class.getProtectionDomain().getCodeSource().getLocation();
+		//String pwd = location.toString().replace(&quot;file:&quot;, &quot;&quot;);
+		
+<span class="fc" id="L22">		String bulletPath = &quot;./bullet.png&quot;;</span>
+		
+<span class="fc" id="L24">		this.add(bulletPath);</span>
+		//this.add(&quot;./src/bullet.png&quot;);
+<span class="fc" id="L26">		this.bullet = this.sprites.get(0);</span>
+<span class="fc" id="L27">		this.bullet.setCentroid((-this.bullet.getWidth())*0.5,</span>
+<span class="fc" id="L28">							    (-this.bullet.getHeight())*0.5);</span>
+<span class="fc" id="L29">	}</span>
+	
+	/**
+	 * sets the speed of the bullet
+	 * @param value
+	 */
+	public void setSpeed(double value)
+	{
+<span class="fc" id="L37">		this.speed = value;</span>
+<span class="fc" id="L38">	}</span>
+	
+	/**
+	 * sets the speed of the bullet
+	 * @param value
+	 */
+	public double getSpeed()
+	{
+<span class="nc" id="L46">		return this.speed;</span>
+	}
+	
+	/**
+	 * bullet animation logic 
+	 */
+	public void step()
+	{
+<span class="fc" id="L54">		double x = this.speed * Math.cos(this.bullet.getAngle());</span>
+<span class="fc" id="L55">		double y = this.speed * Math.sin(this.bullet.getAngle());</span>
+<span class="fc" id="L56">		this.moveBy(x, y);</span>
+<span class="fc" id="L57">	}</span>
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>Login (Dec 14, 2015 9:00:23 PM)</div></body></html>

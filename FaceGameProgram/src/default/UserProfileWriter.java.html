@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>UserProfileWriter.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">Login (Dec 14, 2015 9:00:23 PM)</a> &gt; <a href="../../index.html" class="el_group">FaceGameProgram</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">UserProfileWriter.java</span></div><h1>UserProfileWriter.java</h1><pre class="source lang-java linenums">import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+
+/**
+ * This class write something into a given file &quot;userDatabase&quot; and make a new
+ * file for each user to store user's name, email, password, game score, friends
+ * and posts information.
+ * 
+ * @author Fanglin
+ *
+ */
+<span class="fc" id="L15">public class UserProfileWriter {</span>
+	
+	public void createUserInividuleData (Person p) {
+		try {
+<span class="fc" id="L19">			String filename = &quot;&quot;;</span>
+<span class="fc" id="L20">			filename = p.getId() + &quot;.txt&quot;;</span>
+<span class="fc" id="L21">			PrintWriter out = new PrintWriter(filename);</span>
+			
+<span class="fc" id="L23">			out.println(p.getName());</span>
+<span class="fc" id="L24">			out.println(p.getEmail());</span>
+<span class="fc" id="L25">			String password = new String (p.getPassword());</span>
+<span class="fc" id="L26">			out.println(password);</span>
+			
+<span class="fc" id="L28">			out.println(p.getPicturePath());</span>
+			
+<span class="fc" id="L30">			int f = 0;</span>
+			
+<span class="pc bpc" id="L32" title="1 of 4 branches missed.">			if (p.getGameScore() != null &amp;&amp; p.getGameScore().size() &gt; 0) {</span>
+
+<span class="fc" id="L34">				out.print(p.getGameScore().get(0));</span>
+			}
+<span class="fc" id="L36">			out.println();</span>
+
+<span class="pc bpc" id="L38" title="1 of 4 branches missed.">			if (p.getFriends() != null &amp;&amp; p.getFriends().size() &gt; 0) {</span>
+
+<span class="fc" id="L40">				ArrayList&lt;Integer&gt; friendsIdx = p.getFriends();</span>
+
+<span class="fc bfc" id="L42" title="All 2 branches covered.">				for (f=0; f &lt; friendsIdx.size() - 1; f++) {</span>
+<span class="fc" id="L43">					out.print( friendsIdx.get(f) + &quot;,&quot;);</span>
+				}
+<span class="pc bpc" id="L45" title="1 of 2 branches missed.">				if(friendsIdx.size() &gt; 0)</span>
+<span class="fc" id="L46">					out.print(friendsIdx.get(f));</span>
+			}
+<span class="fc" id="L48">			out.println();</span>
+			
+<span class="pc bpc" id="L50" title="2 of 4 branches missed.">			if (p.getPosts() != null &amp;&amp; p.getPosts().size() &gt; 0) {</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">				for (String s: p.getPosts()) {</span>
+<span class="fc" id="L52">					out.print(s);</span>
+				}
+			}
+<span class="fc" id="L55">			out.println();</span>
+			
+<span class="fc" id="L57">			out.flush();</span>
+<span class="fc" id="L58">			out.close();</span>
+			
+	
+<span class="pc" id="L61">		} catch (Exception e) {</span>
+<span class="nc" id="L62">			e.printStackTrace();</span>
+		}
+		
+<span class="fc" id="L65">	}</span>
+
+	/**
+	 * This method writes in an ID into the userDatabase and creates a new file
+	 * storing all information of the user.
+	 * 
+	 * @param p
+	 */
+
+	public void write(Person p) {
+		try {
+
+			// write ID into the userDatabase
+
+			// File file = new File(&quot;userDatabase.txt&quot;);
+<span class="fc" id="L80">			OutputStreamWriter writer = new OutputStreamWriter(</span>
+<span class="fc" id="L81">					new FileOutputStream(&quot;userDatabase.txt&quot;, true));</span>
+			// FileWriter fw = new FileWriter(&quot;userDatabase.txt&quot;);
+			// FileWriter fw = new FileWriter (file.getAbsoluteFile());
+<span class="fc" id="L84">			BufferedWriter fbw = new BufferedWriter(writer);</span>
+			// PrintWriter out2 = new PrintWriter(new
+			// FileWriter(&quot;userDatabase.txt&quot;,true));
+<span class="fc" id="L87">			String id = &quot;&quot; + p.getId();</span>
+<span class="fc" id="L88">			fbw.write(id);</span>
+<span class="fc" id="L89">			fbw.newLine();</span>
+<span class="fc" id="L90">			fbw.close();</span>
+			
+<span class="fc" id="L92">			String filename = &quot;&quot;;</span>
+<span class="fc" id="L93">			filename = p.getId() + &quot;.txt&quot;;</span>
+<span class="fc" id="L94">			PrintWriter out = new PrintWriter(filename);</span>
+			
+<span class="fc" id="L96">			out.println(p.getName());</span>
+<span class="fc" id="L97">			out.println(p.getEmail());</span>
+<span class="fc" id="L98">			String password = new String (p.getPassword());</span>
+<span class="fc" id="L99">			out.println(password);</span>
+			
+<span class="fc" id="L101">			out.println(p.getPicturePath());</span>
+			
+<span class="fc" id="L103">			int f = 0;</span>
+			
+<span class="pc bpc" id="L105" title="2 of 4 branches missed.">			if (p.getGameScore() != null &amp;&amp; p.getGameScore().size() &gt; 0) {</span>
+
+<span class="nc" id="L107">				out.println(p.getGameScore().get(0));</span>
+			}
+<span class="fc" id="L109">			out.println();</span>
+			
+<span class="pc bpc" id="L111" title="2 of 4 branches missed.">			if (p.getFriends() != null &amp;&amp; p.getFriends().size() &gt; 0) {</span>
+
+<span class="nc" id="L113">				ArrayList&lt;Integer&gt; friendsIdx = p.getFriends();</span>
+
+<span class="nc bnc" id="L115" title="All 2 branches missed.">				for (f=0; f &lt; friendsIdx.size() - 1; f++) {</span>
+<span class="nc" id="L116">					out.print( friendsIdx.get(f) + &quot;,&quot;);</span>
+				}
+<span class="nc bnc" id="L118" title="All 2 branches missed.">				if(friendsIdx.size() &gt; 0)</span>
+<span class="nc" id="L119">					out.print(friendsIdx.get(f));</span>
+			}
+<span class="fc" id="L121">			out.println();</span>
+			
+<span class="pc bpc" id="L123" title="2 of 4 branches missed.">			if (p.getPosts() != null &amp;&amp; p.getPosts().size() &gt; 0) {</span>
+<span class="nc bnc" id="L124" title="All 2 branches missed.">				for (String s: p.getPosts()) {</span>
+<span class="nc" id="L125">					out.print(s);</span>
+				}
+			}
+<span class="fc" id="L128">			out.println();</span>
+			
+<span class="fc" id="L130">			out.flush();</span>
+<span class="fc" id="L131">			out.close();</span>
+
+//			// get a ID and make a file named by ID of the new user.
+//			String filename = &quot;&quot;;
+//			filename = p.getId() + &quot;.txt&quot;;
+//			PrintWriter out = new PrintWriter(filename);
+//
+//			// store name, email and password information of the user
+//			out.println(p.getName());
+//			out.println(p.getEmail());
+//			String password = new String(p.getPassword());
+//			out.println(password);
+//			// store the picture profile information of the user
+//			out.println(p.getPicturePath());
+//
+//			// if game score is not null then all the game scores are printed
+//			// out
+//			if (p.getGameScore() != null) {
+//				for (int s : p.getGameScore()) {
+//					out.print(s + &quot;,&quot;);
+//				}
+//			}
+//			out.println();
+//
+//			// if friends are not null then all friends of the user are printed
+//			// out
+//			if (p.getFriends() != null) {
+//				for (int f : p.getFriends()) {
+//					out.print(f + &quot;,&quot;);
+//				}
+//			}
+//			out.println();
+//
+//			// if posts are not null the all posts of the user are printed out
+//			if (p.getPosts() != null) {
+//				for (String s : p.getPosts()) {
+//					out.print(s);
+//				}
+//			}
+//			out.println();
+//
+//			out.flush();
+//			out.close();
+
+<span class="pc" id="L175">		} catch (Exception e) {</span>
+<span class="nc" id="L176">			e.printStackTrace();</span>
+		}
+<span class="fc" id="L178">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>Login (Dec 14, 2015 9:00:23 PM)</div></body></html>

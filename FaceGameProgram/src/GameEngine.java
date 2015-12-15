@@ -922,13 +922,15 @@ public class GameEngine extends Canvas
 	{
 		String str1 = "W A S D to move";
 		String str2 = "Up Down Left Right arrows to shoot";
-		String str3 = "press any key to start";
+		String str3 = "Space Bar to release a bomb";
+		String str4 = "press any key to start";
     	Font font = new Font("Serif", Font.BOLD, 25);
         g.setFont(font);
         
         this.drawFont(g, str1, 240, 150, new Color(0.8f, 0.0f, 0.5f));
         this.drawFont(g, str2, 130, 180, new Color(0.1f, 1.0f, 0.1f));
-        this.drawFont(g, str3, 215, 210, new Color(0.5f, 0.5f, 0.5f));
+        this.drawFont(g, str3, 180, 210, new Color(0.1f, 1.0f, 0.1f));
+        this.drawFont(g, str4, 215, 250, new Color(0.5f, 0.5f, 0.5f));
 	}
 	
 /**

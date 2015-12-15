@@ -23,8 +23,7 @@ import javax.swing.JPanel;
  * @author Rony Edde
  *
  */
-public class GameEngine extends Canvas 
-{
+public class GameEngine extends Canvas {
 
 	/**
 	 * 
@@ -90,16 +89,14 @@ public class GameEngine extends Canvas
 	private SoundEffects bulletSound;
 	private SoundEffects bombSound;
 	private SoundEffects hitSound;
-	private Profile faceGame;
 	
 	
 	/**
 	 * game Engine constructor
 	 * @param containerFrame an optional JFrame to inherit as a parent
 	 */
-	public GameEngine(JFrame containerFrame, Profile p) 
+	public GameEngine(JFrame containerFrame) 
 	{
-		this.faceGame = p;
 		// the frame where we will draw everything
 		JFrame container = new JFrame("Drone Wars");
 		
@@ -208,7 +205,7 @@ public class GameEngine extends Canvas
 	 */
 	public void gameLoop() 
 	{
-		long lastLoopTime = System.currentTimeMillis();
+		//long lastLoopTime = System.currentTimeMillis();
 		// keep looping until we exit
 		while (gameRunning) 
 		{		
@@ -219,7 +216,7 @@ public class GameEngine extends Canvas
 			
 			// check running time passed
 			//long delta = System.currentTimeMillis() - lastLoopTime;
-			lastLoopTime = System.currentTimeMillis();
+			//lastLoopTime = System.currentTimeMillis();
 			
 			g.setColor(Color.black);
 			g.fillRect(0,0,640,480);
@@ -556,14 +553,6 @@ public class GameEngine extends Canvas
 			this.bulletSound.run();
 		}
 	}
-	/**
-	 * gets the number of bullets
-	 * @return bullet number
-	 */
-	public int getNumBullets()
-	{
-		return this.bullets.size();
-	}
 	
 	/**
 	 * create a radial firing of bombs and decrement the bomb number
@@ -583,15 +572,6 @@ public class GameEngine extends Canvas
 			bb.rotateBy(this.player.gun.getAngle() + angle);
 			this.bullets.add(bb);
 		}
-	}
-	
-	/**
-	 * get num bombs
-	 * return numBullets
-	 */
-	public int getNumBombs()
-	{
-		return this.numBombs;
 	}
 
 	/**
@@ -940,8 +920,6 @@ public class GameEngine extends Canvas
 	public void setGameOver(Graphics2D g)
 	{
 		this.drawGameOverMenu(g);
-		if(this.gameOver == false)
-			this.faceGame.updateScore(this.getPlayerScore());
 		this.gameOver = true;
 	}
 	

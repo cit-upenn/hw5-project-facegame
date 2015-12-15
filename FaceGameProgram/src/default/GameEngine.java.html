@@ -1,0 +1,1046 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>GameEngine.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">Login (Dec 14, 2015 9:00:23 PM)</a> &gt; <a href="../../index.html" class="el_group">FaceGameProgram</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">GameEngine.java</span></div><h1>GameEngine.java</h1><pre class="source lang-java linenums"><span class="fc" id="L1"></span>
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.event.KeyEvent;
+import java.awt.image.BufferStrategy;
+import java.util.ArrayList;
+import java.awt.Canvas;
+import java.awt.event.KeyAdapter;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.geom.AffineTransform;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+/**
+ * Game engine class for all the game engine logic.
+ * Enemies, player, score, sound graphics etc are all handled here
+ * @author Rony Edde
+ *
+ */
+public class GameEngine extends Canvas 
+{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private BufferStrategy strategy;
+<span class="fc" id="L34">	private boolean gameRunning = true;</span>
+	
+	//private final Object redrawLock;
+	//private JFrame win;
+	//private JPanel panel;
+	//private Graphics graphics;
+	//private Graphics2D g2d;
+	//private double rotate;
+	private int width;
+	private int height;
+	//private HashMap&lt;Character, Integer&gt; keysPressed;
+	private ArrayList&lt;Bullet&gt; bullets;
+	private ArrayList&lt;MotionAsset&gt; enemies;
+	private ArrayList&lt;PowerUp&gt; powerUps;
+	private ArrayList&lt;HeartUp&gt; heartUps;
+	private Player player;
+	private ImageAsset lifeAsset;
+	private ImageAsset bombAsset;
+	
+	private double difficulty;
+	private int numLives;
+	private int numBombs;
+	private int numBombBullets;
+	private boolean paused;
+	private boolean gameOver;
+	private double playerSpeed;
+	private boolean moveUp;
+	private boolean moveDown;
+	private boolean moveLeft;
+	private boolean moveRight;
+	private boolean fireUp;
+	private boolean fireDown;
+	private boolean fireLeft;
+	private boolean fireRight;
+	private boolean useBomb;
+	private int powerUpCount;
+	
+	private boolean firstLoop;
+	private boolean gameStarted;
+	private long lastFireTime;
+	private long fireInterval;
+	private long lastSpawnTime;
+	private long spawnInterval;
+	private long lastPowerUpSpawnTime;
+	private long powerUpSpawnInterval;
+	private long lastHeartUpSpawnTime;
+	private long heartUpSpawnInterval;
+	private long lastSoundTime;
+	private long soundInterval;
+	
+	private int playerScore;
+	private int collisionThreshold;
+	
+	private String enemyPath1;
+	private String enemyPath2;
+	
+	private SoundEffects bulletSound;
+	private SoundEffects bombSound;
+	private SoundEffects hitSound;
+	private Profile faceGame;
+	
+	
+	/**
+	 * game Engine constructor
+	 * @param containerFrame an optional JFrame to inherit as a parent
+	 */
+<span class="fc" id="L100">	public GameEngine(JFrame containerFrame, Profile p) </span>
+	{
+<span class="fc" id="L102">		this.faceGame = p;</span>
+		// the frame where we will draw everything
+<span class="fc" id="L104">		JFrame container = new JFrame(&quot;Drone Wars&quot;);</span>
+		
+<span class="pc bpc" id="L106" title="1 of 2 branches missed.">		if (containerFrame != null)</span>
+<span class="fc" id="L107">			container = containerFrame;</span>
+		
+		// get the  the frame and set main resolution
+<span class="fc" id="L110">		JPanel panel = (JPanel) container.getContentPane();</span>
+<span class="fc" id="L111">		panel.setPreferredSize(new Dimension(640,480));</span>
+<span class="fc" id="L112">		panel.setLayout(null);</span>
+		
+		// set the canvas and add the frame to it
+<span class="fc" id="L115">		setBounds(0,0,640,480);</span>
+<span class="fc" id="L116">		panel.add(this);</span>
+		
+		// DO NOT repaint.  Overriding the update to manage draw
+<span class="fc" id="L119">		setIgnoreRepaint(true);</span>
+		
+		// pack and make window visible 
+<span class="fc" id="L122">		container.pack();</span>
+<span class="fc" id="L123">		container.setResizable(false);</span>
+<span class="fc" id="L124">		container.setVisible(true);</span>
+		
+		// close the window if user hits escape
+<span class="fc" id="L127">		container.addWindowListener(new WindowAdapter() </span>
+		{
+			public void windowClosing(WindowEvent e) 
+			{
+				//win.dispose();
+				//win.setVisible(false);//System.exit(0);
+<span class="fc" id="L133">			}</span>
+		});
+		
+		// add key listener
+<span class="fc" id="L137">		addKeyListener(new KeyInputHandler());</span>
+		
+		// get focus for key events
+<span class="fc" id="L140">		requestFocus();</span>
+
+		// enable double buffering and accelerated graphics
+<span class="fc" id="L143">		createBufferStrategy(2);</span>
+<span class="fc" id="L144">		strategy = getBufferStrategy();</span>
+		
+		// setup main game parameters
+<span class="fc" id="L147">		this.setup();</span>
+<span class="fc" id="L148">	}</span>
+	
+	/**
+	 * setup default values and startup for a new game and for restarting a game
+	 */
+	public void setup()
+	{
+<span class="fc" id="L155">		this.width = 640;</span>
+<span class="fc" id="L156">		this.height = 480;</span>
+<span class="fc" id="L157">		this.difficulty = 1.0;</span>
+<span class="fc" id="L158">		this.numLives = 30;</span>
+<span class="fc" id="L159">		this.numBombs = 5;</span>
+<span class="fc" id="L160">		this.numBombBullets = 20;</span>
+<span class="fc" id="L161">		this.paused = true;</span>
+<span class="fc" id="L162">		this.gameOver = false;</span>
+		//this.keysPressed = new HashMap&lt;Character, Integer&gt;();
+<span class="fc" id="L164">		this.bullets = new ArrayList&lt;Bullet&gt;();</span>
+<span class="fc" id="L165">		this.enemies = new ArrayList&lt;MotionAsset&gt;();</span>
+<span class="fc" id="L166">		this.powerUps = new ArrayList&lt;PowerUp&gt;();</span>
+<span class="fc" id="L167">		this.heartUps = new ArrayList&lt;HeartUp&gt;();</span>
+<span class="fc" id="L168">		this.player = new Player();</span>
+<span class="fc" id="L169">		this.playerSpeed = 4.0;</span>
+<span class="fc" id="L170">		this.firstLoop = true;</span>
+<span class="fc" id="L171">		this.gameStarted = false;</span>
+		
+<span class="fc" id="L173">		this.fireInterval = 60;</span>
+<span class="fc" id="L174">		this.lastFireTime = System.currentTimeMillis();</span>
+<span class="fc" id="L175">		this.spawnInterval = 300;</span>
+<span class="fc" id="L176">		this.lastSoundTime = System.currentTimeMillis();</span>
+<span class="fc" id="L177">		this.powerUpSpawnInterval = 4000;</span>
+<span class="fc" id="L178">		this.lastPowerUpSpawnTime = System.currentTimeMillis();</span>
+<span class="fc" id="L179">		this.heartUpSpawnInterval = 6000;</span>
+<span class="fc" id="L180">		this.lastHeartUpSpawnTime = System.currentTimeMillis();</span>
+<span class="fc" id="L181">		this.soundInterval = 10;</span>
+<span class="fc" id="L182">		this.playerScore = 0;</span>
+<span class="fc" id="L183">		this.collisionThreshold = 8;</span>
+<span class="fc" id="L184">		this.powerUpCount = 0;</span>
+		
+<span class="fc" id="L186">		this.lifeAsset = new ImageAsset(&quot;./heart.png&quot;);</span>
+<span class="fc" id="L187">		this.bombAsset = new ImageAsset(&quot;./bomb.png&quot;);</span>
+<span class="fc" id="L188">		this.enemyPath1 = &quot;./enemy1.png&quot;;</span>
+<span class="fc" id="L189">		this.enemyPath2 = &quot;./enemy2.png&quot;;</span>
+		
+<span class="fc" id="L191">		this.bulletSound = new SoundEffects(&quot;./gun_fire.wav&quot;);</span>
+<span class="fc" id="L192">		this.bombSound = new SoundEffects(&quot;./bomb.wav&quot;);</span>
+<span class="fc" id="L193">		this.hitSound = new SoundEffects(&quot;./hit.wav&quot;);</span>
+
+		
+		// set player coordinates at center
+<span class="fc" id="L197">		this.player.moveBy(this.width * 0.5 - this.player.getBBox(0).getCenterX(),</span>
+<span class="fc" id="L198">						   this.height * 0.5 - this.player.getBBox(0).getCenterY());</span>
+    	
+		// initialise the entities so there's something to see
+    	// temp testing of enemies
+    	// this.spawnEnemies(10);
+<span class="fc" id="L203">	}</span>
+	
+
+	/**
+	 * Main game loop where enemy logic, updates and draw calls take place
+	 */
+	public void gameLoop() 
+	{
+<span class="fc" id="L211">		long lastLoopTime = System.currentTimeMillis();</span>
+		// keep looping until we exit
+<span class="pc bpc" id="L213" title="1 of 2 branches missed.">		while (gameRunning) </span>
+		{		
+			// graphics context
+<span class="fc" id="L216">			Graphics2D g = (Graphics2D) strategy.getDrawGraphics();</span>
+<span class="fc" id="L217">			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,</span>
+<span class="fc" id="L218">			        		   RenderingHints.VALUE_TEXT_ANTIALIAS_ON);</span>
+			
+			// check running time passed
+			//long delta = System.currentTimeMillis() - lastLoopTime;
+<span class="fc" id="L222">			lastLoopTime = System.currentTimeMillis();</span>
+			
+<span class="fc" id="L224">			g.setColor(Color.black);</span>
+<span class="fc" id="L225">			g.fillRect(0,0,640,480);</span>
+			
+			//this.setIgnoreRepaint(true);
+			// clear screen
+<span class="fc" id="L229">			g.fillRect(0, 0, this.width, this.height);</span>
+	    	
+	    	
+	    	// draw bullets
+<span class="fc" id="L233">	    	this.drawBullets(g);</span>
+	    	// enemies
+<span class="fc" id="L235">	    	this.drawEnemies(g);</span>
+	    	// player ship
+<span class="fc" id="L237">	    	this.drawPlayer(g);</span>
+	    	// draw powerUps
+<span class="fc" id="L239">	    	this.drawPowerUps(g);</span>
+	    	// draw heartUps
+<span class="fc" id="L241">	    	this.drawHeartUps(g);</span>
+	    	// draw score
+<span class="fc" id="L243">	    	this.drawScore(g);</span>
+	    	// draw lives
+<span class="fc" id="L245">	    	this.drawLives(g);</span>
+	    	// draw bombs
+<span class="fc" id="L247">	    	this.drawBombs(g);</span>
+	        
+<span class="fc bfc" id="L249" title="All 2 branches covered.">	    	if (!this.gameStarted)</span>
+<span class="fc" id="L250">	    		drawStartMenu(g);</span>
+<span class="pc bpc" id="L251" title="1 of 4 branches missed.">	    	if (this.paused &amp;&amp; this.gameStarted)</span>
+<span class="nc" id="L252">				this.drawPauseMenu(g);</span>
+<span class="fc bfc" id="L253" title="All 2 branches covered.">	    	if (this.numLives &lt;= 0)</span>
+<span class="fc" id="L254">	    		this.setGameOver(g);</span>
+	    	
+			// we can now flip the buffer.  We're done drawing
+<span class="fc" id="L257">			g.dispose();</span>
+<span class="fc" id="L258">			strategy.show();</span>
+			
+<span class="fc bfc" id="L260" title="All 6 branches covered.">			if (this.gameOver || (this.paused &amp;&amp; !firstLoop))</span>
+<span class="fc" id="L261">				continue;</span>
+						
+<span class="fc bfc" id="L263" title="All 2 branches covered.">			if (this.moveLeft)</span>
+<span class="fc" id="L264">	    		this.player.moveBy(-this.playerSpeed, 0);</span>
+<span class="fc bfc" id="L265" title="All 2 branches covered.">			if (this.moveRight)</span>
+<span class="fc" id="L266">				this.player.moveBy(this.playerSpeed, 0);</span>
+<span class="fc bfc" id="L267" title="All 2 branches covered.">			if (this.moveUp)</span>
+<span class="fc" id="L268">				this.player.moveBy(0, -this.playerSpeed);</span>
+<span class="fc bfc" id="L269" title="All 2 branches covered.">			if (this.moveDown)</span>
+<span class="fc" id="L270">				this.player.moveBy(0, this.playerSpeed);</span>
+<span class="pc bpc" id="L271" title="1 of 4 branches missed.">			if (this.useBomb &amp;&amp; this.numBombs &gt; 0)</span>
+			{
+<span class="fc" id="L273">				this.useBomb(20);</span>
+<span class="fc" id="L274">				this.numBombs--;</span>
+<span class="fc" id="L275">				this.useBomb = false;</span>
+<span class="fc" id="L276">				this.bombSound.run();</span>
+			}
+<span class="fc bfc" id="L278" title="All 8 branches covered.">			if (this.fireUp || this.fireDown || this.fireLeft || this.fireRight)</span>
+			{
+<span class="fc" id="L280">				this.fireShots();</span>
+			}
+			
+<span class="fc bfc" id="L283" title="All 2 branches covered.">			for(int i=0; i&lt;this.bullets.size(); i++)</span>
+			{
+<span class="fc" id="L285">	    		Bullet bSprite = this.bullets.get(i);</span>
+	    		
+<span class="fc bfc" id="L287" title="All 2 branches covered.">	    		if(bSprite.bullet.getPosX() &gt; this.width+50 || </span>
+<span class="fc bfc" id="L288" title="All 2 branches covered.">	    				bSprite.bullet.getPosX() &lt; -50 ||</span>
+<span class="fc bfc" id="L289" title="All 2 branches covered.">	    				bSprite.bullet.getPosY() &gt; this.height+50 ||</span>
+<span class="fc bfc" id="L290" title="All 2 branches covered.">	    				bSprite.bullet.getPosY() &lt; -50)</span>
+	    		{
+<span class="fc" id="L292">	    			this.bullets.remove(i);</span>
+	    		}
+<span class="fc" id="L294">	    		bSprite.step();</span>
+	    	}
+			
+<span class="fc bfc" id="L297" title="All 2 branches covered.">			for(int i=0; i&lt;this.powerUps.size(); i++)</span>
+			{
+<span class="fc" id="L299">	    		PowerUp powerUp = this.powerUps.get(i);</span>
+	    		
+<span class="pc bpc" id="L301" title="1 of 2 branches missed.">	    		if(powerUp.entity.getPosX() &gt; this.width+50 ||</span>
+<span class="fc bfc" id="L302" title="All 2 branches covered.">	    				powerUp.entity.getPosX() &lt; -50 ||</span>
+<span class="pc bpc" id="L303" title="1 of 2 branches missed.">	    				powerUp.entity.getPosY() &gt; this.height+50 ||</span>
+<span class="fc bfc" id="L304" title="All 2 branches covered.">	    				powerUp.entity.getPosY() &lt; -50)</span>
+	    		{
+<span class="fc" id="L306">	    			this.powerUps.remove(i);</span>
+	    		}
+	    		
+<span class="fc" id="L309">	    		Rectangle bBox = powerUp.getErodedBBox(0, this.collisionThreshold);</span>
+<span class="fc" id="L310">	    		boolean collision = this.player.collidesWith(0, bBox);</span>
+<span class="fc bfc" id="L311" title="All 2 branches covered.">				if(collision)</span>
+				{
+<span class="fc" id="L313">					this.powerUps.remove(i);</span>
+<span class="fc" id="L314">					this.powerUpCount = 100;</span>
+				}
+	    		
+<span class="fc" id="L317">	    		powerUp.step();</span>
+	    	}
+			
+<span class="fc bfc" id="L320" title="All 2 branches covered.">			for(int i=0; i&lt;this.heartUps.size(); i++)</span>
+			{
+<span class="fc" id="L322">	    		HeartUp heartUp = this.heartUps.get(i);</span>
+	    		
+<span class="pc bpc" id="L324" title="1 of 2 branches missed.">	    		if(heartUp.entity.getPosX() &gt; this.width+50 || </span>
+<span class="pc bpc" id="L325" title="1 of 2 branches missed.">	    				heartUp.entity.getPosX() &lt; -50 ||</span>
+<span class="pc bpc" id="L326" title="1 of 2 branches missed.">	    				heartUp.entity.getPosY() &gt; this.height+50 ||</span>
+<span class="fc bfc" id="L327" title="All 2 branches covered.">	    				heartUp.entity.getPosY() &lt; -50)</span>
+	    		{
+<span class="fc" id="L329">	    			this.heartUps.remove(i);</span>
+	    		}
+	    		
+<span class="fc" id="L332">	    		Rectangle bBox = heartUp.getBBox(0);</span>
+<span class="fc" id="L333">	    		boolean collision = this.player.collidesWith(0, bBox);</span>
+<span class="fc bfc" id="L334" title="All 2 branches covered.">				if(collision)</span>
+				{
+<span class="fc" id="L336">					this.heartUps.remove(i);</span>
+<span class="fc" id="L337">					this.numLives+=2;</span>
+				}
+	    		
+<span class="fc" id="L340">				heartUp.step();</span>
+	    	}
+			
+<span class="fc bfc" id="L343" title="All 2 branches covered.">			for (int i=0; i&lt;this.enemies.size(); i++)</span>
+			{
+<span class="fc" id="L345">				MotionAsset e = this.enemies.get(i);</span>
+<span class="fc" id="L346">				Rectangle bBox = e.getErodedBBox(0, this.collisionThreshold);</span>
+<span class="fc" id="L347">				boolean collision = false;</span>
+<span class="fc bfc" id="L348" title="All 2 branches covered.">				for (int j=0; j&lt;this.bullets.size(); j++)</span>
+				{
+<span class="fc" id="L350">					Bullet bb = this.bullets.get(j);</span>
+					
+					// collide with bullets
+<span class="fc" id="L353">					collision = bb.collidesWith(0, bBox);</span>
+<span class="fc bfc" id="L354" title="All 2 branches covered.">					if(collision)</span>
+					{
+<span class="fc" id="L356">						this.enemies.remove(i);</span>
+<span class="fc" id="L357">						this.bullets.remove(j);</span>
+<span class="fc" id="L358">						this.playerScore+=10;</span>
+<span class="fc" id="L359">						this.hitSound.run();</span>
+
+<span class="fc" id="L361">						break;</span>
+					}
+				}
+				
+				// collide with player
+<span class="fc" id="L366">				collision = this.player.collidesWith(0, bBox);</span>
+<span class="fc bfc" id="L367" title="All 2 branches covered.">				if(collision)</span>
+				{
+<span class="fc" id="L369">					this.enemies.remove(i);</span>
+<span class="fc" id="L370">					this.numLives--;</span>
+				}
+				
+<span class="fc" id="L373">				e.aim(this.player);</span>
+<span class="fc" id="L374">				e.step();</span>
+			}
+			
+			// spawn new enemies
+<span class="fc" id="L378">			this.spawnEnemies(2);</span>
+			
+			// spawn power ups
+<span class="fc" id="L381">			this.spawnPowerUps(1);</span>
+			
+			// spawn heart ups
+<span class="fc" id="L384">			this.spawnHeartUps(1);</span>
+			
+			// slightly increase difficulty
+<span class="fc" id="L387">			this.incrementDifficulty(0.001);</span>
+			
+			// wait 17 millisec
+<span class="pc" id="L390">			try { Thread.sleep(10); } catch (Exception e) {}</span>
+			
+<span class="fc" id="L392">			this.firstLoop = false;</span>
+		}
+<span class="nc" id="L394">	}</span>
+
+	/**
+	 * check if enough time has elapsed to enable firing
+	 * @return true if enough time elapsed to fire
+	 */
+	public boolean canFire() 
+	{
+		// test if enough time elapsed to fire
+<span class="fc bfc" id="L403" title="All 2 branches covered.">		if (System.currentTimeMillis() - this.lastFireTime &lt; this.fireInterval) </span>
+		{
+<span class="fc" id="L405">			return false;</span>
+		}
+		
+<span class="fc" id="L408">		this.lastFireTime = System.currentTimeMillis();</span>
+<span class="fc bfc" id="L409" title="All 2 branches covered.">		if(this.powerUpCount &gt; 0)</span>
+<span class="fc" id="L410">			this.powerUpCount--;</span>
+		
+<span class="fc" id="L412">		return true;</span>
+	}
+
+	/**
+	 * check if enough time elapsed to play sound.
+	 * avoids clashing sound noise and slowdown
+	 * @return true if enough time elapsed to play sound
+	 */
+	public boolean canPlaySound() 
+	{
+		// test if enough time elapsed to fire
+<span class="nc bnc" id="L423" title="All 2 branches missed.">		if (System.currentTimeMillis() - this.lastSoundTime &lt; this.soundInterval) </span>
+		{
+<span class="nc" id="L425">			return false;</span>
+		}
+		
+<span class="nc" id="L428">		this.lastSoundTime = System.currentTimeMillis();</span>
+<span class="nc" id="L429">		return true;</span>
+	}
+	
+	/**
+	 * check if enough time has elapsed to spawn new enemies
+	 * @return true if enough time elapsed
+	 */
+	public boolean canSpawn()
+	{
+		// test if enough time elapsed to spawn
+<span class="fc bfc" id="L439" title="All 2 branches covered.">		if (System.currentTimeMillis() - this.lastSpawnTime &lt; this.spawnInterval) </span>
+		{
+<span class="fc" id="L441">			return false;</span>
+		}
+		
+<span class="fc" id="L444">		this.lastSpawnTime = System.currentTimeMillis();</span>
+<span class="fc" id="L445">		return true;</span>
+	}
+	
+	/**
+	 * check if enough time elapsed to spawn power ups
+	 * @return true if enough time elapsed
+	 */
+	public boolean canSpawnPowerUps()
+	{
+		// test if enough time elapsed to spawn
+<span class="fc bfc" id="L455" title="All 2 branches covered.">		if (System.currentTimeMillis() - this.lastPowerUpSpawnTime &lt; this.powerUpSpawnInterval) </span>
+		{
+<span class="fc" id="L457">			return false;</span>
+		}
+		
+<span class="fc" id="L460">		this.lastPowerUpSpawnTime = System.currentTimeMillis();</span>
+<span class="fc" id="L461">		return true;</span>
+	}
+	
+	/**
+	 * check if enough time elapsed to spawn heart power ups
+	 * @return true if enough time elapsed
+	 */
+	public boolean canSpawnHeartUps()
+	{
+		// test if enough time elapsed to spawn
+<span class="fc bfc" id="L471" title="All 2 branches covered.">		if (System.currentTimeMillis() - this.lastHeartUpSpawnTime &lt; this.heartUpSpawnInterval) </span>
+		{
+<span class="fc" id="L473">			return false;</span>
+		}
+		
+<span class="fc" id="L476">		this.lastHeartUpSpawnTime = System.currentTimeMillis();</span>
+<span class="fc" id="L477">		return true;</span>
+	}
+	
+	/**
+	 * fire shots.  Creates new bullets with initial speed and direction 
+	 * following the gun
+	 */
+	public void fireShots()
+	{
+		// compute fire interval
+<span class="fc bfc" id="L487" title="All 2 branches covered.">		if (this.canFire())</span>
+		{
+<span class="fc" id="L489">			double angle = 0.0;</span>
+<span class="fc bfc" id="L490" title="All 2 branches covered.">			if(this.fireUp)</span>
+			{
+<span class="fc bfc" id="L492" title="All 2 branches covered.">				if(this.fireRight)</span>
+<span class="fc" id="L493">					angle = Math.PI*1.75;</span>
+<span class="pc bpc" id="L494" title="1 of 2 branches missed.">				else if(this.fireLeft)</span>
+<span class="fc" id="L495">					angle = Math.PI*1.25;</span>
+				else
+<span class="nc" id="L497">					angle = Math.PI*1.5;</span>
+<span class="nc" id="L498">			}</span>
+<span class="fc bfc" id="L499" title="All 2 branches covered.">			else if(this.fireDown)</span>
+			{
+<span class="pc bpc" id="L501" title="1 of 2 branches missed.">				if(this.fireRight)</span>
+<span class="fc" id="L502">					angle = Math.PI*0.25;</span>
+<span class="nc bnc" id="L503" title="All 2 branches missed.">				else if(this.fireLeft)</span>
+<span class="nc" id="L504">					angle = Math.PI*0.75;</span>
+				else
+<span class="nc" id="L506">					angle = Math.PI*0.5;</span>
+<span class="nc" id="L507">			}</span>
+<span class="fc bfc" id="L508" title="All 2 branches covered.">			else if(this.fireLeft)</span>
+<span class="fc" id="L509">				angle = Math.PI;</span>
+<span class="pc bpc" id="L510" title="1 of 2 branches missed.">			else if(this.fireRight)</span>
+<span class="fc" id="L511">				angle = 0.0;</span>
+			
+<span class="fc" id="L513">			this.player.gun.setRot(angle);			  </span>
+			
+<span class="fc bfc" id="L515" title="All 2 branches covered.">			if(this.powerUpCount &lt;= 0)</span>
+			{
+<span class="fc" id="L517">				double randRot = 0.05 * (Math.random() - 0.5) *2;</span>
+<span class="fc" id="L518">				double randMove = 20 * (0.5 + Math.random() * 0.5);</span>
+		
+<span class="fc" id="L520">				Bullet bb = new Bullet();</span>
+<span class="fc" id="L521">				bb.setSpeed(randMove);</span>
+			
+<span class="fc" id="L523">				bb.moveBy(this.player.ship.getPosX()+(this.player.ship.getWidth())*0.5, </span>
+<span class="fc" id="L524">						this.player.ship.getPosY()+(this.player.ship.getHeight())*0.5);</span>
+<span class="fc" id="L525">				bb.rotateBy(this.player.gun.getAngle() + randRot);</span>
+<span class="fc" id="L526">				this.bullets.add(bb);</span>
+<span class="fc" id="L527">			}</span>
+			else
+			{
+<span class="fc" id="L530">				double randRot = 0.05 * (Math.random() - 0.5) *2;</span>
+<span class="fc" id="L531">				double randMove = 20 * (0.5 + Math.random() * 0.5);</span>
+		
+<span class="fc" id="L533">				Bullet bb1 = new Bullet();</span>
+<span class="fc" id="L534">				Bullet bb2 = new Bullet();</span>
+<span class="fc" id="L535">				Bullet bb3 = new Bullet();</span>
+<span class="fc" id="L536">				bb1.setSpeed(randMove);</span>
+<span class="fc" id="L537">				bb2.setSpeed(randMove);</span>
+<span class="fc" id="L538">				bb3.setSpeed(randMove);</span>
+			
+<span class="fc" id="L540">				bb1.moveBy(this.player.ship.getPosX()+(this.player.ship.getWidth())*0.5, </span>
+<span class="fc" id="L541">						this.player.ship.getPosY()+(this.player.ship.getHeight())*0.5);</span>
+<span class="fc" id="L542">				bb1.rotateBy(this.player.gun.getAngle() + randRot);</span>
+				
+<span class="fc" id="L544">				bb2.moveBy(this.player.ship.getPosX()+(this.player.ship.getWidth())*0.5, </span>
+<span class="fc" id="L545">						this.player.ship.getPosY()+(this.player.ship.getHeight())*0.5);</span>
+<span class="fc" id="L546">				bb2.rotateBy(this.player.gun.getAngle() + randRot+0.52);</span>
+				
+<span class="fc" id="L548">				bb3.moveBy(this.player.ship.getPosX()+(this.player.ship.getWidth())*0.5, </span>
+<span class="fc" id="L549">						this.player.ship.getPosY()+(this.player.ship.getHeight())*0.5);</span>
+<span class="fc" id="L550">				bb3.rotateBy(this.player.gun.getAngle() + randRot-0.52);</span>
+				
+<span class="fc" id="L552">				this.bullets.add(bb1);</span>
+<span class="fc" id="L553">				this.bullets.add(bb2);</span>
+<span class="fc" id="L554">				this.bullets.add(bb3);</span>
+			}
+<span class="fc" id="L556">			this.bulletSound.run();</span>
+		}
+<span class="fc" id="L558">	}</span>
+	/**
+	 * gets the number of bullets
+	 * @return bullet number
+	 */
+	public int getNumBullets()
+	{
+<span class="nc" id="L565">		return this.bullets.size();</span>
+	}
+	
+	/**
+	 * create a radial firing of bombs and decrement the bomb number
+	 * @param numBullets the number of bullets to fire
+	 */
+	public void useBomb(int numBullets)
+	{
+<span class="fc" id="L574">		double angle = 0.0;</span>
+<span class="fc bfc" id="L575" title="All 2 branches covered.">		for (int i = 0; i&lt;numBombBullets; i++)</span>
+		{
+<span class="fc" id="L577">			angle = i * Math.PI * 2 / numBullets;</span>
+<span class="fc" id="L578">			Bullet bb = new Bullet();</span>
+<span class="fc" id="L579">			bb.setSpeed(10);</span>
+		
+<span class="fc" id="L581">			bb.moveBy(this.player.ship.getPosX()+(this.player.ship.getWidth())*0.5, </span>
+<span class="fc" id="L582">					  this.player.ship.getPosY()+(this.player.ship.getHeight())*0.5);</span>
+<span class="fc" id="L583">			bb.rotateBy(this.player.gun.getAngle() + angle);</span>
+<span class="fc" id="L584">			this.bullets.add(bb);</span>
+		}
+<span class="fc" id="L586">	}</span>
+	
+	/**
+	 * get num bombs
+	 * return numBullets
+	 */
+	public int getNumBombs()
+	{
+<span class="nc" id="L594">		return this.numBombs;</span>
+	}
+
+	/**
+	 * spawn enemies
+	 * @param num the number of enemies to spawn
+	 */
+	public void spawnEnemies(int num)
+	{
+<span class="fc bfc" id="L603" title="All 2 branches covered.">		if(this.canSpawn())</span>
+		{
+<span class="fc bfc" id="L605" title="All 2 branches covered.">			for (int i=0; i&lt;num; i++)</span>
+			{
+<span class="fc" id="L607">				double axis = Math.random();</span>
+<span class="fc" id="L608">				double x = 0.0;</span>
+<span class="fc" id="L609">				double y = 0.0;</span>
+<span class="fc bfc" id="L610" title="All 2 branches covered.">				if (axis&lt;0.5)</span>
+				{
+<span class="fc" id="L612">					x = 2 * (Math.random()-0.5) * this.width;</span>
+<span class="fc" id="L613">					y = Math.round(Math.random()) * this.height;</span>
+<span class="fc" id="L614">				}</span>
+				else
+				{
+<span class="fc" id="L617">					x = Math.round(Math.random()) * this.width ;</span>
+<span class="fc" id="L618">					y = 2 * (Math.random()-0.5) * this.height;</span>
+				}
+				
+<span class="pc bpc" id="L621" title="1 of 4 branches missed.">				if(x &gt; 0 &amp;&amp; x &lt; this.width+30)</span>
+<span class="fc" id="L622">					x+=30;</span>
+<span class="fc bfc" id="L623" title="All 2 branches covered.">				else if(x &gt; -30)</span>
+<span class="fc" id="L624">					x-=30;</span>
+				
+<span class="pc bpc" id="L626" title="1 of 4 branches missed.">				if(y &gt; 0 &amp;&amp; y &lt; this.height+30)</span>
+<span class="fc" id="L627">					y+=30;</span>
+<span class="fc bfc" id="L628" title="All 2 branches covered.">				else if(y &gt; -30)</span>
+<span class="fc" id="L629">					y-=30;</span>
+				
+				
+<span class="fc" id="L632">				MotionAsset e = null;</span>
+<span class="fc bfc" id="L633" title="All 2 branches covered.">				if (Math.random() &lt; 0.5)</span>
+<span class="fc" id="L634">					e = new EnemyWaving(this.enemyPath1);    	</span>
+				else
+<span class="fc" id="L636">					e = new EnemyFollow(this.enemyPath2);</span>
+				
+				// fit random to 0.2-1.0 and amp about 5
+<span class="fc" id="L639">				double speed = ((Math.random() * 0.8) + 0.2) * 2 * this.difficulty;</span>
+<span class="fc" id="L640">				e.setSpeed(speed);</span>
+				
+<span class="fc" id="L642">				e.moveBy(x, y);</span>
+<span class="fc" id="L643">				this.enemies.add(e);</span>
+				
+			}
+		}
+<span class="fc" id="L647">	}</span>
+	
+	/**
+	 * spawn power ups
+	 * @param num the number of power ups to spawn
+	 */
+	public void spawnPowerUps(int num)
+	{
+<span class="fc bfc" id="L655" title="All 2 branches covered.">		if(this.canSpawnPowerUps())</span>
+		{
+<span class="fc bfc" id="L657" title="All 2 branches covered.">			for (int i=0; i&lt;num; i++)</span>
+			{
+<span class="fc" id="L659">				double axis = Math.random();</span>
+<span class="fc" id="L660">				double x = 0.0;</span>
+<span class="fc" id="L661">				double y = 0.0;</span>
+<span class="fc bfc" id="L662" title="All 2 branches covered.">				if (axis&lt;0.5)</span>
+				{
+<span class="fc" id="L664">					x = 2 * (Math.random()-0.5) * this.width;</span>
+<span class="fc" id="L665">					y = Math.round(Math.random()) * this.height;</span>
+<span class="fc" id="L666">				}</span>
+				else
+				{
+<span class="fc" id="L669">					x = Math.round(Math.random()) * this.width ;</span>
+<span class="fc" id="L670">					y = 2 * (Math.random()-0.5) * this.height;</span>
+				}
+				
+<span class="pc bpc" id="L673" title="1 of 4 branches missed.">				if(x &gt; 0 &amp;&amp; x &lt; this.width+30)</span>
+<span class="fc" id="L674">					x+=30;</span>
+<span class="fc bfc" id="L675" title="All 2 branches covered.">				else if(x &gt; -30)</span>
+<span class="fc" id="L676">					x-=30;</span>
+				
+<span class="pc bpc" id="L678" title="1 of 4 branches missed.">				if(y &gt; 0 &amp;&amp; y &lt; this.height+30)</span>
+<span class="fc" id="L679">					y+=30;</span>
+<span class="fc bfc" id="L680" title="All 2 branches covered.">				else if(y &gt; -30)</span>
+<span class="fc" id="L681">					y-=30;</span>
+				
+				
+<span class="fc" id="L684">				PowerUp p = new PowerUp(&quot;./multi_shot.png&quot;);</span>
+				
+				// fit random to 0.2-1.0 and amp about 5
+<span class="fc" id="L687">				double speed = ((Math.random() * 0.8) + 0.2) * 2;</span>
+<span class="fc" id="L688">				p.setSpeed(speed);</span>
+<span class="fc" id="L689">				p.moveBy(x, y);</span>
+<span class="fc" id="L690">				p.aim(this.player);</span>
+<span class="fc" id="L691">				this.powerUps.add(p);</span>
+				
+			}
+		}
+<span class="fc" id="L695">	}</span>
+	
+	/**
+	 * spawn hears to the player
+	 * @param num the number of hearts to spawn
+	 */
+	public void spawnHeartUps(int num)
+	{
+<span class="fc bfc" id="L703" title="All 2 branches covered.">		if(this.canSpawnHeartUps())</span>
+		{
+<span class="fc bfc" id="L705" title="All 2 branches covered.">			for (int i=0; i&lt;num; i++)</span>
+			{
+<span class="fc" id="L707">				double axis = Math.random();</span>
+<span class="fc" id="L708">				double x = 0.0;</span>
+<span class="fc" id="L709">				double y = 0.0;</span>
+<span class="pc bpc" id="L710" title="1 of 2 branches missed.">				if (axis&lt;0.5)</span>
+				{
+<span class="nc" id="L712">					x = 2 * (Math.random()-0.5) * this.width;</span>
+<span class="nc" id="L713">					y = Math.round(Math.random()) * this.height;</span>
+<span class="nc" id="L714">				}</span>
+				else
+				{
+<span class="fc" id="L717">					x = Math.round(Math.random()) * this.width ;</span>
+<span class="fc" id="L718">					y = 2 * (Math.random()-0.5) * this.height;</span>
+				}
+				
+<span class="pc bpc" id="L721" title="2 of 4 branches missed.">				if(x &gt; 0 &amp;&amp; x &lt; this.width+30)</span>
+<span class="fc" id="L722">					x+=30;</span>
+<span class="nc bnc" id="L723" title="All 2 branches missed.">				else if(x &gt; -30)</span>
+<span class="nc" id="L724">					x-=30;</span>
+				
+<span class="pc bpc" id="L726" title="1 of 4 branches missed.">				if(y &gt; 0 &amp;&amp; y &lt; this.height+30)</span>
+<span class="fc" id="L727">					y+=30;</span>
+<span class="pc bpc" id="L728" title="1 of 2 branches missed.">				else if(y &gt; -30)</span>
+<span class="nc" id="L729">					y-=30;</span>
+				
+				
+<span class="fc" id="L732">				HeartUp p = new HeartUp(&quot;./heart.png&quot;);</span>
+				
+				// fit random to 0.2-1.0 and amp about 5
+<span class="fc" id="L735">				double speed = ((Math.random() * 0.8) + 0.2) * 2;</span>
+<span class="fc" id="L736">				p.setSpeed(speed);</span>
+<span class="fc" id="L737">				p.moveBy(x, y);</span>
+<span class="fc" id="L738">				p.aim(this.player);</span>
+<span class="fc" id="L739">				this.heartUps.add(p);</span>
+				
+			}
+		}
+<span class="fc" id="L743">	}</span>
+	
+	/**
+	 * increments difficulty
+	 * @param val the amount of difficulty to increment by
+	 */
+	public void incrementDifficulty(double val)
+	{
+<span class="fc" id="L751">		this.difficulty += val;</span>
+<span class="fc" id="L752">	}</span>
+	
+	/**
+	 * gets the difficulty
+	 * @return the difficulty level
+	 */
+	public double getDifficulty()
+	{
+<span class="nc" id="L760">		return this.difficulty;</span>
+	}
+	
+	public void drawBullets(Graphics2D g)
+	{
+<span class="fc bfc" id="L765" title="All 2 branches covered.">		for(int i=0; i&lt;this.bullets.size(); i++)</span>
+		{
+<span class="fc" id="L767">			Bullet bullet = this.bullets.get(i);</span>
+<span class="fc" id="L768">			g.drawImage(bullet.bullet.getImage(), bullet.bullet.getTransform(), null);</span>
+		}
+<span class="fc" id="L770">	}</span>
+	
+	/**
+	 * draws the player ship to the graphics context.
+	 * @param g the graphics context
+	 */
+	public void drawPlayer(Graphics2D g)
+	{
+<span class="fc" id="L778">		g.drawImage(this.player.ship.getImage(), this.player.ship.getTransform(), null);</span>
+<span class="fc" id="L779">    	g.drawImage(this.player.gun.getImage(), this.player.gun.getTransform(), null);</span>
+<span class="fc" id="L780">	}</span>
+	
+	/**
+	 * draws the enemy ships to the graphics context.
+	 * @param g the graphics context
+	 */
+	public void drawEnemies(Graphics2D g)
+	{
+<span class="fc bfc" id="L788" title="All 2 branches covered.">		for(int i=0; i&lt;this.enemies.size(); i++)</span>
+    	{
+<span class="fc" id="L790">    		MotionAsset motionAsset = this.enemies.get(i);</span>
+<span class="fc" id="L791">    		g.drawImage(motionAsset.entity.getImage(), motionAsset.entity.getTransform(), null);</span>
+    	}
+<span class="fc" id="L793">	}</span>
+	
+	/**
+	 * draws the power ups to the graphics context.
+	 * @param g the graphics context
+	 */
+	public void drawPowerUps(Graphics2D g)
+	{
+<span class="fc bfc" id="L801" title="All 2 branches covered.">		for(int i=0; i&lt;this.powerUps.size(); i++)</span>
+    	{
+<span class="fc" id="L803">    		PowerUp powerUp = this.powerUps.get(i);</span>
+<span class="fc" id="L804">    		g.drawImage(powerUp.entity.getImage(), powerUp.entity.getTransform(), null);</span>
+    	}
+<span class="fc" id="L806">	}</span>
+	
+	/**
+	 * draws the hearts to the graphics context.
+	 * @param g the graphics context
+	 */
+	public void drawHeartUps(Graphics2D g)
+	{
+<span class="fc bfc" id="L814" title="All 2 branches covered.">		for(int i=0; i&lt;this.heartUps.size(); i++)</span>
+    	{
+<span class="fc" id="L816">    		HeartUp heartUp = this.heartUps.get(i);</span>
+<span class="fc" id="L817">    		g.drawImage(heartUp.entity.getImage(), heartUp.entity.getTransform(), null);</span>
+    	}
+<span class="fc" id="L819">	}</span>
+	
+	/**
+	 * draws the player score to the graphics context.
+	 * @param g the graphics context
+	 */
+	public void drawScore(Graphics2D g)
+	{
+<span class="fc" id="L827">		String scoreStr = &quot;Player Score:&quot; + this.playerScore;</span>
+<span class="fc" id="L828">    	Font font = new Font(&quot;Sans-Serif&quot;, Font.BOLD, 20);</span>
+<span class="fc" id="L829">        g.setFont(font);</span>
+
+<span class="fc" id="L831">        this.drawFont(g, scoreStr, 10, 30, new Color(1.0f, 0.6f, 0.0f));</span>
+<span class="fc" id="L832">	}</span>
+
+	/**
+	 * draws the number of lives to the graphics context.
+	 * @param g the graphics context
+	 */
+	public void drawLives(Graphics2D g)
+	{
+<span class="fc" id="L840">		String lifeStr = &quot;lives&quot;;</span>
+<span class="fc" id="L841">    	Font font = new Font(&quot;Serif&quot;, Font.BOLD, 18);</span>
+<span class="fc" id="L842">        g.setFont(font);</span>
+<span class="fc" id="L843">        g.setColor(new Color(0.1f, 0.5f, 0.8f));</span>
+<span class="fc" id="L844">        g.drawString(lifeStr, 10, 52);</span>
+        
+<span class="fc bfc" id="L846" title="All 2 branches covered.">		for (int i=0; i&lt;this.numLives; i++)</span>
+		{
+<span class="fc" id="L848">			AffineTransform at = new AffineTransform();</span>
+<span class="fc" id="L849">			at.setToTranslation(47 + i*13, 40);</span>
+<span class="fc" id="L850">			g.drawImage(this.lifeAsset.image.getImage(), at, null);</span>
+		}
+<span class="fc" id="L852">	}</span>
+	
+	/**
+	 * draws the number of bombs to the graphics context.
+	 * @param g the graphics context
+	 */
+	public void drawBombs(Graphics2D g)
+	{
+<span class="fc" id="L860">		String lifeStr = &quot;bombs&quot;;</span>
+<span class="fc" id="L861">    	Font font = new Font(&quot;Serif&quot;, Font.BOLD, 18);</span>
+<span class="fc" id="L862">        g.setFont(font);</span>
+<span class="fc" id="L863">        g.setColor(new Color(0.8f, 0.1f, 0.1f));</span>
+<span class="fc" id="L864">        g.drawString(lifeStr, 10, 70);</span>
+        
+<span class="fc bfc" id="L866" title="All 2 branches covered.">		for (int i=0; i&lt;this.numBombs; i++)</span>
+		{
+<span class="fc" id="L868">			AffineTransform at = new AffineTransform();</span>
+<span class="fc" id="L869">			at.setToTranslation(62 + i*13, 60);</span>
+<span class="fc" id="L870">			g.drawImage(this.bombAsset.image.getImage(), at, null);</span>
+		}
+<span class="fc" id="L872">	}</span>
+	
+	/**
+	 * draws the string as a font to the graphics context.
+	 * @param g the graphics context
+	 * @param str the string to draw
+	 * @param x the x coordinate
+	 * @param y the y coordinate
+	 * @param c the color of the text
+	 */
+	public void drawFont(Graphics2D g, String str, int x, int y, Color c)
+	{
+<span class="fc" id="L884">		float RGB[] = {0.0f, 0.0f, 0.0f, 0.0f};</span>
+<span class="fc" id="L885">		c.getComponents(RGB);</span>
+<span class="fc" id="L886">		Color bright = new Color(RGB[0], RGB[1], RGB[2]);</span>
+<span class="fc" id="L887">		bright = bright.brighter().brighter();</span>
+<span class="fc" id="L888">		Color dark = new Color(RGB[0], RGB[1], RGB[2]);</span>
+<span class="fc" id="L889">		dark = dark.darker().darker();</span>
+		
+<span class="fc" id="L891">		g.setColor(bright);</span>
+<span class="fc" id="L892">        g.drawString(str, x-1, y);</span>
+<span class="fc" id="L893">        g.setColor(dark);</span>
+<span class="fc" id="L894">        g.drawString(str, x, y+1);</span>
+<span class="fc" id="L895">        g.setColor(c);</span>
+<span class="fc" id="L896">        g.drawString(str, x, y); </span>
+<span class="fc" id="L897">	}</span>
+	
+	/**
+	 * draws the pause menu 
+	 * @param g the graphics context
+	 */
+	public void drawPauseMenu(Graphics2D g)
+	{
+<span class="nc bnc" id="L905" title="All 2 branches missed.">		if(this.gameOver)</span>
+<span class="nc" id="L906">			return;</span>
+		
+<span class="nc" id="L908">		String str1 = &quot;Game Paused&quot;;</span>
+<span class="nc" id="L909">		String str2 = &quot;Press P to resume&quot;;</span>
+<span class="nc" id="L910">    	Font font = new Font(&quot;Serif&quot;, Font.BOLD, 25);</span>
+<span class="nc" id="L911">        g.setFont(font);</span>
+        
+<span class="nc" id="L913">        this.drawFont(g, str1, 240, 150, new Color(0.0f, 0.1f, 1.0f));</span>
+<span class="nc" id="L914">        this.drawFont(g, str2, 220, 180, new Color(0.1f, 1.0f, 0.1f));</span>
+<span class="nc" id="L915">	}</span>
+
+	/**
+	 * draws the start menu
+	 * @param g the graphics context
+	 */
+	public void drawStartMenu(Graphics2D g)
+	{
+<span class="fc" id="L923">		String str1 = &quot;W A S D to move&quot;;</span>
+<span class="fc" id="L924">		String str2 = &quot;Up Down Left Right arrows to shoot&quot;;</span>
+<span class="fc" id="L925">		String str3 = &quot;press any key to start&quot;;</span>
+<span class="fc" id="L926">    	Font font = new Font(&quot;Serif&quot;, Font.BOLD, 25);</span>
+<span class="fc" id="L927">        g.setFont(font);</span>
+        
+<span class="fc" id="L929">        this.drawFont(g, str1, 240, 150, new Color(0.8f, 0.0f, 0.5f));</span>
+<span class="fc" id="L930">        this.drawFont(g, str2, 130, 180, new Color(0.1f, 1.0f, 0.1f));</span>
+<span class="fc" id="L931">        this.drawFont(g, str3, 215, 210, new Color(0.5f, 0.5f, 0.5f));</span>
+<span class="fc" id="L932">	}</span>
+	
+/**
+ * ends the game and sets it to game over
+ * @param g the graphics context
+ */
+	public void setGameOver(Graphics2D g)
+	{
+<span class="fc" id="L940">		this.drawGameOverMenu(g);</span>
+<span class="fc bfc" id="L941" title="All 2 branches covered.">		if(this.gameOver == false)</span>
+<span class="fc" id="L942">			this.faceGame.updateScore(this.getPlayerScore());</span>
+<span class="fc" id="L943">		this.gameOver = true;</span>
+<span class="fc" id="L944">	}</span>
+	
+	/**
+	 * draws a game over menu
+	 * @param g the graphics context
+	 */
+	public void drawGameOverMenu(Graphics2D g)
+	{
+<span class="fc" id="L952">		String str1 = &quot;Game Over&quot;;</span>
+<span class="fc" id="L953">		String str2 = &quot;Score: &quot; + this.playerScore;</span>
+<span class="fc" id="L954">		String str3 = &quot;Press P to start a new game&quot;;</span>
+<span class="fc" id="L955">    	Font font = new Font(&quot;Serif&quot;, Font.BOLD, 25);</span>
+<span class="fc" id="L956">        g.setFont(font);</span>
+        
+<span class="fc" id="L958">        this.drawFont(g, str1, 240, 150, new Color(1.0f, 0.1f, 0.0f));</span>
+<span class="fc" id="L959">        this.drawFont(g, str2, 240, 180, new Color(0.2f, 1.0f, 1.0f));</span>
+<span class="fc" id="L960">        this.drawFont(g, str3, 150, 210, new Color(0.5f, 0.5f, 0.5f));</span>
+<span class="fc" id="L961">	}</span>
+	
+	/**
+	 * gets the player score
+	 * @return the current score of the player
+	 */
+	public int getPlayerScore()
+	{
+<span class="fc" id="L969">		return this.playerScore;</span>
+	}
+	
+	/**
+	 * Event handler class
+	 * @author Rony Edde
+	 *
+	 */
+<span class="fc" id="L977">	private class KeyInputHandler extends KeyAdapter </span>
+	{
+
+		//private int pressCount = 1;
+		
+		public void keyPressed(KeyEvent e) {
+			// if the keys were pressed, update movement
+<span class="fc bfc" id="L984" title="All 2 branches covered.">			if (e.getKeyCode() == KeyEvent.VK_A)</span>
+<span class="fc" id="L985">	    		moveLeft = true;</span>
+<span class="fc bfc" id="L986" title="All 2 branches covered.">	    	if (e.getKeyCode() == KeyEvent.VK_D)</span>
+<span class="fc" id="L987">	    		moveRight = true;</span>
+<span class="fc bfc" id="L988" title="All 2 branches covered.">	    	if (e.getKeyCode() == KeyEvent.VK_W)</span>
+<span class="fc" id="L989">	    		moveUp = true;</span>
+<span class="fc bfc" id="L990" title="All 2 branches covered.">	    	if (e.getKeyCode() == KeyEvent.VK_S)</span>
+<span class="fc" id="L991">	    		moveDown = true;</span>
+<span class="fc bfc" id="L992" title="All 2 branches covered.">	    	if (e.getKeyCode() == KeyEvent.VK_UP)</span>
+<span class="fc" id="L993">	    		fireUp = true;</span>
+<span class="fc bfc" id="L994" title="All 2 branches covered.">	    	if (e.getKeyCode() == KeyEvent.VK_DOWN)</span>
+<span class="fc" id="L995">	    		fireDown = true;</span>
+<span class="fc bfc" id="L996" title="All 2 branches covered.">	    	if (e.getKeyCode() == KeyEvent.VK_LEFT)</span>
+<span class="fc" id="L997">	    		fireLeft = true;</span>
+<span class="fc bfc" id="L998" title="All 2 branches covered.">	    	if (e.getKeyCode() == KeyEvent.VK_RIGHT)</span>
+<span class="fc" id="L999">	    		fireRight = true;</span>
+<span class="fc bfc" id="L1000" title="All 2 branches covered.">	    	if (e.getKeyCode() == KeyEvent.VK_P)</span>
+	    	{
+<span class="pc bpc" id="L1002" title="1 of 2 branches missed.">	    		paused = !paused;</span>
+<span class="pc bpc" id="L1003" title="1 of 2 branches missed.">	    		if (gameOver)</span>
+<span class="nc" id="L1004">	    			setup();</span>
+	    	}
+<span class="fc bfc" id="L1006" title="All 2 branches covered.">	    	if (e.getKeyCode() == KeyEvent.VK_SPACE)</span>
+<span class="fc" id="L1007">	    		useBomb = true;</span>
+<span class="fc" id="L1008">		} </span>
+		
+
+		public void keyReleased(KeyEvent e) {
+			// if the keys were released, update movement
+<span class="fc bfc" id="L1013" title="All 2 branches covered.">			if (e.getKeyCode() == KeyEvent.VK_A)</span>
+<span class="fc" id="L1014">	    		moveLeft = false;</span>
+<span class="fc bfc" id="L1015" title="All 2 branches covered.">	    	if (e.getKeyCode() == KeyEvent.VK_D)</span>
+<span class="fc" id="L1016">	    		moveRight = false;</span>
+<span class="fc bfc" id="L1017" title="All 2 branches covered.">	    	if (e.getKeyCode() == KeyEvent.VK_W)</span>
+<span class="fc" id="L1018">	    		moveUp = false;</span>
+<span class="fc bfc" id="L1019" title="All 2 branches covered.">	    	if (e.getKeyCode() == KeyEvent.VK_S)</span>
+<span class="fc" id="L1020">	    		moveDown = false;</span>
+<span class="fc bfc" id="L1021" title="All 2 branches covered.">	    	if (e.getKeyCode() == KeyEvent.VK_UP)</span>
+<span class="fc" id="L1022">	    		fireUp = false;</span>
+<span class="fc bfc" id="L1023" title="All 2 branches covered.">	    	if (e.getKeyCode() == KeyEvent.VK_DOWN)</span>
+<span class="fc" id="L1024">	    		fireDown = false;</span>
+<span class="fc bfc" id="L1025" title="All 2 branches covered.">	    	if (e.getKeyCode() == KeyEvent.VK_LEFT)</span>
+<span class="fc" id="L1026">	    		fireLeft = false;</span>
+<span class="fc bfc" id="L1027" title="All 2 branches covered.">	    	if (e.getKeyCode() == KeyEvent.VK_RIGHT)</span>
+<span class="fc" id="L1028">	    		fireRight = false;</span>
+<span class="fc bfc" id="L1029" title="All 2 branches covered.">	    	if (e.getKeyCode() == KeyEvent.VK_SPACE)</span>
+<span class="fc" id="L1030">	    		useBomb = false;</span>
+	    	else
+	    	{
+<span class="fc" id="L1033">	    		gameStarted = true;</span>
+	    	}
+<span class="fc" id="L1035">		}</span>
+
+		/**
+		 * disabled
+		 */
+		public void keyTyped(KeyEvent e) 
+<span class="fc" id="L1041">		{}</span>
+	}
+}
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>Login (Dec 14, 2015 9:00:23 PM)</div></body></html>

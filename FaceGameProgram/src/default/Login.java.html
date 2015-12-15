@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>Login.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">Login (Dec 14, 2015 9:00:23 PM)</a> &gt; <a href="../../index.html" class="el_group">FaceGameProgram</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">Login.java</span></div><h1>Login.java</h1><pre class="source lang-java linenums"><span class="fc" id="L1">import java.awt.BorderLayout;</span>
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+/**
+ * This program provides Login and sign up interface for users.
+ * 
+ * @author Fanglin Lu and Xinxin Ma
+ */
+public class Login extends JFrame {
+
+	/**
+	 * instance variables
+	 */
+	private JButton jButton1;
+	private JButton jButton2;
+
+	private JLabel jLabel1;
+	private JLabel jLabel2;
+	private JLabel jLabel3;
+	private JLabel jLabel4;
+
+	private JPanel jPanel1;
+	private JPanel jPanel3;
+
+	private JTextField jTextField1;
+	private JPasswordField jTextField2;
+	private JTextField nameField;
+	private JTextField emailField;
+	private JPasswordField passwordField;
+<span class="fc" id="L46">	private UserDatabase ud = new UserDatabase();</span>
+	private Person user;
+
+	// private GridBagConstraints gbc = new GridBagConstraints();
+
+	/**
+	 * Constructor -- initialize the panel with panels, labels and buttons.
+	 */
+<span class="fc" id="L54">	public Login() {</span>
+<span class="fc" id="L55">		setup();</span>
+<span class="fc" id="L56">	}</span>
+
+	/**
+	 * This method set up all the panels, labels and buttons.
+	 */
+	private void setup() {
+<span class="fc" id="L62">		setVisible(true);</span>
+<span class="fc" id="L63">		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);</span>
+		
+<span class="fc" id="L65">		setSize(450, 300);</span>
+<span class="fc" id="L66">		setPreferredSize(new Dimension(450, 300));</span>
+<span class="fc" id="L67">		setLocationRelativeTo(null);</span>
+
+		// JPanel1 is the light blue panel
+<span class="fc" id="L70">		jPanel1 = new JPanel();</span>
+<span class="fc" id="L71">		jPanel1.setBackground(new Color(0.9f, 1.0f, 1.0f));</span>
+
+		// show welcome information
+		// JLabel1 is the text label welcome info
+<span class="fc" id="L75">		jLabel1 = new JLabel();</span>
+<span class="fc" id="L76">		jLabel1.setText(&quot;Welcome to FaceGame!&quot;);</span>
+<span class="fc" id="L77">		jLabel1.setFont(new Font(&quot;Superclarendon&quot;, Font.BOLD | Font.ITALIC, 27));</span>
+<span class="fc" id="L78">		jPanel1.add(jLabel1);</span>
+
+<span class="fc" id="L80">		getContentPane().add(jPanel1, BorderLayout.NORTH);</span>
+
+		// JLabel4 is the &quot;sign up&quot; info
+<span class="fc" id="L83">		jLabel4 = new JLabel();</span>
+<span class="fc" id="L84">		jLabel4.setVerticalAlignment(SwingConstants.TOP);</span>
+<span class="fc" id="L85">		jLabel4.setText(&quot;Sign UP!&quot;);</span>
+<span class="fc" id="L86">		Font jLabel4Font = new Font(&quot;Tahoma&quot;, 2, 22);</span>
+<span class="fc" id="L87">		jLabel4.setFont(jLabel4Font);</span>
+
+		// textfields: for sign up, respectively
+<span class="fc" id="L90">		nameField = new JTextField(&quot;Name&quot;, 20);</span>
+<span class="fc" id="L91">		nameField.setColumns(5);</span>
+<span class="fc" id="L92">		nameField.setBackground(Color.WHITE);</span>
+<span class="fc" id="L93">		emailField = new JTextField(&quot;Email&quot;, 20);</span>
+<span class="fc" id="L94">		passwordField = new JPasswordField(&quot;New Password&quot;, 20);</span>
+
+		// the sign up button is JButton2
+<span class="fc" id="L97">		jButton2 = new JButton(&quot;Sign Up&quot;);</span>
+<span class="fc" id="L98">		jButton2.setVerticalAlignment(SwingConstants.TOP);</span>
+<span class="fc" id="L99">		jButton2.setFont(new Font(&quot;Lantinghei SC&quot;, Font.BOLD | Font.ITALIC, 15));</span>
+<span class="fc" id="L100">		jButton2.setHorizontalAlignment(SwingConstants.LEFT);</span>
+<span class="fc" id="L101">		jButton2.setBackground(new Color(0.9f, 1.0f, 1.0f));</span>
+<span class="fc" id="L102">		jButton2.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(ActionEvent evt) {
+<span class="fc" id="L104">				jButton2ActionPerformed(evt);</span>
+
+<span class="fc" id="L106">			}</span>
+		});
+
+		// JPanel3 is the login panel
+<span class="fc" id="L110">		jPanel3 = new JPanel();</span>
+<span class="fc" id="L111">		jPanel3.setLayout(new BoxLayout(jPanel3, BoxLayout.PAGE_AXIS));</span>
+
+		// JLabel2 and JLabel3 are email and password for existing user
+		// respectively
+<span class="fc" id="L115">		jLabel2 = new JLabel();</span>
+<span class="fc" id="L116">		jLabel2.setText(&quot;Email&quot;);</span>
+<span class="fc" id="L117">		jLabel3 = new JLabel();</span>
+<span class="fc" id="L118">		jLabel3.setText(&quot;Password&quot;);</span>
+
+		// textfields are for users to input their email/password
+<span class="fc" id="L121">		jTextField1 = new JTextField();</span>
+<span class="fc" id="L122">		jTextField2 = new JPasswordField();</span>
+
+<span class="fc" id="L124">		Box box1 = Box.createHorizontalBox();</span>
+
+		// email
+<span class="fc" id="L127">		box1.add(jLabel2);</span>
+<span class="fc" id="L128">		box1.add(jTextField1);</span>
+
+		// password
+<span class="fc" id="L131">		box1.add(jLabel3);</span>
+<span class="fc" id="L132">		box1.add(jTextField2);</span>
+
+<span class="fc" id="L134">		jPanel3.add(box1);</span>
+
+		// JButton is the login button
+<span class="fc" id="L137">		jButton1 = new JButton(&quot;login&quot;);</span>
+<span class="fc" id="L138">		jButton1.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(ActionEvent evtButton1) {
+<span class="nc" id="L140">				jButton1ActionPerformed(evtButton1);</span>
+
+<span class="nc" id="L142">			}</span>
+		});
+
+		// put everything on the panel
+<span class="fc" id="L146">		jPanel3.add(jButton1);</span>
+<span class="fc" id="L147">		jPanel3.add(jLabel4);</span>
+<span class="fc" id="L148">		jPanel3.add(nameField);</span>
+<span class="fc" id="L149">		jPanel3.add(emailField);</span>
+<span class="fc" id="L150">		jPanel3.add(passwordField);</span>
+<span class="fc" id="L151">		jPanel3.add(jButton2);</span>
+
+<span class="fc" id="L153">		getContentPane().add(jPanel3, BorderLayout.CENTER);</span>
+<span class="fc" id="L154">		pack();</span>
+
+<span class="fc" id="L156">	}</span>
+
+	/**
+	 * This method shows what will happen after click the &quot;sign on&quot; button.
+	 * 
+	 * @param evt
+	 */
+	private void jButton2ActionPerformed(ActionEvent evt) {
+<span class="fc" id="L164">		String inputName = nameField.getText();</span>
+<span class="fc" id="L165">		String inputEmail = emailField.getText();</span>
+<span class="fc" id="L166">		char[] inputPw = passwordField.getPassword();</span>
+
+			// if name/email/password user input is null, show error messages.
+<span class="pc bpc" id="L169" title="1 of 2 branches missed.">			if (inputName.equals(&quot;Name&quot;)) {</span>
+	
+<span class="nc" id="L171">				JOptionPane.showMessageDialog(null,</span>
+<span class="nc" id="L172">						&quot;Please try to enter your name.&quot;, &quot;Failed&quot;,</span>
+<span class="nc" id="L173">						JOptionPane.ERROR_MESSAGE);</span>
+	
+<span class="pc bpc" id="L175" title="1 of 2 branches missed.">			} else if (inputEmail.equals(&quot;Email&quot;)) {</span>
+<span class="nc" id="L176">				JOptionPane.showMessageDialog(null,</span>
+<span class="nc" id="L177">						&quot;Please try to enter your email.&quot;, &quot;Failed&quot;,</span>
+<span class="nc" id="L178">						JOptionPane.ERROR_MESSAGE);</span>
+	
+<span class="pc bpc" id="L180" title="1 of 2 branches missed.">			} else if (String.valueOf(inputPw).equals(&quot;New Password&quot;)) {</span>
+<span class="nc" id="L181">				JOptionPane.showMessageDialog(null,</span>
+<span class="nc" id="L182">						&quot;Please try again and enter your password.&quot;, &quot;Failed&quot;,</span>
+<span class="nc" id="L183">						JOptionPane.ERROR_MESSAGE);</span>
+	
+<span class="nc" id="L185">			} else {</span>
+<span class="fc" id="L186">				user = new Person(inputName, inputEmail, inputPw);</span>
+<span class="fc" id="L187">				UserDatabase.addProfile(user);</span>
+	
+<span class="fc" id="L189">				UserProfileWriter fw = new UserProfileWriter();</span>
+<span class="fc" id="L190">				fw.write(user);</span>
+	
+<span class="fc" id="L192">				Profile userProfile = new Profile(user);</span>
+			}
+
+<span class="fc" id="L195">		}</span>
+
+
+	/**
+	 * This method shows what will happen after clicking the &quot;login&quot; button.
+	 * 
+	 * @param evt
+	 */
+	private void jButton1ActionPerformed(ActionEvent evt) {
+<span class="nc" id="L204">		Boolean match = false;</span>
+<span class="nc" id="L205">		String inputEmail = jTextField1.getText();</span>
+<span class="nc" id="L206">		char[] inputPw = jTextField2.getPassword();</span>
+<span class="nc" id="L207">		ArrayList&lt;Person&gt; p = UserDatabase.getUsers();</span>
+
+		// if email or password input is null, show error messages
+<span class="nc bnc" id="L210" title="All 2 branches missed.">		if (inputEmail.equals(&quot;&quot;)) {</span>
+<span class="nc" id="L211">			JOptionPane.showMessageDialog(null,</span>
+<span class="nc" id="L212">					&quot;Please try again and enter your email.&quot;, &quot;Failed&quot;,</span>
+<span class="nc" id="L213">					JOptionPane.ERROR_MESSAGE);</span>
+
+<span class="nc bnc" id="L215" title="All 2 branches missed.">		} else if (inputPw.length == 0) {</span>
+<span class="nc" id="L216">			JOptionPane.showMessageDialog(null,</span>
+<span class="nc" id="L217">					&quot;Please try again and enter your password.&quot;, &quot;Failed&quot;,</span>
+<span class="nc" id="L218">					JOptionPane.ERROR_MESSAGE);</span>
+
+<span class="nc" id="L220">		} else {</span>
+			// if the email and password input are both match tuple in database,
+			// the boolean match shows true, otherwise it will be false (false
+			// default)
+<span class="nc bnc" id="L224" title="All 2 branches missed.">			for (Person person : p) {</span>
+<span class="nc bnc" id="L225" title="All 2 branches missed.">				if (Arrays.equals(person.getPassword(), inputPw)</span>
+<span class="nc bnc" id="L226" title="All 2 branches missed.">						&amp;&amp; inputEmail.equals(person.getEmail())) {</span>
+<span class="nc" id="L227">					match = true;</span>
+<span class="nc" id="L228">					user = person;</span>
+				}
+			}
+
+			// if match is true then show the profile, otherwise show another
+			// error message
+<span class="nc bnc" id="L234" title="All 2 branches missed.">			if (match == true) {</span>
+<span class="nc" id="L235">				Profile pf = new Profile(user);</span>
+				// FileReader fd = new FileReader();
+
+<span class="nc" id="L238">			} else {</span>
+				JOptionPane
+<span class="nc" id="L240">						.showMessageDialog(</span>
+<span class="nc" id="L241">								null,</span>
+<span class="nc" id="L242">								&quot;Username or Password is not correct! Please sign up or type agin!&quot;,</span>
+<span class="nc" id="L243">								&quot;Failed&quot;, JOptionPane.ERROR_MESSAGE);</span>
+			}
+		}
+
+<span class="nc" id="L247">	}</span>
+
+	/**
+	 * This method get a new person.
+	 * 
+	 * @return user
+	 * 
+	 */
+	public Person getPerson() {
+<span class="nc" id="L256">		return user;</span>
+	}
+
+	/**
+	 * Main method -- a new Login and Sign on panel and all related functions
+	 * are displayed.
+	 * 
+	 * @param args
+	 * 
+	 */
+	public static void main(String args[]) {
+<span class="fc" id="L267">		Login newLogin = new Login();</span>
+<span class="fc" id="L268">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>Login (Dec 14, 2015 9:00:23 PM)</div></body></html>

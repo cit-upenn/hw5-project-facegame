@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>Sprite.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">Login (Dec 14, 2015 9:00:23 PM)</a> &gt; <a href="../../index.html" class="el_group">FaceGameProgram</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">Sprite.java</span></div><h1>Sprite.java</h1><pre class="source lang-java linenums">import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
+import java.awt.Image;
+import java.awt.Rectangle;
+import java.awt.Transparency;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.io.File;
+
+import javax.imageio.ImageIO;
+import javax.swing.JFrame;
+
+
+/**
+ * The sprite class for displaying sprites
+ * @author Rony Edde
+ *
+ */
+public class Sprite extends JFrame
+{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2L;
+	private File imageFile;
+	private BufferedImage bufferedImage;
+	private Image image;
+	private AffineTransform transform;
+	private double posX;
+	private double posY;
+	private double angle;
+	private double width;
+	private double height;
+	private double centroidX;
+	private double centroidY;
+	private double scaleX;
+	private double scaleY;
+	private Rectangle bounds;
+
+	/**
+	 * constructor for sprite class that takes an image path
+	 * @param imageFile the path to the image
+	 */
+<span class="fc" id="L44">	public Sprite(String imageFile)</span>
+	{
+<span class="fc" id="L46">		this.transform = new AffineTransform();</span>
+<span class="fc" id="L47">		this.posX = 0.0;</span>
+<span class="fc" id="L48">		this.posY = 0.0;</span>
+<span class="fc" id="L49">		this.angle = 0.0;</span>
+<span class="fc" id="L50">		this.centroidX = 0.0;</span>
+<span class="fc" id="L51">		this.centroidY = 0.0;</span>
+		
+		try
+		{
+<span class="fc" id="L55">			this.imageFile = new File(imageFile);</span>
+<span class="fc" id="L56">			this.bufferedImage = ImageIO.read(this.imageFile);</span>
+			
+<span class="fc" id="L58">			this.width = this.bufferedImage.getWidth();</span>
+<span class="fc" id="L59">			this.height = this.bufferedImage.getHeight();</span>
+			
+<span class="fc" id="L61">			this.scaleX = 1.0;</span>
+<span class="fc" id="L62">			this.scaleY = 1.0;</span>
+			
+<span class="fc" id="L64">			this.transform.setToIdentity();</span>
+<span class="fc" id="L65">			this.transform.scale(this.scaleX, this.scaleY);</span>
+<span class="fc" id="L66">			this.transform.translate(this.posX, this.posY);</span>
+<span class="fc" id="L67">			this.transform.rotate(this.angle, this.width * 0.5, this.height * 0.5);</span>
+			
+<span class="fc" id="L69">			this.bounds = new Rectangle();</span>
+<span class="fc" id="L70">			this.updateBounds();</span>
+			
+
+<span class="fc" id="L73">			BufferedImage buf = ImageIO.read(this.imageFile);</span>
+		
+		// generate a hardware accelerated image
+<span class="fc" id="L76">		GraphicsConfiguration gc = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();</span>
+<span class="fc" id="L77">		this.image = gc.createCompatibleImage(buf.getWidth(),buf.getHeight(),Transparency.BITMASK);</span>
+		
+		// draw image in the accelerated graphics buffer
+<span class="fc" id="L80">		image.getGraphics().drawImage(this.bufferedImage,0,0,null);</span>
+		//this.bufferedImage.getGraphics().drawImage(buf,0,0,null);
+
+<span class="fc" id="L83">		}</span>
+<span class="nc" id="L84">		catch(Exception exception)</span>
+		{
+<span class="nc" id="L86">			exception.printStackTrace();</span>
+<span class="nc" id="L87">			System.out.print(&quot;could not load image&quot;);</span>
+		}
+<span class="fc" id="L89">	}</span>
+	
+	/**
+	 * set the centrod of the sprite
+	 * @param x the x centroid coordinate
+	 * @param y the y centroid coordinate
+	 */
+	public void setCentroid(double x, double y)
+	{
+<span class="fc" id="L98">		this.centroidX = x;</span>
+<span class="fc" id="L99">		this.centroidY = y;</span>
+<span class="fc" id="L100">	}</span>
+	
+	/**
+	 * updates the transform coordinates of the sprite
+	 */
+	public void updateTransform()
+	{
+<span class="fc" id="L107">		this.transform.setToIdentity();		</span>
+<span class="fc" id="L108">		this.transform.translate(this.posX+this.centroidX, this.posY+this.centroidY);</span>
+<span class="fc" id="L109">		this.transform.rotate(this.angle, this.width * 0.5, this.height * 0.5);</span>
+<span class="fc" id="L110">		this.transform.scale(this.scaleX, this.scaleY);</span>
+<span class="fc" id="L111">		this.updateBounds();</span>
+<span class="fc" id="L112">	}</span>
+	
+	/**
+	 * sets the bounds of the bounding box of the sprite
+	 * @param x the x coordinate
+	 * @param x the x coordinate
+	 * @param width the width of the box
+	 * @param height the height of the box
+	 */
+	public void setBounds(double x, double y, double width, double height)
+	{
+<span class="fc" id="L123">		this.bounds.setRect((int)x, (int)y, (int)width, (int)height);</span>
+<span class="fc" id="L124">	}</span>
+	
+	/**
+	 * automatically computes the bounds of the box after any transformation occurs
+	 */
+	public void updateBounds()
+	{
+<span class="fc" id="L131">		this.setBounds(this.posX+this.centroidX, </span>
+<span class="fc" id="L132">					   this.posY+this.centroidY, </span>
+<span class="fc" id="L133">                       this.width, </span>
+<span class="fc" id="L134">                       this.height);</span>
+<span class="fc" id="L135">	}</span>
+	
+	/**
+	 * get the current bounds of the sprite
+	 */
+	public Rectangle getBounds()
+	{
+<span class="fc" id="L142">		return this.bounds;</span>
+	}
+	
+	/**
+	 * sets the position of the sprite
+	 * @param x the x position
+	 * @param y the y position
+	 */
+	public void setPos(double x, double y)
+	{
+<span class="nc" id="L152">		this.posX = x;</span>
+<span class="nc" id="L153">		this.posY = y;</span>
+<span class="nc" id="L154">		this.updateTransform();</span>
+<span class="nc" id="L155">	}</span>
+	
+	/**
+	 * moves the sprite relative to the current position
+	 * @param x the x value to move by
+	 * @param y the y value to move by
+	 */
+	public void moveBy(double x, double y)
+	{
+<span class="fc" id="L164">		this.posX += x;</span>
+<span class="fc" id="L165">		this.posY += y;</span>
+<span class="fc" id="L166">		this.updateTransform();		</span>
+<span class="fc" id="L167">	}</span>
+	
+	/**
+	 *  rotates the sprite by the angle offset
+	 * @param angle the angle value to rotate by
+	 */
+	public void rotateBy(double angle)
+	{
+<span class="fc" id="L175">		this.angle += angle;</span>
+<span class="fc" id="L176">		this.updateTransform();	</span>
+<span class="fc" id="L177">	}</span>
+	
+	/**
+	 * moves and rotates the sprite relative to current position and angle
+	 * @param x the x offset
+	 * @param y the y offset
+	 * @param rotate the angle offset
+	 */
+	public void moveAndRotateBy(double x, double y, double rotate)
+	{
+<span class="nc" id="L187">		this.posX += x;</span>
+<span class="nc" id="L188">		this.posY += y;</span>
+<span class="nc" id="L189">		this.angle += rotate;</span>
+<span class="nc" id="L190">		this.updateTransform();		</span>
+<span class="nc" id="L191">	}</span>
+	
+	/**
+	 * sets the rotation of the sprite
+	 * @param angle the angle to set the rotation to
+	 */
+	public void setRot(double angle)
+	{
+<span class="fc" id="L199">		this.angle = angle;</span>
+<span class="fc" id="L200">		this.updateTransform();</span>
+<span class="fc" id="L201">	}</span>
+	
+	/**
+	 * sets the scale of the sprite
+	 * @param scaleX the X scale to set
+	 * @param scaleY the Y scale to set
+	 */
+	public void setScale(double scaleX, double scaleY)
+	{
+<span class="nc" id="L210">		this.scaleX = scaleX;</span>
+<span class="nc" id="L211">		this.scaleY = scaleY;</span>
+<span class="nc" id="L212">		this.updateTransform();</span>
+<span class="nc" id="L213">	}</span>
+	
+	/**
+	 * gets the scale of the sprite
+	 * @return the scale x
+	 */
+	public double getScaleX()
+	{
+<span class="nc" id="L221">		return this.scaleX;</span>
+	}
+	
+	/**
+	 * gets the scale of the sprite
+	 * @return the scale x
+	 */
+	public double getScaleY()
+	{
+<span class="nc" id="L230">		return this.scaleY;</span>
+	}
+	
+	
+	/**
+	 * get the BufferedImage object
+	 * @return a BufferedImage of the sprite
+	 */
+	public BufferedImage getImageBuffer()
+	{
+<span class="nc" id="L240">		return this.bufferedImage;</span>
+	}
+	
+	/*
+	 * gets the Image of the sprite
+	 */
+	public Image getImage()
+	{
+<span class="fc" id="L248">		return this.image;</span>
+	}
+	
+	/**
+	 * gets the x position of the sprite
+	 * @return the x position
+	 */
+	public double getPosX()
+	{
+<span class="fc" id="L257">		return this.posX;</span>
+	}
+	
+	/**
+	 * gets the y postion of the sprite
+	 * @return the y position of the sprite
+	 */
+	public double getPosY()
+	{
+<span class="fc" id="L266">		return this.posY;</span>
+	}
+	
+	/**
+	 * gets the angle of the sprite
+	 * @return the angle in radians
+	 */
+	public double getAngle()
+	{
+<span class="fc" id="L275">		return this.angle;</span>
+	}
+	
+	/**
+	 * get the transformation matrix of the sprite
+	 * @return the AffineTransform matrix
+	 */
+	public AffineTransform getTransform()
+	{
+<span class="fc" id="L284">		return this.transform;</span>
+	}
+	
+	/**
+	 * gets the width of the sprite
+	 * @return width the width of the sprite
+	 */
+	public int getWidth()
+	{
+<span class="fc" id="L293">		return (int)this.width;</span>
+	}
+	
+	/**
+	 * gets the heigth of the sprite
+	 * @return width the heigth of the sprite
+	 */
+	public int getHeight()
+	{
+<span class="fc" id="L302">		return (int)this.height;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>Login (Dec 14, 2015 9:00:23 PM)</div></body></html>

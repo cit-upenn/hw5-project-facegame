@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>UserDatabase.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">Login (Dec 14, 2015 9:00:23 PM)</a> &gt; <a href="../../index.html" class="el_group">FaceGameProgram</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">UserDatabase.java</span></div><h1>UserDatabase.java</h1><pre class="source lang-java linenums">import java.util.ArrayList;
+
+/**
+ * This program stores user information in userDatabase.
+ * 
+ * @author Fanglin
+ *
+ */
+public class UserDatabase {
+	
+	/**
+	 * instance variables
+	 */
+	private static ArrayList&lt;Person&gt; users;
+
+	/**
+	 * constructor -- initialize a new user and read in the file represents this
+	 * user line 0: name line 1: email line 2: password line 3: picture path
+	 * line 4: game score line 5: friend list line 6: posts
+	 */
+<span class="fc" id="L21">	public UserDatabase() {</span>
+
+<span class="fc" id="L23">		UserProfileReader rd = new UserProfileReader(&quot;userDatabase.txt&quot;);</span>
+<span class="fc" id="L24">		ArrayList&lt;String&gt; lines = rd.getDatabaseLines();</span>
+
+<span class="fc" id="L26">		users = new ArrayList&lt;Person&gt;();</span>
+
+<span class="pc bpc" id="L28" title="1 of 2 branches missed.">		if (lines != null) {</span>
+<span class="fc bfc" id="L29" title="All 2 branches covered.">			for (String s : lines) {</span>
+<span class="fc" id="L30">				String filename = s + &quot;.txt&quot;;</span>
+<span class="fc" id="L31">				UserProfileReader userFile = new UserProfileReader(filename);</span>
+				try {
+<span class="fc" id="L33">					ArrayList&lt;String&gt; userInfo = userFile.getDatabaseLines();</span>
+<span class="fc" id="L34">					Person p = new Person(userInfo.get(0), userInfo.get(1),</span>
+<span class="fc" id="L35">							userInfo.get(2).toCharArray());</span>
+	
+<span class="fc" id="L37">					p.setId(Integer.parseInt(s));</span>
+<span class="fc" id="L38">					p.setPicturePath(userInfo.get(3));</span>
+	
+<span class="fc" id="L40">					String gameScoreLine = userInfo.get(4);</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">					if (gameScoreLine.length() &gt; 0) {</span>
+	
+<span class="fc" id="L43">						String[] gameScores = gameScoreLine.split(&quot;,&quot;);</span>
+<span class="fc" id="L44">						ArrayList&lt;Integer&gt; scores = new ArrayList&lt;Integer&gt;();</span>
+	
+<span class="fc bfc" id="L46" title="All 2 branches covered.">						for (int i = 0; i &lt; gameScores.length; i++) {</span>
+<span class="fc" id="L47">							scores.add(Integer.parseInt(gameScores[i]));</span>
+						}
+	
+<span class="fc" id="L50">						p.setGameScore(scores);</span>
+					}
+	
+<span class="fc" id="L53">					String friendsLine = userInfo.get(5);</span>
+<span class="fc bfc" id="L54" title="All 2 branches covered.">					if (friendsLine.length() &gt; 0) {</span>
+<span class="fc" id="L55">						String[] friends = friendsLine.split(&quot;,&quot;);</span>
+<span class="fc" id="L56">						ArrayList&lt;Integer&gt; friendList = new ArrayList&lt;Integer&gt;();</span>
+	
+<span class="fc bfc" id="L58" title="All 2 branches covered.">						for (int i = 0; i &lt; friends.length; i++) {</span>
+<span class="fc" id="L59">							friendList.add(Integer.parseInt(friends[i]));</span>
+						}
+	
+<span class="fc" id="L62">						p.setFriendList(friendList);</span>
+					}
+	
+	//				String postList = userInfo.get(6);
+	//				if (postList.length() &gt; 0) {
+	//					String[] posts = postList.split(&quot;Name: &quot;);
+	//					ArrayList&lt;String&gt; postLists = new ArrayList&lt;String&gt;();
+	//
+	//					for (int i = 0; i &lt; posts.length; i++) {
+	//						postLists.add(posts[i]);
+	//					}
+	//
+	//					p.setPostList(postLists);
+	//				}
+					
+<span class="fc" id="L77">					String post = &quot;&quot;;</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">					for (int i = 6; i &lt; userInfo.size(); i++){</span>
+<span class="fc" id="L79">						post += &quot;\n&quot; + userInfo.get(i);</span>
+					}
+					
+<span class="fc" id="L82">					ArrayList&lt;String&gt; postList = new ArrayList&lt;String&gt;();</span>
+<span class="fc" id="L83">					postList.add(post);</span>
+<span class="fc" id="L84">					p.setPostList(postList);</span>
+<span class="fc" id="L85">					users.add(p);</span>
+<span class="pc" id="L86">				} catch (Exception e) {</span>
+					
+<span class="nc" id="L88">					e.printStackTrace();</span>
+				}
+			}
+		}
+
+<span class="fc" id="L93">	}</span>
+
+	/**
+	 * add a profile for a user
+	 * 
+	 * @param p
+	 */
+	public static void addProfile(Person p) {
+<span class="fc" id="L101">		users.add(p);</span>
+
+<span class="fc" id="L103">	}</span>
+
+	/**
+	 * get the users
+	 * 
+	 * @return users
+	 */
+	public static ArrayList&lt;Person&gt; getUsers() {
+<span class="fc" id="L111">		return users;</span>
+	}
+
+	/**
+	 * get number of users
+	 * 
+	 * @return users.size()
+	 */
+	public static int getNumberOfUsers() {
+<span class="fc" id="L120">		return users.size();</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>Login (Dec 14, 2015 9:00:23 PM)</div></body></html>

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>MotionAsset.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">Login (Dec 14, 2015 9:00:23 PM)</a> &gt; <a href="../../index.html" class="el_group">FaceGameProgram</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">MotionAsset.java</span></div><h1>MotionAsset.java</h1><pre class="source lang-java linenums">import java.awt.Rectangle;
+
+/**
+ * abstract class for motion assets.  This will be used for all emenies
+ * @author Rony Edde
+ *
+ */
+public abstract class MotionAsset extends Asset
+{
+	Sprite entity;
+	private double speed;
+	private double direction;
+	private double targetDir;
+	private double dirThreshold;
+	private double steps;
+	
+	/**
+	 * default behavior of all enemy initialization
+	 * @param enemyPath the path to the image file
+	 */
+	public MotionAsset(String enemyPath)
+	{
+<span class="fc" id="L23">		super();</span>
+<span class="fc" id="L24">		this.speed = 0.5;</span>
+<span class="fc" id="L25">		this.direction = 0.0;</span>
+<span class="fc" id="L26">		this.targetDir = 0.0;</span>
+<span class="fc" id="L27">		this.dirThreshold = 0.01;</span>
+<span class="fc" id="L28">		this.steps = 0.0;</span>
+		
+<span class="fc" id="L30">		this.add(enemyPath);</span>
+
+<span class="fc" id="L32">		this.entity = this.sprites.get(0);</span>
+<span class="fc" id="L33">		this.entity.setCentroid((-this.entity.getWidth())*0.5,</span>
+<span class="fc" id="L34">							    (-this.entity.getHeight())*0.5);</span>
+<span class="fc" id="L35">	}</span>
+	
+	/**
+	 * The step number if being incremented return that value
+	 * @return
+	 */
+	public double getSteps()
+	{
+<span class="fc" id="L43">		return this.steps;</span>
+	}
+	
+	/**
+	 * set the number of steps the asset has been updated
+	 * @param step number of steps to set
+	 */
+	public void setSteps(double step)
+	{
+<span class="fc" id="L52">		this.steps = step;</span>
+<span class="fc" id="L53">	}</span>
+	
+	/**
+	 * get the speed value
+	 * @return the asset's speed
+	 */
+	public double getSpeed()
+	{
+<span class="fc" id="L61">		return this.speed;</span>
+	}
+	
+	/**
+	 * set the speed value of the asset
+	 * @param value the speed value
+	 */
+	public void setSpeed(double value)
+	{
+<span class="fc" id="L70">		this.speed = value;</span>
+<span class="fc" id="L71">	}</span>
+	
+	/**
+	 * get the directional angle of the asset in radians
+	 * @return the angle
+	 */
+	public double getDirection()
+	{
+<span class="fc" id="L79">		return this.direction;</span>
+	}
+	
+	/**
+	 * set the directional angle of the asset in radians
+	 * @param dir the angular direction
+	 */
+	public void setDirection(double dir)
+	{
+<span class="nc" id="L88">		this.direction = dir;</span>
+<span class="nc" id="L89">	}</span>
+	
+	/**
+	 * gets the target direction 
+	 * @return the angle to the target's position
+	 */
+	public double getTargetDir()
+	{
+<span class="nc" id="L97">		return this.targetDir;</span>
+	}
+	
+	/**
+	 * set the angular direction to the target
+	 * @param dir
+	 */
+	public void setTargetDir(double dir)
+	{
+<span class="nc" id="L106">		this.targetDir = dir;</span>
+<span class="nc" id="L107">	}</span>
+	
+	/**
+	 * blends the current angle with the target angle
+	 */
+	private void blendToDirection()
+	{
+<span class="nc bnc" id="L114" title="All 2 branches missed.">		if(this.targetDir - this.direction &lt; this.dirThreshold)</span>
+<span class="nc" id="L115">			this.direction += 0.01;</span>
+<span class="nc bnc" id="L116" title="All 2 branches missed.">		else if(this.targetDir - this.direction &gt; this.dirThreshold)</span>
+<span class="nc" id="L117">			this.direction -= 0.01;</span>
+<span class="nc" id="L118">	}</span>
+	
+	/**
+	 * aims current asset to the target destination
+	 * @param target the target asset to aim to
+	 */
+	public void aim(Asset target)
+	{
+<span class="fc" id="L126">		Rectangle srcBBox = this.getBBox(0);</span>
+<span class="fc" id="L127">		double srcX = srcBBox.getCenterX();</span>
+<span class="fc" id="L128">		double srcY = srcBBox.getCenterY();</span>
+		
+<span class="fc" id="L130">		Rectangle targetBBox = target.getBBox(0);</span>
+<span class="fc" id="L131">		double targetX = targetBBox.getCenterX();</span>
+<span class="fc" id="L132">		double targetY = targetBBox.getCenterY();</span>
+		
+<span class="fc" id="L134">		Vec2D v = new Vec2D(targetX - srcX, targetY - srcY);</span>
+<span class="fc" id="L135">		v.normalize();</span>
+<span class="fc" id="L136">		double angle = v.getAngle();</span>
+<span class="fc" id="L137">		this.direction = angle;</span>
+<span class="fc" id="L138">		this.sprites.get(0).setRot(this.direction);</span>
+		
+<span class="fc" id="L140">	}</span>
+	
+	/**
+	 * default step animation logig behavior
+	 */
+	public void step()
+	{
+<span class="fc" id="L147">		double x = this.speed * Math.cos(this.direction);</span>
+<span class="fc" id="L148">		double y = this.speed * Math.sin(this.direction);</span>
+<span class="fc" id="L149">		this.moveBy(x, y);</span>
+<span class="fc" id="L150">		this.steps++;</span>
+<span class="fc" id="L151">	}</span>
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>Login (Dec 14, 2015 9:00:23 PM)</div></body></html>

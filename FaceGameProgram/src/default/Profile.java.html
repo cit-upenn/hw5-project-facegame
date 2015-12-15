@@ -1,0 +1,515 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>Profile.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">Login (Dec 14, 2015 9:00:23 PM)</a> &gt; <a href="../../index.html" class="el_group">FaceGameProgram</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">Profile.java</span></div><h1>Profile.java</h1><pre class="source lang-java linenums"><span class="fc" id="L1"></span>
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.plaf.synth.SynthSeparatorUI;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+/**
+ * @author fanglinlu xinxinma Rony
+ * This is a class creating the main window for the FaceGame program.
+ */
+
+public class Profile extends JFrame {
+
+	private JPanel p1;
+	private JPanel p2;
+	private JPanel p3;
+	private JPanel p4;
+	private JPanel pCenter;
+	private JPanel pPosts;
+	private JPanel gamePanel;
+	private JPanel imagePanel;
+	private JPanel gameScorePanel;
+	private JTable friendsTable;
+	private TableModel model;
+	private JTextArea friendsInfo;
+	
+	private JButton b1;
+	private JButton b3;
+	private JButton b4;
+	private JButton b5;
+
+
+	private JLabel welcome;
+	private JLabel imageLabel;
+	private JLabel postTag;
+	private JLabel gameScoreLabel;
+	private JLabel gameScoreTag;
+
+
+	private JTextArea statusArea;
+
+	
+	private JTextField tf1;
+
+	private JFrame container;
+	private GameThread game;
+	
+	private Person loginUser;
+	
+	private JLabel name;
+	private String picturePath;
+
+	private int gameScore;
+	private String post;
+	private ArrayList&lt;Integer&gt; friendIds;
+	
+	private JComboBox&lt;String[]&gt; searchFriends;
+
+	
+ 	private UserProfileWriter upw;
+	
+/**
+ * This is the constructor for the class.
+ * @param p
+ */
+<span class="fc" id="L84">	public Profile(Person p) {</span>
+<span class="fc" id="L85">		this.post = &quot;&quot;;</span>
+<span class="fc" id="L86">		this.picturePath = &quot;emptyProfilePicture2.jpg&quot;;</span>
+<span class="fc" id="L87">		this.gameScore = 0;</span>
+<span class="fc" id="L88">		this.friendIds = new ArrayList&lt;Integer&gt;();</span>
+		
+<span class="fc" id="L90">		loginUser = p;</span>
+<span class="fc" id="L91">		name = new JLabel(loginUser.getName());</span>
+<span class="fc" id="L92">		name.setFont(new Font(&quot;Serif&quot;, Font.ITALIC, 40));</span>
+		
+<span class="pc bpc" id="L94" title="1 of 2 branches missed.">		if (loginUser.getPicturePath().length() &gt; 0) {</span>
+<span class="nc" id="L95">			picturePath = loginUser.getPicturePath();</span>
+		}
+<span class="fc" id="L97">		ArrayList&lt;Integer&gt; gameScoreList = loginUser.getGameScore();</span>
+<span class="pc bpc" id="L98" title="2 of 4 branches missed.">		if (gameScoreList != null &amp;&amp; gameScoreList.size() &gt; 0) {</span>
+<span class="nc" id="L99">			gameScore = gameScoreList.get(0);</span>
+		}
+		
+<span class="fc" id="L102">		ArrayList&lt;Integer&gt; userFriendsIds = loginUser.getFriends();</span>
+<span class="pc bpc" id="L103" title="2 of 4 branches missed.">		if (userFriendsIds != null &amp;&amp; userFriendsIds.size() &gt; 0){</span>
+<span class="nc" id="L104">			friendIds = userFriendsIds;</span>
+		}
+<span class="fc" id="L106">		ArrayList&lt;String&gt; posts = loginUser.getPosts();</span>
+<span class="pc bpc" id="L107" title="2 of 4 branches missed.">		if(posts != null &amp;&amp; posts.size() &gt; 0) {</span>
+<span class="nc" id="L108">			post = posts.get(0);</span>
+		}
+		
+<span class="fc" id="L111">		gui();</span>
+
+<span class="fc" id="L113">	}</span>
+/**
+ * This is the gui method which dispalys everything on the frame. 
+ */
+	public void gui() {
+/**
+ * initialize the variables
+ */
+<span class="fc" id="L121">		this.p1 = new JPanel();</span>
+<span class="fc" id="L122">		this.p2 = new JPanel();</span>
+<span class="fc" id="L123">		this.p3 = new JPanel();</span>
+<span class="fc" id="L124">		this.p4 = new JPanel();</span>
+<span class="fc" id="L125">		this.pCenter = new JPanel();</span>
+<span class="fc" id="L126">		this.pPosts = new JPanel();</span>
+<span class="fc" id="L127">		this.gamePanel = new JPanel();</span>
+<span class="fc" id="L128">		this.imagePanel = new JPanel();</span>
+<span class="fc" id="L129">		this.gameScorePanel = new JPanel();</span>
+<span class="fc" id="L130">		this.friendsInfo = new JTextArea(&quot;&quot;);</span>
+<span class="fc" id="L131">		this.b1 = new JButton(&quot;Add Status&quot;);</span>
+<span class="fc" id="L132">		this.b3 = new JButton(&quot;Update profile picture&quot;);</span>
+<span class="fc" id="L133">		this.b4 = new JButton(&quot;Play Game!&quot;);</span>
+<span class="fc" id="L134">		this.b5 = new JButton(&quot;Add Friends&quot;);</span>
+		
+<span class="fc" id="L136">		this.statusArea = new JTextArea(&quot;&quot;);</span>
+		
+<span class="fc" id="L138">		this.tf1 = new JTextField(&quot;New Status&quot;, 20);</span>
+		
+<span class="fc" id="L140">		this.container = new JFrame(&quot;Drone Wars&quot;);</span>
+		
+<span class="fc" id="L142">		upw = new UserProfileWriter();</span>
+		
+<span class="fc" id="L144">		ArrayList&lt;Person&gt; users = UserDatabase.getUsers();</span>
+		
+<span class="fc" id="L146">		setVisible(true);</span>
+<span class="fc" id="L147">		setSize(1200, 800);</span>
+<span class="fc" id="L148">		setPreferredSize(new Dimension(1200, 800));</span>
+<span class="fc" id="L149">		setLocationRelativeTo(null);</span>
+<span class="fc" id="L150">		setDefaultCloseOperation(EXIT_ON_CLOSE);</span>
+
+<span class="fc" id="L152">		this.imagePanel.setSize(600, 600);</span>
+<span class="fc" id="L153">		this.model = new DefaultTableModel(50, 1) {</span>
+			   @Override
+			   public boolean isCellEditable(int row, int column) {
+			       //Only the third column
+<span class="pc bpc" id="L157" title="1 of 2 branches missed.">			       return column == 3;</span>
+			   }
+			};
+<span class="fc" id="L160">		this.friendsTable = new JTable(model);</span>
+		
+<span class="fc" id="L162">		p1.setBackground(new Color(0.9f, 1.0f, 1.0f));</span>
+<span class="fc" id="L163">		p1.add(tf1);</span>
+<span class="fc" id="L164">		p1.add(b1);</span>
+		
+<span class="fc" id="L166">		ArrayList&lt;Person&gt; usersFromDatabase = UserDatabase.getUsers();</span>
+<span class="fc" id="L167">		System.out.println(usersFromDatabase.size());</span>
+<span class="fc" id="L168">		int databaseSize = UserDatabase.getNumberOfUsers();</span>
+<span class="fc" id="L169">		System.out.println(databaseSize);</span>
+		
+// Add information about the comboBox. 
+<span class="fc" id="L172">		String[] userNameArray = new String[databaseSize];</span>
+<span class="fc" id="L173">		int j = 0;</span>
+		
+<span class="fc bfc" id="L175" title="All 2 branches covered.">		for (int i = 0; i &lt; databaseSize;i++) {</span>
+<span class="fc" id="L176">			String userName = usersFromDatabase.get(i).getName();</span>
+<span class="fc bfc" id="L177" title="All 2 branches covered.">			if (!userName.equals(loginUser.getName())){</span>
+<span class="fc" id="L178">				userNameArray[j] = userName;</span>
+<span class="fc" id="L179">				j++;</span>
+			}
+
+		}
+		
+<span class="fc" id="L184">		this.searchFriends = new JComboBox(userNameArray);</span>
+
+
+<span class="fc" id="L187">		p1.add(searchFriends);</span>
+<span class="fc" id="L188">		p1.add(b5);</span>
+		
+		// added the image path input Textfield
+<span class="fc" id="L191">		p1.add(b3);</span>
+		
+// set up the west panel
+<span class="fc" id="L194">		p2.setBackground(new Color(0.9f, 0.9f, 0.9f));</span>
+<span class="fc" id="L195">		p2.setLayout(new BoxLayout(p2, BoxLayout.PAGE_AXIS));</span>
+	
+	
+
+<span class="fc" id="L199">		this.friendsTable = new JTable(model);</span>
+<span class="fc" id="L200">		this.friendsTable.setShowHorizontalLines(false);</span>
+<span class="fc" id="L201">		this.friendsTable.setBackground(new Color(0.8f, 0.8f, 0.8f));</span>
+<span class="fc" id="L202">		this.friendsTable.setShowVerticalLines(false);</span>
+<span class="fc" id="L203">		this.friendsTable.setShowVerticalLines(false);</span>
+<span class="fc" id="L204">		this.friendsTable.setRowHeight(20);</span>
+
+		
+		
+<span class="fc" id="L208">		this.friendsTable.addMouseListener(new MouseAdapter()</span>
+		{
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+<span class="fc" id="L213">            	int index = friendsTable.getSelectedRow();</span>
+<span class="pc bpc" id="L214" title="1 of 2 branches missed.">            	if(index != -1)</span>
+            	{
+<span class="fc bfc" id="L216" title="All 2 branches covered.">            		if (model.getValueAt(index, 0) != null)</span>
+            		{	
+<span class="pc bpc" id="L218" title="1 of 2 branches missed.">            			if (index&lt;friendIds.size())</span>
+            			{
+<span class="fc" id="L220">            				Person clickedFriend = users.get(friendIds.get(index));</span>
+<span class="fc" id="L221">            				String strValue = clickedFriend.getPosts().get(0);</span>
+<span class="fc" id="L222">            				friendsInfo.setText(clickedFriend.getName() + &quot;'s status is: \n&quot; + strValue);</span>
+            			}
+            		}
+            	}
+<span class="fc" id="L226">            }</span>
+        });
+		
+		
+		
+<span class="pc bpc" id="L231" title="1 of 2 branches missed.">		for (int i=0; i&lt;friendIds.size(); i++)</span>
+		{
+<span class="nc" id="L233">			Person friendPerson = users.get(friendIds.get(i));</span>
+<span class="nc" id="L234">			this.model.setValueAt(friendPerson.getName(), i, 0);</span>
+		}
+		
+<span class="fc" id="L237">		JLabel friendsLabelField = new JLabel(&quot;Friends List&quot;);</span>
+<span class="fc" id="L238">		friendsLabelField.setFont(new Font(&quot;Serif&quot;, Font.ITALIC, 27));</span>
+		
+<span class="fc" id="L240">		JLabel friendsInfoLabel = new JLabel(&quot;Friend Info&quot;);</span>
+<span class="fc" id="L241">		friendsInfoLabel.setFont(new Font(&quot;Serif&quot;, Font.ITALIC, 25));</span>
+<span class="fc" id="L242">		p2.add(friendsInfoLabel);</span>
+		
+<span class="fc" id="L244">		p2.add(this.friendsInfo);</span>
+		
+		// add friends title for friends list
+<span class="fc" id="L247">		p2.add(friendsLabelField);</span>
+		// add friends table
+<span class="fc" id="L249">		p2.add(this.friendsTable);</span>
+
+		// update table
+<span class="fc" id="L252">		this.updateFriendsTable(friendIds.size());</span>
+
+<span class="fc" id="L254">		p3.setBackground(new Color(0.9f, 0.9f, 0.9f));</span>
+<span class="fc" id="L255">		p4.setBackground(new Color(0.9f, 0.9f, 0.9f));</span>
+		
+		//add panels to the frame.
+
+<span class="fc" id="L259">		add(p1, BorderLayout.NORTH);</span>
+<span class="fc" id="L260">		add(p2, BorderLayout.WEST);</span>
+<span class="fc" id="L261">		add(p3, BorderLayout.SOUTH);</span>
+<span class="fc" id="L262">		add(p4, BorderLayout.EAST);</span>
+<span class="fc" id="L263">		add(this.pCenter);	</span>
+<span class="fc" id="L264">		pCenter.setLayout(new GridLayout(2,3));</span>
+		
+<span class="fc" id="L266">		pCenter.add(imagePanel);</span>
+		
+		try {
+<span class="fc" id="L269">			updatePictureProfile(picturePath, false);</span>
+<span class="fc" id="L270">			this.imageLabel.setSize(300, 300);</span>
+<span class="fc" id="L271">			this.imagePanel.setSize(300, 300);</span>
+<span class="fc" id="L272">			imagePanel.add(imageLabel);</span>
+
+<span class="pc" id="L274">		} catch (Exception e){</span>
+<span class="nc" id="L275">			e.printStackTrace();</span>
+		}		
+		
+<span class="fc" id="L278">		pCenter.add(name);</span>
+		//set up the post area
+<span class="fc" id="L280">		pPosts.setLayout(new BoxLayout(pPosts,BoxLayout.PAGE_AXIS));</span>
+<span class="fc" id="L281">		pPosts.setBackground(new Color(0.9f, 1.0f, 1.0f));</span>
+<span class="fc" id="L282">		postTag = new JLabel (&quot;Post Area: &quot;);</span>
+<span class="fc" id="L283">		postTag.setFont(new Font(&quot;Serif&quot;, Font.ITALIC, 30));</span>
+<span class="fc" id="L284">		pPosts.add(postTag);</span>
+<span class="fc" id="L285">		pCenter.add(pPosts);</span>
+		
+<span class="fc" id="L287">		statusArea.setAutoscrolls(true);</span>
+<span class="fc" id="L288">		statusArea.setText(post);</span>
+<span class="fc" id="L289">		statusArea.setFont(new Font(&quot;Calibri&quot;, Font.PLAIN, 16));</span>
+<span class="fc" id="L290">		System.out.println(post);</span>
+<span class="fc" id="L291">		statusArea.setBackground(new Color(0.9f, 1.0f, 1.0f));</span>
+<span class="fc" id="L292">		pPosts.add(statusArea);</span>
+		
+<span class="fc" id="L294">		b4.setFont(new Font(&quot;Serif&quot;, Font.ITALIC, 30));</span>
+		
+		// add the game panel
+<span class="fc" id="L297">		gamePanel.setLayout(new BoxLayout(gamePanel,BoxLayout.PAGE_AXIS));;</span>
+<span class="fc" id="L298">		gamePanel.add(b4);</span>
+
+<span class="fc" id="L300">		gameScoreLabel = new JLabel (&quot;&quot; + gameScore);</span>
+<span class="fc" id="L301">		gameScoreTag = new JLabel (&quot;Your most recent game score is: &quot;);</span>
+<span class="fc" id="L302">		gameScoreTag.setFont (new Font(&quot;Calibri&quot;, Font.PLAIN, 16));</span>
+<span class="fc" id="L303">		gameScoreLabel.setFont (new Font(&quot;Serif&quot;, Font.ITALIC, 30));</span>
+		
+<span class="fc" id="L305">		gameScorePanel.add(gameScoreTag);</span>
+<span class="fc" id="L306">		gameScorePanel.add(gameScoreLabel);</span>
+		
+<span class="fc" id="L308">		gamePanel.add(gameScorePanel);</span>
+		
+<span class="fc" id="L310">		pCenter.add(gamePanel);</span>
+		
+		
+		//add actionListeners	
+		
+<span class="fc" id="L315">		b1.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(ActionEvent updateStatusEvt) {
+<span class="fc" id="L317">				updateStatusArea();</span>
+<span class="fc" id="L318">				upw.createUserInividuleData(loginUser);</span>
+				
+				
+<span class="fc" id="L321">			}</span>
+		});
+
+		
+<span class="fc" id="L325">		b3.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(ActionEvent pictureButtonEvt) {
+
+<span class="fc" id="L328">				updatePictureProfile(picturePath, true);</span>
+<span class="fc" id="L329">				loginUser.setPicturePath(picturePath);</span>
+<span class="fc" id="L330">				upw.createUserInividuleData(loginUser);</span>
+		
+<span class="fc" id="L332">			}</span>
+		
+		});
+
+<span class="fc" id="L336">		b4.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(ActionEvent e) {
+<span class="fc" id="L338">				launchGame();</span>
+<span class="fc" id="L339">			}</span>
+		});
+		
+<span class="fc" id="L342">		b5.addActionListener(new ActionListener(){</span>
+			public void actionPerformed (ActionEvent addFriendsEvent){
+<span class="fc" id="L344">				int found = -1;</span>
+<span class="pc bpc" id="L345" title="1 of 2 branches missed.">				for (int i = 0; i &lt; users.size(); i++) {</span>
+<span class="fc bfc" id="L346" title="All 2 branches covered.">					if (users.get(i).getName().compareTo(searchFriends.getSelectedItem().toString()) == 0) {</span>
+<span class="fc" id="L347">						found = i;</span>
+<span class="fc" id="L348">						break;</span>
+					}
+				}
+<span class="pc bpc" id="L351" title="1 of 2 branches missed.">				if (found != -1) {</span>
+<span class="fc" id="L352">					loginUser.addFriend(found);</span>
+<span class="fc" id="L353">					friendIds = loginUser.getFriends();</span>
+<span class="fc" id="L354">					upw.createUserInividuleData(loginUser);</span>
+<span class="fc" id="L355">					updateFriendsTable(friendIds.size());</span>
+				}
+<span class="fc" id="L357">			}</span>
+		});
+		
+		
+<span class="fc" id="L361">		pack();</span>
+		
+<span class="fc" id="L363">	}</span>
+	
+/**
+ * This is a method to update scores.
+ * @param score
+ */
+	
+	public void updateScore(int score) {
+<span class="fc" id="L371">		gameScore = score;</span>
+<span class="fc" id="L372">		ArrayList&lt;Integer&gt; gs = new ArrayList&lt;Integer&gt;();</span>
+<span class="fc" id="L373">		gs.add(gameScore);</span>
+<span class="fc" id="L374">		loginUser.setGameScore(gs);</span>
+<span class="fc" id="L375">		upw.createUserInividuleData(loginUser);</span>
+<span class="fc" id="L376">		this.gameScoreLabel.setText(&quot;&quot; + score);</span>
+<span class="fc" id="L377">		System.out.println(gameScore);</span>
+
+<span class="fc" id="L379">	}</span>
+/**
+ * This is a method to update friends' table. 
+ * @param clearSize
+ */
+	private void updateFriendsTable(int clearSize)
+	{
+<span class="fc bfc" id="L386" title="All 2 branches covered.">		if (clearSize &gt; 0){</span>
+<span class="fc bfc" id="L387" title="All 2 branches covered.">			for (int i = 0; i &lt; clearSize; i++) {</span>
+<span class="fc" id="L388">				this.model.setValueAt(&quot;&quot;, clearSize, 0);</span>
+			}
+		}
+<span class="fc" id="L391">		ArrayList&lt;Integer&gt; friendIds = loginUser.getFriends();</span>
+<span class="fc" id="L392">		ArrayList&lt;Person&gt; users = UserDatabase.getUsers();</span>
+		
+<span class="fc bfc" id="L394" title="All 2 branches covered.">		for (int i=0; i&lt;friendIds.size(); i++)</span>
+		{
+<span class="fc" id="L396">			Person friendPerson = users.get(friendIds.get(i));</span>
+<span class="fc" id="L397">			this.model.setValueAt(friendPerson.getName(), i, 0);</span>
+		}
+<span class="fc" id="L399">	}</span>
+	/**
+	 * This is a method to update status area in the post areas. 
+	 */
+	private void updateStatusArea()
+	{
+		//this.statusArea.setText(&quot;&quot;);
+<span class="fc" id="L406">		String input = tf1.getText();</span>
+		
+<span class="fc" id="L408">		DateFormat df = new SimpleDateFormat(&quot;dd/MM/yy HH:mm:ss&quot;);</span>
+<span class="fc" id="L409">		Date dateobj = new Date();</span>
+		
+<span class="fc" id="L411">		GeoLocation gl = new GeoLocation();</span>
+<span class="fc" id="L412">		gl.getLocationData();</span>
+<span class="fc" id="L413">		String[] glStrings = gl.getLocationStrings();</span>
+<span class="fc" id="L414">		String finalLocation = &quot;&quot;;</span>
+		String s;
+<span class="fc bfc" id="L416" title="All 2 branches covered.">		for(int i = 1; i &lt; glStrings.length - 5; i++)</span>
+		{	
+<span class="fc" id="L418">			s = glStrings[glStrings.length - 5 - i];</span>
+<span class="fc" id="L419">			finalLocation +=  s  + &quot;, &quot;;</span>
+		}
+<span class="fc" id="L421">		s = glStrings[glStrings.length - 5];</span>
+<span class="fc" id="L422">		finalLocation += s;</span>
+<span class="fc" id="L423">		String textAreaInput = input + &quot;\n&quot; + &quot;Date: &quot; + df.format(dateobj) + &quot;\n&quot; + &quot;Location: &quot; + finalLocation;</span>
+<span class="fc" id="L424">		System.out.println(textAreaInput);</span>
+<span class="fc" id="L425">		String outputText = textAreaInput + &quot;\n\n&quot; + this.statusArea.getText();</span>
+<span class="fc" id="L426">		this.statusArea.setText(outputText);</span>
+<span class="fc" id="L427">		ArrayList&lt;String&gt; postListString = new ArrayList&lt;String&gt;();</span>
+<span class="fc" id="L428">		postListString.add(outputText);</span>
+<span class="fc" id="L429">		loginUser.setPostList(postListString);</span>
+<span class="fc" id="L430">		System.out.println(postListString);</span>
+<span class="fc" id="L431">		this.statusArea.setFont(new Font(&quot;Calibri&quot;, Font.PLAIN, 16));</span>
+
+			
+<span class="fc" id="L434">	}</span>
+	/**
+	 * This is a method to update profiel pictures. 
+	 * @param picturePath
+	 * @param dialog
+	 */
+	private void updatePictureProfile(String picturePath, boolean dialog) {
+
+<span class="fc" id="L442">		System.out.println(picturePath);</span>
+	
+		
+<span class="fc bfc" id="L445" title="All 2 branches covered.">		if (dialog)</span>
+		{
+<span class="fc" id="L447">			JFileChooser chooser = new JFileChooser();</span>
+<span class="fc" id="L448">			FileNameExtensionFilter filter = new FileNameExtensionFilter(</span>
+<span class="fc" id="L449">					&quot;JPG, PNG Images&quot;, &quot;jpg&quot;, &quot;PNG&quot;);</span>
+<span class="fc" id="L450">			chooser.setFileFilter(filter);</span>
+<span class="fc" id="L451">			chooser.getCurrentDirectory();</span>
+
+<span class="fc" id="L453">			int returnVal = chooser.showOpenDialog(this);</span>
+<span class="pc bpc" id="L454" title="1 of 2 branches missed.">			if(returnVal == JFileChooser.APPROVE_OPTION) </span>
+			{
+<span class="nc" id="L456">				picturePath = chooser.getSelectedFile().getAbsolutePath();</span>
+			}
+<span class="fc" id="L458">			File currentPic = new File(picturePath);</span>
+<span class="fc" id="L459">			this.picturePath = picturePath;</span>
+<span class="pc bpc" id="L460" title="1 of 2 branches missed.">			if (currentPic.exists() == false)</span>
+<span class="nc" id="L461">				return;</span>
+		}
+		
+<span class="fc" id="L464">		BufferedImage originalImage = null;</span>
+<span class="fc" id="L465">		BufferedImage image = null;</span>
+		try {
+<span class="fc" id="L467">			originalImage = ImageIO.read(new File(picturePath));</span>
+<span class="fc" id="L468">			image = new BufferedImage (300, 300, BufferedImage.TYPE_INT_ARGB);</span>
+			
+<span class="fc" id="L470">			AffineTransform at = new AffineTransform();</span>
+<span class="fc" id="L471">			double scaleX = 1.0 * 300.0 / originalImage.getWidth();</span>
+<span class="fc" id="L472">			double scaleY = 1.0 * 300.0 / originalImage.getHeight();</span>
+<span class="fc" id="L473">			at.scale(scaleX,  scaleX);</span>
+<span class="fc" id="L474">			AffineTransformOp ato = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);</span>
+<span class="fc" id="L475">			ato.filter(originalImage, image);</span>
+			
+<span class="pc" id="L477">		} catch (IOException e) {</span>
+			// TODO Auto-generated catch block
+<span class="nc" id="L479">			System.out.println(&quot;Come to catch!&quot;);</span>
+<span class="nc" id="L480">			e.printStackTrace();</span>
+		}
+<span class="fc" id="L482">		this.imageLabel = new JLabel(new ImageIcon(image));</span>
+<span class="fc" id="L483">		Dimension d = new Dimension(10, 10);</span>
+<span class="fc" id="L484">		this.imageLabel.setSize(d);;</span>
+
+		
+<span class="fc bfc" id="L487" title="All 2 branches covered.">		if (this.imagePanel.getComponentCount() &gt; 0)</span>
+<span class="fc" id="L488">			this.imagePanel.remove(0);</span>
+		
+<span class="fc" id="L490">		this.imagePanel.add(this.imageLabel, BorderLayout.NORTH);</span>
+<span class="fc" id="L491">		imageLabel.setSize(300, 300);</span>
+<span class="fc" id="L492">		imagePanel.setSize(300, 300);</span>
+
+<span class="fc" id="L494">		repaint();</span>
+
+		
+<span class="fc" id="L497">	}</span>
+	
+	/**
+	 * This is a method to launch game. 
+	 */
+
+	private void launchGame() 
+	{
+<span class="fc" id="L505">		this.updateScore(0);</span>
+		
+<span class="fc" id="L507">		game = new GameThread(this.container, this);</span>
+
+<span class="fc" id="L509">		game.start();</span>
+<span class="fc" id="L510">	}</span>
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>Login (Dec 14, 2015 9:00:23 PM)</div></body></html>

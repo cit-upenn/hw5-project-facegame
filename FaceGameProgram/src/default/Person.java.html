@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>Person.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">Login (Dec 14, 2015 9:00:23 PM)</a> &gt; <a href="../../index.html" class="el_group">FaceGameProgram</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">Person.java</span></div><h1>Person.java</h1><pre class="source lang-java linenums">import java.util.ArrayList;
+
+/**
+ * This class provides all information of a single user.
+ * 
+ * @author Fanglin
+ *
+ */
+
+public class Person {
+
+	/**
+	 * instance variables
+	 */
+	private int id;
+
+ 	private String name;
+ 	private String email;
+ 	private char[] password;
+ 	private String picturePath;
+
+ 	private ArrayList&lt;Integer&gt; gameScore;
+ 	
+ 	private ArrayList&lt;Integer&gt; listOfFriends;
+	
+ 	private ArrayList&lt;String&gt; posts ;
+
+ 	/**
+ 	 * class variable
+ 	 */
+ 	public static int friendsCount;
+ 	
+ 	
+ 	
+
+	/**
+	 * constructor -- initialize an object person with arguments name, email and
+	 * password
+	 * 
+	 * @param name
+	 * @param email
+	 * @param pw
+	 */
+	
+<span class="fc" id="L45">	public Person(String name, String email, char[] pw) {</span>
+
+<span class="fc" id="L47">		id = UserDatabase.getNumberOfUsers();</span>
+<span class="fc" id="L48">		this.name = name;</span>
+<span class="fc" id="L49">		this.email = email;</span>
+<span class="fc" id="L50">		password = pw;</span>
+<span class="fc" id="L51">		picturePath = &quot;&quot;;</span>
+<span class="fc" id="L52">		gameScore = new ArrayList&lt;Integer&gt;();</span>
+<span class="fc" id="L53">		listOfFriends = new ArrayList&lt;Integer&gt;();</span>
+<span class="fc" id="L54">		posts = new ArrayList&lt;String&gt;();</span>
+<span class="fc" id="L55">	}</span>
+
+	/**
+	 * @return id
+	 */
+	public int getId() {
+<span class="fc" id="L61">		return id;</span>
+	}
+
+	/**
+	 * @param id
+	 */
+	public void setId(int id) {
+<span class="fc" id="L68">		this.id = id;</span>
+<span class="fc" id="L69">	}</span>
+
+	/**
+	 * @return name
+	 */
+	public String getName() {
+<span class="fc" id="L75">		return name;</span>
+	}
+
+	/**
+	 * @return password
+	 */
+	public char[] getPassword() {
+<span class="fc" id="L82">		return password;</span>
+	}
+
+	/**
+	 * @return email
+	 */
+	public String getEmail() {
+<span class="fc" id="L89">		return email;</span>
+	}
+
+	/**
+	 * @return picturePath
+	 */
+	public String getPicturePath() {
+<span class="fc" id="L96">		return picturePath;</span>
+	}
+
+	/**
+	 * @param picturePath
+	 */
+	public void setPicturePath(String picturePath) {
+<span class="fc" id="L103">		this.picturePath = picturePath;</span>
+<span class="fc" id="L104">	}</span>
+
+	/**
+	 * id of friends
+	 * 
+	 * @param list
+	 */
+	public void setFriendList(ArrayList&lt;Integer&gt; list) {
+<span class="fc" id="L112">		listOfFriends = list;</span>
+<span class="fc" id="L113">	}</span>
+
+	/**
+	 * posts
+	 * 
+	 * @param list
+	 */
+	public void setPostList(ArrayList&lt;String&gt; list) {
+<span class="fc" id="L121">		posts = list;</span>
+		
+<span class="fc" id="L123">	}</span>
+
+	/**
+	 * game scores
+	 * 
+	 * @param gs
+	 */
+	public void setGameScore(ArrayList&lt;Integer&gt; gs) {
+<span class="fc" id="L131">		gameScore = gs;</span>
+<span class="fc" id="L132">	}</span>
+
+	/**
+	 * @return gameScore
+	 */
+	public ArrayList&lt;Integer&gt; getGameScore() {
+<span class="fc" id="L138">		return gameScore;</span>
+	}
+
+	/**
+	 * @return posts
+	 */
+	public ArrayList&lt;String&gt; getPosts() {
+<span class="fc" id="L145">		return posts;</span>
+	}
+
+	/**
+	 * @return listOfFriends
+	 */
+	public ArrayList&lt;Integer&gt; getFriends() {
+<span class="fc" id="L152">		return listOfFriends;</span>
+	}
+
+	/**
+	 * @param id
+	 * @return ture if the id is not in listOfFriends, otherwise return false
+	 */
+	public boolean addFriend(int id) {
+<span class="pc bpc" id="L160" title="1 of 2 branches missed.">		if (!listOfFriends.contains(id)) {</span>
+<span class="fc" id="L161">			listOfFriends.add(id);</span>
+<span class="fc" id="L162">			return true;</span>
+		} else {
+<span class="nc" id="L164">			return false;</span>
+		}
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>Login (Dec 14, 2015 9:00:23 PM)</div></body></html>
