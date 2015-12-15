@@ -1,7 +1,7 @@
 rony
 rony
 1234
-C:\Users\moi\workspace\FaceGameProgram\jpeg.png
+jpeg.png
 0
 0,1,3,4,2,5
 
